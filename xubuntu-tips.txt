@@ -1,0 +1,789 @@
+# В этом файле собраны советы и подсказки по использованию Xubuntu, и Линукса вообще.
+# Используй приложенный мейкфайл для удобного просмотра.
+
+# Текст ниже добавляется к выводу `make help`.
+? Полезные теги:
+?   +install         - установка
+?   +initial-setup   - начальная настройка
+?   +useful-packages - полезные пакеты
+?   +repair          - разруливание проблем
+
+[+install] [legacy] [uefi] [bios] [windows-dual-boot]
+Выбираем между legacy и uefi
+До установки выбери в биосе режим загрузки: legacy или uefi.
+Может быть еще dual - то есть выбирать автоматически, предпочитая uefi.
+На новых компах выбора может не быть - всегда uefi.
+Варианты:
+    * Другая ОС уже стоит и хочется дуал-бут:
+        Нужно оставить то, что уже стоит.
+        Но только если это не dual-режим - тогда выясни, что на самом деле используется:
+            - Если ты на линуксе, то проверь существование папки `/sys/firmware/efi` - если она есть, то ты на uefi.
+            - Иначе попробуй в биосе заменить dual на legacy или uefi, посмотри что из них запустится.
+        Нельзя оставлять dual-режим потому, что в нем загрузочная флешка грузится в режиме uefi, и соответственно ставит убунту в этом же режиме.
+        Если другая ОС стоит в режиме legacy, то будет плохо.
+    * Дуал-бут не нужен:
+        По идее uefi круче, но на нем бывают проблемы в дровами для видюхи, и вообще он замороченный.
+        Надежнее поставить legacy.
+
+[+install] [bug-workaround]
+При установке лучше не подключать сеть, и отказаться от загрузки драйверов.
+
+[+install] [boot] [black-screen] [videocard] [drivers] [bug-workaround]
+Фикс черного экрана при запуске с флешки/диска (анимация загрузки нормальная, а потом гаснет)
+Выключи комп кнопкой и при следующей загрузке тыкай Shift.
+Выбирай пункт меню `safe graphics`. Если его нет, то то же самое делаем руками:
+В открывшемся окне найди экспертный режим, в нем команду запуска. Там после `quiet splash` добавь ` nomodeset`, и нажми Enter.
+В уже установленной системе такой проблемы быть не должно, но разрешение может быть неправильным. Читай тут же про фикс разрешения для карточек nvidia.
+
+[+install] [+outdated] [bug-workaround]
+Проблемы с раскладкой в установщике
+Если выберешь русский язык в установщике, может не работать англ. раскладка.
+Тогда в меню пуск найди настроки клавиатуры и включи ее.
+Но не используй англ. язык в пароле, а то не сможешь ввести при первом запуске системы! Используй онли цифры.
+
+[+install] [partitions]
+Какие разделы создавать при установке
+* основной - ФС ext4, флаги не трогай, точка монтирования `/`.
+По желанию:
+    * хоум - все так же, точка монтирования `/home`. Это чтобы документы и настройки не уничтожались при переустановке.
+Если используешь uefi:
+    * efi - размер 536 мб (столько делает инсталлер), ФС fat32, флаги boot, esp.
+    Если устанавливаешь в uefi-режиме, а такого раздела нет, будет ругаться.
+
+[+install] [+repair] [boot] [grub]
+При установке ошибка grub-а, а после ребута вылезает консоль `grub recovery/rescue`
+Вероятно проблема в режиме загрузки, legacy vs uefi. Почитай выше про это.
+Варианты действий для метода тыка:
+    А. Переустановить без UEFI.
+        Имеет смысл только если предыдущая попытка установки была с UEFI, то есть с флешки линукс загрузился в UEFI-режиме (папка `/sys/firmware/efi` существует).
+        Если так, то в биосе убери поддержку UEFI (оставь только легаси-режим).
+    B. Понять, что не так с настройкой UEFI.
+        Тут нужно думать.
+    С. Поставить GRUB из консоли. (Видимо этот способ ставит его без UEFI?)
+        Вариант не очень, потому что-то еще могло не доустановиться, но вроде работает.
+        Выключи комп кнопкой и снова запускайся с установочного диска.
+        В терминале делай `sudo fdisk -l`, по размеру определи где стоит линукс. Пусть это будет `/dev/sda7`.
+        Дальше делай вот что (sic, второй раз `sda` без цифры):
+            sudo mount /dev/sda7 /mnt
+            sudo grub-install --boot-directory=/mnt/boot /dev/sda
+        После запуска нормальной системы на всякий случай сделай `sudo update-grub`.
+
+[+repair] [boot] [grub]
+При включении вылезает консоль `grub` (НЕ `recovery/rescue`)
+    set pager=1
+    ls
+Он даст список разделов. Теперь найди перебором раздел с убунтой:
+    ls (hd0,1)/
+и так далее. Кода нашел, делай типа вот этого: (используй автокомплит на tab; вместо sda1 - раздел с убунтой)
+    set root=(hd0,1)
+    linux /boot/vmlinuz root=/dev/sda1
+    initrd /boot/initrd.img
+    boot
+Когда убунта запустится, сделай
+    sudo apt-get update
+    sudo apt-get upgrade
+чтобы обновиться, а потом
+    sudo updage-grub
+.
+Если при `update-grub` он спросит, обновить ли конфиг, нажми "оставить текущий конфиг" (дефолт).
+Потом он спросит, куда его поставить: /dev/sda или /dev/sdaX. Выбери первое. Это эквивалентно автоматическому определению X, по идее.
+
+[boot] [grub]
+Настраиваем GRUB из гуи
+    sudo apt-get install grub-customizer
+    grub-customizer
+На старой убунте его нет в апт-гет. Тогда сначала сделай
+    sudo add-apt-repository ppa:danielrichter2007/grub-customizer
+    sudo apt-get update
+Он слегка тупит, поэтому если менял порядок пунктов (или даже если нет), перед выходом из него сделай reload (он же F5) и проверь, что все нормально.
+
+[+initial-setup] [reboot] [hang] [reisub] [oom-killer]
+Ядерные хоткеи REISUB, и как их включить
+Включаем так:
+    sudo nano /etc/sysctl.d/10-magic-sysrq.conf
+    kernel.sysrq = 244
+Все операции начинаются так:
+    Зажать Alt
+    Если ты в гуи, зажать Ctrl
+    Нажать PrintScreen
+    Можно отпустить все кроме Alt.
+Дальше, на выбор:
+    * Ребут (нажимай клавишы МЕДЛЕННО): R E I S U B
+    * Убить процесс, который ест больше всего памяти: F
+
+[+initial-setup] [snap]
+Сносим систему snap-пакетов
+Ее не жалко, особенно на Xubuntu. Про ванильную убунту не уверен.
+Можно куда-то сохранить список установленных snap-пакетов: сохранить вывод `snap list`.
+Потом сделать вот так:
+    sudo apt autoremove --purge snapd gnome-software-plugin-snap
+    rm -rf ~/snap
+Не уверен, что нужно:
+    sudo rm -rf /var/cache/snapd/
+
+[fonts]
+Куда ставить шрифты
+Для себя: ~/.local/share/fonts/
+Для всех: /usr/local/share/fonts
+Может потребоваться сброс кэша шрифтов: `fc-cache`, или `fc-cache -f`.
+
+[fonts] [fonts-antialiasing]
+Отключение антиалиасинга на конкретном шрифте
+В ~/.fonts.conf впиши это: (если файла нет - создай; если есть - добавь содержимое внутрь тега <fontconfig>)
+    <!--
+    ~/.fonts.conf
+    Remember to run "fc-cache" after you modify this file.
+    -->
+    <fontconfig>
+      <match target="font">
+        <test name="family" qual="any">
+          <string>Красивое имя шрифта</string>
+        </test>
+        <edit name="antialias" mode="assign" binding="strong">
+          <bool>false</bool>
+        </edit>
+      </match>
+    </fontconfig>
+
+[+initial-setup] [fonts] [fonts-antialiasing]
+Отключение антиалиасинга везде, с мясом
+    cd /etc/fonts/conf.d
+    sudo rm 10-antialias.conf
+    sudo rm 10-hinting-slight.conf
+    sudo ln -s ../conf.avail/10-hinting-full.conf
+    fc-cache -fv  #Лучше вместо этого ребут?
+Как вернуть обратно - думаю, понятно.
+Странновато работает. Для надежности лучше еще руками отключить антиалиасинг в гуи настроек.
+
+[fonts] [fonts-antialiasing]
+Отключение запрета на использование пиксельных шрифтов
+Видимо запрет стоит, чтобы не возникали неожиданные проблемы со скейлингом. Может и не стоит отключать.
+    cd /etc/fonts/conf.d
+    sudo rm 70-no-bitmaps.conf
+Откатить можно командой: sudo ln -s ../conf.avail/70-no-bitmaps.conf
+
+[+initial-setup] [fonts]
+Шрифты с Windows
+Старый плохой вариант:
+    sudo apt install ttf-mscorefonts-installer
+Нормальный вариант:
+    Ищи на sourceforge проект `mscorefonts2` (там два экзешника от мелкомягких, скачай их и выпотроши шрифты архиватором).
+Самый модный, но слегка пиратский вариант:
+    Скачай офф. вируалку винды (якобы для тестов браузера Edge), образ для виртуалбокс.
+    Распотроши архиватором пока не дойдешь до файла с расширением `.vmdk`.
+        sudo apt install libguestfs-tools
+        sudo mkdir /mnt/foo
+        sudo guestmount -a 'MSEdge - Win10-disk001.vmdk' -i --ro /mnt/foo
+        sudo cp -r /mnt/foo/Windows/Fonts/ .
+        sudo chown -R "$USER:$USER" Fonts
+        sudo umount /mnt/foo
+        sudo rm -r /mnt/foo
+    Полученную папочку переименуй во что-нибудь, и положи:
+        в `~/.local/share/fonts/` (для себя), или
+        в `/usr/local/share/fonts` (для всех - тогда chown не нужен?)
+
+[clock] [windows-dual-boot]
+Фикс кривых часов при дуал-буте с виндой
+(как-то странно работает, я бы не торопился)
+sudo timedatectl set-local-rtc 1
+Без sudo вроде тоже работает, но с ним спокойнее.
+
+[+outdated] [black-screen] [lock-screen] [videocard] [drivers] [bug-workaround]
+Фикс черного лок-скрина в Xubuntu (пофикшено в Xubuntu 19.10)
+Либо вводить вслепую
+Либо нажимать F1/2/../6, затем F7 (но это вызывает задержку)
+Либо (дает очень ретро экран блокировки и не дает монитору отключиться)
+    sudo apt remove light-locker
+    sudo apt install xscreensaver
+Либо (но это вызывает мерцание экрана блокировки и не дает монитору отключаться)
+    sudo apt remove light-locker
+    sudo apt install xfce4-screensaver
+
+[+outdated] [crash] [bug-workaround]
+Фикс краша "Редактора меню" в Xubuntu, когда в системе используется русский язык (пофикшено в Xubuntu 19.10)
+sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
+Найти строку
+    return GLib.markup_escape_text(text, len(text))
+Заменить на
+    return GLib.markup_escape_text(text)
+
+[+initial-setup] [fonts]
+Какие шрифты выбрать
+Основной:  Trebuchet MS 9, или Verdana 8
+Моно:      Noto Mono 9 (Andale Mono 10 тоже норм)
+Заголовки: Verdana Bold 9, или Trebuchet MS Bold 9
+Терминал:  Noto Mono 9
+(полный хинтинг, без АА)
+
+[+initial-setup] [laptop] [overheating] [battery]
+Чтобы ноут не грелся и ел меньше батареи
+Вариант 1:
+    sudo apt install laptop-mode-tools
+    Ребут
+Вариант 2:
+    sudo apt install tlp
+    sudo tlp start (либо ребут)
+Режим энергосбережения: (работает с вариантом 1, на счет 2 не уверен)
+    sudo apt install cpufrequtils
+    Возможно ребут?
+    sudo cpufreq-set -g powersave (включает режим энергосбережения до ребута, есть еще `performance` - наоборот)
+        Чтобы узнать список режимов, делай `cpufreq-info` и ищи там governors.
+
+[+initial-setup] [screen] [144hz] [videocard] [drivers]
+Настраиваем 144-герцовый монитор
+В настройках дисплея ставим 144 герца, тут все легко.
+Настройка имеет свойство слетать, когда моник отключается из-за неактивности. Чтобы это исправить:
+    Создай "профиль" дисплея с 144 герцами.
+    "Настраивать дисплеи при подключении" -> да
+    "Автоматически включать профили" -> да
+
+[+initial-setup] [videocard] [drivers] [amd] [white-screen]
+Ставим драйвер от AMD
+Сначала проверь, что он не встал по дефолту! Убунта запросто могла сама его поставить.
+`glxinfo` будет показывать "mesa", но это ничего не значит.
+Сделай `lspci -v | sed '1,/VGA/d;/^$/,$d'`, и если увидишь строку `Kernel driver in use: amdgpu`, то драйвер стоит.
+Чтобу установить, качай с сайта amd и запускай `amdgpu-install`.
+Есть еще `amdgpu-pro-install`, который как обычный, но дополнен closed-source компонентами, но:
+    * Он у меня не встал (белый экран после логина).
+    * Не факт, что он лучше.
+Сносится командой `amdgpu[-pro]-uninstall`. Никаких утилит настроек нет, кажется.
+
+[+initial-setup] [videocard] [drivers] [nvidia] [white-screen]
+Ставим драйвер от NVidia
+В гуи настроек есть старые драйвера, а в apt - поновее, но не факт что они лучше.
+Из apt ставить так: `sudo apt install nvidia-driver-XXX` (XXX = версия). Потом можно попробовать `sudo nvidia-xconfig`, но наверное лучше без него.
+Дрова могут нормально не ставиться на uefi. Надо было ставить убунту в legacy-режиме (уже установленную можно переделать под legacy, но это не идеально).
+
+[videocard] [drivers] [nvidia] [black-screen] [boot]
+Отключаем нерабочие дрова NVidia
+Ctrl+Alt+F1/2/3/4/5/6/7 - переходим в другой терминал.
+sudo apt purge nvidia-driver-XXX --autoremove
+Ребут.
+
+[videocard] [drivers] [nvidia]
+Дрова Nvidia с офсайта (они так себе, лучше из пакетного менеджера)
+Там в принципе все объяснено.
+НЕ логинимся в систему.
+Выходим в другую виртуальную консоль (Ctrl+Alt+F6).
+Инсталлер сначала обрабатываем chmod +x, потом запускаем под sudo.
+Он может попробовать отключить noveau-драйвер (спросит разрешение), соглашаемся,
+    но запоминаем, как вернуть на место (стереть /usr/lib/modprobe.d/nvidia-installer..., /etc/modprobe.d/nvidia-installer...).
+Удалять так:
+    Тот же экзешник запускаем с `--uninstall`, опять под sudo.
+    Стираем файлы в modprobe из пред. пункта.
+
+[+initial-setup] [videocard] [drivers] [nvidia] [tearing]
+Фикс тиринга на nvidia: (тиринг = tearing = диагональный разрыв при скроллинге)
+Добавить в параметры ядра (в grub-customizer, например):
+    nvidia-drm.modeset=1
+Потом ребут.
+Рабочий стол может странно выглядеть:
+    Нужно залезть в настроки и что-то сделать со "вторым монитором" (это видео-разъем на ноуте, даже если он не подключен).
+    Лучше всего подвинуть этот монитор так, чтобы он был рядом с основным, а не поверх (это снимет галочку "зеркальные экраны").
+Если ты посмотрел в этот пункт, то у тебя еще может глючить lightdm gtk greeter (программа, которая спрашивает пароль при загрузке, но не локскрин).
+    Проверь так: Перезагрузись. На экране ввода пароля открой выпадающий список пользователей. Потом закрой его кликом по пустому месту. Если картинка испортилась, проблема есть. Тогда сделай то, что написано ниже:
+    sudo nano /etc/lightdm/lightdm.conf.d/10-set-monitors.conf
+    Это создаст файл. Имя может быть любое, но нужно чтобы оно начиналось с маленького двузначного числа и кончалось на `.conf`.
+    Впиши туда примерно вот это:
+        [Seat:*]
+        display-setup-script = xrandr --output VGA-0 --off --output LVDS-1-1 --auto --primary
+    Тут ты для каждого своего моника (посмотри их имена в гуи настроек моников) задаешь настройки.
+    Они начинаются с `--output <имя>`, а потом либо `--off`, чтобы выключить, либо `--auto` чтобы автоматически определить параметры. Плюс на одном монике лучше поставить `--primary`, чтобы сделать его основным.
+    Проверь эту команду (начиная с `xrandr`), запустив ее в терминале.
+    После сохранения конфига, проверь что он применился командой `lightdm --show-config` (там в списке должна быть твоя настройка).
+
+[videocard] [drivers] [nvidia] [resolution]
+Фикс разрешения на NVidia
+Сначала поставь и включи дрова от nvidia
+Дальше: https://askubuntu.com/questions/100900/ (копию см ниже)
+-
+    Follow these steps.
+-
+    Note that **steps 6 and 7 are not usually necessary;** try skipping them and if that does not work, repeat all steps and include these two. Some monitors don't send EDID information to the computer, so Ubuntu can't know what the monitor is capable of and only offers safe (low) resolutions. Those two steps resolve that problem.
+-
+Можно пропустить 1-3, если нет черного экрана или чего-то такого:
+    1. Reboot and restart in `Recovery Mode`.
+    2. Type `rm /etc/X11/xorg.xonf` (<kbd>Enter</kbd>)
+    3. Type `reboot` (<kbd>Enter</kbd>)
+Продолжай отсюда:
+    4. Once you're at the normal Ubuntu desktop again, press <kbd>Alt</kbd> + <kbd>F2</kbd> and type `terminal` (<kbd>Enter</kbd>)
+    5. In the terminal, type `sudo nvidia-xconfig` (<kbd>Enter</kbd>). This will write a new `xorg.conf` file.
+В шаге 5 могут вылезать разные варнинги. Не парься, скорее всего конфиг он и так записал.
+    6. Press <kbd>Alt</kbd> + <kbd>F2</kbd> and type `gksu gedit /etc/X11/xorg.conf` (<kbd>Enter</kbd>).
+Или, скажем, `sudo mousepad /etc/X11/xorg.conf`.
+    7. Look for the part beginning with `Section "Monitor"`and there enter the correct `HorizSync` and `VertRefresh` values. (See https://askubuntu.com/questions/100898/how-do-i-look-up-the-hsync-vsync-values-for-my-monitor )
+Статы нашего старого моника: (прямо так и копируй, но добавь 4 пробела в начале строки)
+HorizSync	30.0 - 83.0
+VertRefresh	56.0 - 75.0
+    8. Restart.
+    9. Once you're at the normal Ubuntu desktop again, find _"Nvidia X Server Settings"_ in the _"start menu"_ and start that.
+    10. In the section `X Server Display Configuration`, set the desired resolution and press the button `Save to X Configuration File`.
+Он может ворчать, что не может сохранить файл. Тогда руками из превьюшки скопипасть.
+    11. Reboot.
+-
+    You should now have the proper resolution!
+-
+    Finally, copy the file `/etc/X11/xorg.conf` to a safe place in case you mess it up later and need to restore it.
+Дальше по идее можно убрать `nomodeset` и заменить его на более пацанский `nvidia-drm.modeset=1` (а возможно на ничего).
+
+[+initial-setup] [gui-themes] [visual-customization]
+Темы офомления (для xfce)
+Великолепная! Но минус - если у xfce-панели поставить кастомный цвет фона, будет визуальный бажок.
+    adapta-gtk-theme
+Хорошая, но онли рамки окон:
+    shiki-colors-xfwm-theme
+Терпимо:
+    murrine-themes
+Кастомные (от хороших к плохим), если нет специального скрипта установки, кидай темы в `~/.themes`.
+    https://github.com/vinceliuice/Canta-theme
+    У этой рамки окон хорошие, можно поставить только ради них:
+        https://www.opendesktop.org/s/Gnome/p/1239855/ (ее постоянно меняли, качай файл за 2020-02-28. Дальше кнопки на панели задач стали вертикально не во всю ширину, поверь мне, я бисектил.)
+    https://sourceforge.net/projects/classiclooks/
+    https://github.com/B00merang-Project (набор)
+
+[visual-customization] [compton]
+Модный блюр под полупрозрачными окнами, на compton (не рекомендую)
+    sudo apt install compton
+Отключи в настройках оконного менеждера "Эффекты", а то он не будет работать.
+Попробуй запустить compton, поиграй с флагами. Когда все устроит, добавь его в автозапуск с флагом `-b`.
+Годные настройки:
+    compton -bCfG -I 0.1 -O 0.1 -e 0.925 -r 5 -o 1 -l -7 -t -7 --blur-background-frame --blur-background-exclude '_GTK_FRAME_EXTENTS@:c' --blur-kern '7,7,0.5,0,0,0,0,0,0,0,0.75,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0.75,0,0,0,0,0,0,0,0.5'
+Тут сделан хитрый кастомный блюр. Заметь, бубном он выключен для определенного типа окон (которые сделаны через gtk3, вроде - на вид они без заголовков, а-ля файрфокс с выключенным заголовком).
+Иначе вокруг них в большом радиусе экран размыливало. Сейчас все еще размыливает немного вокруг попапов, но это даже красиво.
+Менее выпендрежные настройки, без блюра.
+    compton -bCfG -I 0.1 -O 0.1 -e 0.95 -r 5 -o 1 -l -7 -t -7
+
+[visual-customization] [compiz]
+Свистелки для оформления окон, на compiz (не рекомендую)
+Во-первых: sudo apt install fusion-icon
+Эта штука позволит легко экспериментировать с декорациями, и в случае чего вернуть дефолтные.
+-
+Дальше: sudo apt install compiz compiz-plugins-main compiz-plugins-extra compizconfig-settings-manager emerald emerald-themes
+-
+Открой настройки `CompizConfig settings manager`.
+Включи жизненно необходимые плагины:
+    Композитный режим, OpenGL, Совместимость с Gnome,
+    Оформление окна (рамки окон),
+    Изменение размеров окна, Переместить окно,
+    Размещение окон (автоматический выбор координат окна, вместо дефолтных 0,0)
+В настройках "Оформление окна" Compiz-а, замени команду на "emerald --replace".
+Теперь ты готов к эксперементам.
+Запусти `fusion-icon`. Теперь в трее ты можешь переключаться между оконными менеджерами: xfwm4 (дефолтный) и compiz (новый).
+Учти, если меняешь настройки compiz, может потребоваться перезапустить fusion-icon.
+Если все нравится, то добавить `compiz --replace` в автозагрузку.
+Способ для Xubuntu:
+    sudo mousepad /etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+    В открывшемся файле найти: xfwm4
+    И заменить на: compiz"
+    То же самое повторить для
+    sudo mousepad /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-session.xml
+
+[+useful-packages] [automation]
+Управляем окнами из командной строки
+sudo apt install xdotool
+Есть еще `wmctrl`, но он кажется похуже.
+
+[+initial-setup] [autorun] [messengers]
+Автозапуск мессенджеров
+Телеграм умеет стартовать в трее: `путь/до/Telegram -startintray`.
+Дискорд тоже: `discord --start-minimized`
+
+[+initial-setup] [visual-customization]
+Меньше промежутки между значками на рабочем столе
+На выбор:
+    A. Настройка "Показывать значки на основном дисплее" (не знаю, почему она влияет). Или...
+    B. Создай файл `~/.config/gtk-3.0/gtk.css`, если его нет. Впиши туда:
+    * {
+        -XfdesktopIconView-cell-spacing: 2px;
+        -XfdesktopIconView-cell-padding: 2px;
+        -XfdesktopIconView-text-width-proportion: 1.4;
+    }
+    В оригинале советовали использовать 1.7 вместо 1.4, на твое усмотрение.
+
+[+initial-setup] [visual-customization]
+Убираем квадратные скобки в названиях свернутых окон в панели
+Открываем "редактор настроек" (xfce4-settings-editor), в нем открываем раздел xfce4-panel.
+Там находим пункт `/plugins/plugin-N`. N такое, чтобы напротив него было написано `tasklist`.
+Нажимаем `Создать свойство`, имя ставим `/plugins/plugin-N/label-decorations`, тип bool (логический), значение false.
+
+[swap] [memory]
+Размер swap, его изменение
+Размер свопа можно проверить так: grep Swap /proc/meminfo
+Если хочешь больше свопа, тогда...
+Во-первых, выясни как у тебя сделан своп, файлом или разделом: cat /proc/swaps
+Должен сказать `Type file`. Если вдруг `Type partition`, то, наверное, нужно ресайзить раздел gparted-ом (только как-то его отключить сначала, либо с лайв-флешки?).
+Теперь, временно выключаем своп:
+    sudo swapoff -a
+Изменяем размер своп-файла (убедись, что название файла (`/swapfile`) совпадает с выводом `/proc/swaps`).
+Заметь, `bs` *умножается* на `count` (bs=1G count=4 -> 4 гига).
+    sudo dd if=/dev/zero of=/swapfile bs=1G count=4
+Доводим до ума файл:
+    sudo mkswap /swapfile
+Включаем своп обратно:
+    sudo swapon /swapfile
+Проверяем эффект:
+    grep Swap /proc/meminfo
+
+[+useful-packages] [disk-usage]
+Диск забит, как определить чем?
+Минималистичный, медленный вариант:
+    sudo apt install ncdu
+    ncdu /
+Хороший вариант:
+    sudo apt install duc
+    Все команды ниже выполнять на произвольных папках.
+    Под sudo нужно выполнять или все, или никакие (потому что БД с файлами будут отдельные). Без sudo не сможем посмотреть защищенные файлы.
+    Сканируем диск: (это нужно делать каждый раз, иначе информация будет старая)
+    sudo duc index -p /
+    Отображаем результат:
+    * Графически: sudo duc gui /
+    * В терминале, интерактивно: sudo duc ui /
+    * ...
+
+[+initial-setup] [bash] [completion]
+Регистро-независимые подсказки в bash
+Для всех:
+    Дописать в конец `/etc/inputrc` строку:
+        set completion-ignore-case On
+Для себя:
+    Дописать ту же строку в `~/.inputrc`.
+    Если нет такого файла, создать его и в начало поставить строку `$include /etc/inputrc`.
+
+[+initial-setup] [clock]
+Нормальные форматы даты/времени:
+    Короткий: (для часов в таскбаре)
+        %-d %b, %R
+    Длинный: (для тултипа часов в таскбаре и др.)
+        %A, %-d %B %Y, %R:%S
+    Для времени изменения файлов:
+        %d.%m.%Y, %H:%M
+
+[+install] [+useful-packages] [live-usb]
+Создание загрузочной флешки из линукса
+Есть инструмент с гуи:
+    sudo apt install usb-creator-gtk
+
+[+install] [+useful-packages] [live-usb]
+Кастомизируем установочный образ убунты
+    sudo apt-add-repository ppa:cubic-wizard/release
+    sudo apt update
+    sudo apt install cubic
+
+[+useful-packages] [remote-desktop]
+Удаленный рабочий стол
+Показать существующий стол удаленно:
+    Поставь пакет `tigervnc-scraping-server`.
+    Установи пароль команой `vncpasswd`.
+    Запусти сервер с помощью `x0tigervncserver -PasswordFile=/home/holyblackcat/.vnc/passwd`.
+    Может быть нужен флажок `-display=:0` или `-display=:0.0`, менее вероятно с другим числом.
+    Если ты рут и хочешь экран другого пользователя (или возможно если ты зашел по ssh?),
+        сначала нужно сделать `export XAUTHORITY=/home/OTHER_USER/.Xauthority`.
+Как подключиться:
+    На линуксе пакет `tigervnc-viewer`.
+    Под винду на их сайте есть экзешник `vncviewer`.
+
+[+initial-setup] [+useful-packages] [ssh]
+Настройка ssh-сервера
+sudo apt install openssh-server
+Создай файл `~/.ssh/authorized_keys`, туда впиши строку с публичным ключом.
+Убедись, что ты владелец и файла и папки, и что стоят правильные права:
+    chmod 700 ~/.ssh
+    chmod 644 ~/.ssh/authorized_keys
+
+[vi]
+Текстовый редактор vi для чайников
+В дефолтном режиме в нижнем-левом углу стоит символ `-`.
+Escape - вернуться в дефолтный режим.
+`i` - перейти в режим ввода текста. (Символ `I`.)
+`:` - перейти в режим ввода команд. (Символ `:`.)
+    Здесь команды вводятся текстом и завершаются ентером, работает бэкспейс.
+    q - выход (не работает если есть несохраненные изменения)
+    !q - принудительный выход без сохранения
+    wq - выход с сохранением
+
+[+initial-setup] [drivers] [sensors]
+Мониторим температуру
+Проц/видюха/...:
+    sudo apt install lm-sensors
+    sensors
+Жесткий диск:
+    sudo apt install hddtemp
+    sudo chmod u+s `which hddtemp` # Чтобы работал без sudo.
+    hddtemp
+Видюха от nvidia:
+    nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader
+Чтобы делать это с комфортом:
+    Запусти `sensors -u` и найди нужные значения.
+    Вывод разделен пустыми строками на устройства. Первая строка после пустой - имя устройства.
+    Научись выпарсивать значения.
+        Пример скрипта:
+            #!/bin/sh
+            sensors -u | awk '
+            /^$/{x=""}
+            /^[^ ].*:$/{y=$0}
+            x==""&&/k10temp/{x="cpu"}
+            x==""&&/amdgpu/{x="gpu"}
+            x=="cpu"&&y=="Tdie:"&&/temp1_input/{cpu=$2}
+            x=="gpu"&&y=="edge:"&&/temp1_input/{gpu=$2}
+            END {
+                "hddtemp -n /dev/sda" | getline hdd;
+                printf "CPU:%.0f GPU:%.0f HDD:%s\n",cpu,gpu,hdd
+            }'
+        Здесь находятся:
+            температура проца (имя устройства содержит "k10temp", в нем в группе "Tdie:" ищется параметр "temp1_input")
+            температура видяхи (имя устройства содержит "amdgpu", в нем в группе "edge:" ищется параметр "temp1_input")
+            температура hdd (находится отдельно командой hddtemp)
+Можно еще показывать результаты в панели, для этого `sudo apt install xfce4-genmon-plugin`.
+    Туда можно зафигачить тот же скрипт, но если хочешь цвета, придется пользоваться специальной XML-разметкой, например вот так: (упрощенный вариант без hdd, рекомендуется шрифт arial 7, период 5с)
+        #!/bin/sh
+        sensors -u | awk '
+        /^$/{x=""}
+        /^[^ ].*:$/{y=$0}
+        x==""&&/k10temp/{x="cpu"}
+        x==""&&/amdgpu/{x="gpu"}
+        x=="cpu"&&y=="Tdie:"&&/temp1_input/{cpu=$2}
+        x=="gpu"&&y=="edge:"&&/temp1_input/{gpu=$2}
+        END {
+            printf "<txt><span color='\''#666'\''>CPU </span><span color='\''#0af'\''>%.0f</span>\n",cpu
+            printf "<span color='\''#666'\''>GPU </span><span color='\''#f66'\''>%.0f</span></txt><tool>Сенсоры</tool>",gpu
+        }'
+
+[+initial-setup] [+useful-packages]
+Полезные пакеты
+    gcc-10 g++-10
+    patchelf     (патчим исполняемые файлы, например меняем в них путь к динамическим библиотекам, т.е. rpath)
+    git cmake
+    wine
+    audacious    (winamp-подобный плеер; ниже смотри где брать норм скины)
+    net-tools    (ifconfig и другие команды работы с сетью)
+    rar unrar    (работа с rar-архивами)
+    geeqie       (нормальный просмотрщик изображений)
+    krita krita-l10n (граф. редактор и локализации для него)
+    xdotool      (управление окнами из консоли; альтернатива: wmctrl)
+    dconf-editor (редактор настроек)
+    ntpdate      (синхронизатор часов)
+    htop         (модный консольный диспечер задач)
+    gparted      (редактор разделов)
+    grub-customizer    (гуи для настройки grub-а)
+    gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
+    duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
+    ncdu         (то же самое, но минималистичный консольный вариант)
+    imagemagick  (конвертер форматов картинок)
+    rename       (массовое переименование файлов регулярками)
+    hardinfo     (информация о системе)
+    fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
+    gnome-games  (набор казуальных игр)
+    aisleriot    (разные пасьянсы в одном приложении)
+Менее полезные:
+    fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
+    potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
+    qpdf         (разные манипуляции с pdf)
+
+[+initial-setup]
+Неочевидные ошибки в настройках
+`Диспечер окон (дополнительно) -> Эффекты -> Отображать полноэкранные окна сразу` = да
+    Вроде как уменьшает лаги полноэкранных приложений, да и вообще система кажется отзывчивее.
+
+[+initial-setup] [visual-customization]
+Что за куча модулей в панели xfce?
+Оставь "область уведомлений", а за ней "модуль оповещений статуса" (фиолтеовый кружочек), убери "индикаторы" (серый кружочек) и наверное еще "модуль оповещений".
+
+[visual-customization] [icons] [bug-workaround]
+Иконка значка на рабочем столе сбрасывается!
+Открой выбор инонки и нажми "файлы изображений", там выбери нужный файл как картинку. Должно сработать. Ищи в `/usr/share/pixmaps`.
+
+[+initial-setup] [visual-customization]
+Нормальая тема для терминала (как в MSYS2 на винде)
+Выбери тему XTERM, потом сделай вот что:
+    скопируй из цветов светло-серый, поставь его цветом текста. А цветом фона поставь черный (0,0,0).
+
+[+initial-setup] [visual-customization] [workspaces]
+Относительное расположение workspaces (какой относительно какого слева/справа/...)
+Это кастомизируется через одно место.
+Поставь на панель виджет воркспейсов и переключи его в режим эскизов. Потом поиграй с количеством строк в нем, чтобы все выглядело хорошо.
+Он сам выставит относительное расположение, чтобы оно совпадало с эскизами. Потом эскизы (и наверное весь виджет) можно убрать.
+
+[+initial-setup] [firefox] [minor] [visual-customization]
+В firefox видео разворачивается на полный экран с медленной анимацией
+В `about:config` поставь `full-screen-api.transition-duration.leave`
+и `full-screen-api.transition-duration.enter` в `0 0`.
+
+[+initial-setup] [firefox] [minor]
+В firefox скролл слишком медленный
+В `about:config` поставь `mousewheel.min_line_scroll_amount` в 30 или что-то подобное.
+
+[+initial-setup] [firefox] [minor] [visual-customization]
+В firefox шрифты убогие
+Скачай офф. виртуалку с 10 виндой и достань из нее шрифты, тут где-то есть инструкция.
+
+[minor] [sudo] [gui]
+Графическая замена sudo
+pkexec <команда>
+
+[appimage]
+Как интегрировать Appimage-программы в систему
+Есть программа appimaged, которая делает это сама, но она чуть-чуть мутная (на ноябрь 2020). Лучше руками.
+Качаешь программу куда угодно, делаешь ей `chmod +x`.
+Потом через гуи создаешь desktop-файл (ПКМ по меню <s>пуск</s>whisker -> изменить приложения).
+Чтобы получить иконку программы, запусти appimage-файл с флагом `--appimage-mount` (вообще, глянь `--appimage-help`). Скопируй иконку в `.local/share/icons/` (из папки, куда он примонтировал). Нажми Ctrl+C чтобы размонтировать appimage.
+Как писал здесь же, иконка может отказываться ставиться. Тогда выбери ее как "картинку", а не как "иконку".
+
+[minor] [bug-workaround]
+Шорткат Ctrl+Shift+E делает непонятно что.
+В старой версии gtk3 он был захардкожен для ввода emoji. В новой это выпилили.
+Если эта проблема возникает в приложении из snap store, попробуй поставить его другим способом. (Помогло для vscode.)
+
+[+initial-setup] [+useful-packages] [gcc]
+Новенький gcc на старой убунте
+sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa  (если не работает, попробуй .../test вместо .../ppa)
+Отмена: та же команда с ключем -r
+
+[+initial-setup] [+useful-packages] [clang]
+Ставим новый clang
+wget https://apt.llvm.org/llvm.sh
+chmod +x llvm.sh
+sudo ./llvm.sh <версия>
+sudo apt install clang-tidy-11 clang-tools-11 #Дополнительные пакеты, которые сами не ставятся, но репозитории для них подхватываются.
+(Где версия - одно число, например 11. Если не указать, скачается последняя стабильная.)
+(Этот скрипт добавляет в апт репозиторий llvm, и скачивает оттуда нужные пакеты. Смотри какие именно в самом скрипте.)
+
+[boot] [uefi] [bios] [minor]
+Перезагрузка в настройки uefi (не уверен, работает ли с биосом?)
+systemctl reboot --firmware-setup
+
+[steam] [minor]
+Где лежат игры в Steam'e
+~/.steam/steam/SteamApps/common
+
+[visual-customization] [minor]
+Как найти текущие обои/фон рабочего стола
+xfconf-query -c xfce4-desktop -l | grep last-image | xargs -n1 -- xfconf-query -c xfce4-desktop -p
+(будет список картинок для разных рабочих мест и т.п.)
+
+[network] [wifi] [ethernet]
+Расшарить вайфай через провод
+В списке соединений, на проводном соединении (не на вайфае), в настройках IPv4 выставь "Метод: предоставить сеть другим компьютерам".
+
+[+useful-packages] [minor] [pdf]
+Манипуляция pdf
+sudo apt install qpdf
+qpdf --empty --pages файл1.pdf диапазон1 файл2.pdf диапазон2 файл3.pdf диапазон3 -- результат.pdf
+Пример диапазона: `1,10-12,20-z` (`z` означает последнюю страницу). Диапазон можно не указывать, тогда будут использованы все страницы.
+(Если хочется сохранить разную метадату отдного из файлов, укажи его название вместо `--empty`, а после `--pages` вместо его названия используй `.`.)
+(Есть еще другой похожий пакет, `pdftk`, но он весит много и какой-то мутный.)
+
+[boot] [diagnostic]
+Как понять, почему система долго грузится?
+systemd-analyze blame
+Если написать просто `systemd-analyze`, выдаст время загрузки.
+
+[+useful-packages] [git] [passwords]
+Сохраняем пароли в гите
+Лучше рассмотри ssh-ключи, потому что при способе ниже твои пароли защищены только общим паролем от профиля. Вероятно на них можно повесить отдельный пароль, но пока непонятно как.
+Если уверен:
+    sudo apt install libsecret-1-0 libsecret-1-dev libglib2.0-dev
+    sudo make -C /usr/share/doc/git/contrib/credential/libsecret
+    git config --global credential.helper /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+Готово! Для управления паролями из гуи сделай:
+    sudo apt install seahorse
+Чтобы сбросить настроку, повтори `git config ...` с "" вместо последнего параметра, и в гуе сотри все пароли.
+
+[+useful-packages] [file-formats]
+Открываем rpm-пакеты как архивы
+    sudo apt install rpm2cpio
+Им конвертим в .cpio, потом открываем менеджером архивов.
+
+[wine] [minor]
+В программах в wine не енфорсится минимальный размер окна
+`winecfg -> разрешить менеджеру окон управлять окнами wine -> нет`, но это порождает другие проблемы.
+Лучше использовать только временно, для тестов.
+
+[wine] [mono]
+Ставим wine mono
+Скачай `wine mono msi` с winehq.org, запусти `wine uninstaller`, там нажми установить и выбери файл.
+Рекомендуется делать это в отдельном wine-префиксе (`export WINEPREFIX=/home/$USER/.wine_mono`)
+
+[opengl] [videocard] [drivers] [amd]
+OpenGL на AMD на mesa-драйвере не умеет в compatibility-профиль
+Запусти с переменной `MESA_GL_VERSION_OVERRIDE=3.3COMPAT` или подобной.
+Это только изменяет видимую версию без гарантии поддержки фич, но кажется работает неплохо.
+
+[icons]
+Как сделать desktop-файл, с потощью которого можно открывать файлы
+В команде нужно упомянуть `%f` (один файл) или `%F` (много файлов).
+В зависимости от команды, перед этим возможно стоит поставить `--`.
+Есть еще `%u` и `%U` - для 1 и несколько URL (это надмножество файлов).
+
+[+repair]
+Стер не-скрытое содержимое папки home! Как восстановить базовую структуру папок?
+xdg-user-dirs-update --force
+xdg-user-dirs-gtk-update --force
+Первая команда создает папки, вторая добавляет их в закладки проводника.
+Если вторая команда барахлит, удали `.config/gtk-3.0/bookmarks` и попробуй заново.
+Для интереса, кастомные закладки можно добавлять перетаскиванием папки на панель проводника. Или из консоли, вот так:
+    echo "file://"`python3 -c 'import urllib.parse;print(urllib.parse.quote(input()))' <<< $(realpath ПАПКА)` >>.config/gtk-3.0/bookmarks
+
+[virtualbox] [usb]
+Пробрасываем USB-устройства в VirtualBox
+sudo apt install virtualbox-ext-pack #Ставим экстеншоны для VirtualBox.
+sudo usermod -aG vboxusers $USER #Добавляем себя в специальную группу, чтобы разрешить доступ к USB.
+Наверное стоит перезайти в систему.
+В настройках виртуалки теперь появится usb-контроллер 2.0 (возьми его, или как вариант 3.0).
+Теперь в список можно будет добавить свое устройство. Если будешь добавлять мышку, приготовься к невидимому курсору, и тому,
+что мышка не будет работать снаружи машины, пока она работает. Невидимый курсор лечится в `Win->"Mouse"??->Additional mouse settings->Pointer trail=yes`.
+
+[audacious] [visual-customization] [winamp]
+В audacious классический скин от winamp-а
+Скачать отсюда: https://www.opendesktop.org/p/1008329/
+Zip-архив скопировать в:
+    (для всех) /usr/share/audacious/Skins/
+    (для себя) ~/.local/share/audacious/Skins/
+
+[+useful-packages] [man] [gui]
+Смотрим man pages в браузере:
+    sudo apt install groff #Проверь, нужен ли. Скорее да чем нет.
+    yelp man:git-log
+    #        ^^^^^^^ имя страницы
+
+[+useful-packages] [ip]
+Узнать локальный IP-адрес
+    hostname -I
+Или:
+    sudo apt install net-tools
+    ifconfig
+
+[+useful-packages] [razer] [drivers]
+Настраиваем девайсы Razer:
+    sudo gpasswd -a $USER plugdev
+    sudo add-apt-repository ppa:openrazer/stable
+    sudo apt install openrazer-meta
+Отключаем автозапуск демона openrazer, ниже читай зачем.
+    systemctl disable --user openrazer-daemon
+Ребут, или хотя бы перезайти в пользователя.
+    sudo add-apt-repository ppa:polychromatic/stable
+    sudo apt install polychromatic
+Дальше запускай Polychromatic и развлекайся.
+Бывает, что выбор кастомного цвета дурит - попробуй после него пощелкать рандомные радиокнопки, тогда цвет должен примениться.
+Или вместо этого можно в настройках добавить твой цвет в палитру - хорошая идея, чтобы потом его не потерять.
+При запуске polychromatic включается некий `openrazer-daemon`, и пока он работает, диод scroll lock не отображает раскладку, спецклавиши дурят, и еще что-то.
+Он убивается командой `openrazer-daemon -s`. Убедись, что в момент убийства диод совпадает с раскладой.
+
+[file-formats] [minor]
+Монтируем iso как файловую систему
+sudo mount -o loop foo.iso target/directory
+
+[minor] [shell]
+Сменить пароль
+passwd
+
+[minor] [shell]
+Сменить дефолтный шелл
+chsh -s /bin/bash
+
+[minor] [cron]
+Редактировать запуск задач по таймеру
+crontab -e
+
+[network] [wifi]
+Подключиться к роутеру по wifi без пароля
+Сначала нажми кнопку на роутере с двумя стрелочками, потом сделай `sudo wpa_cli wps_pbc`.
