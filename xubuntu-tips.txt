@@ -478,6 +478,8 @@ sudo apt install xdotool
     Может быть нужен флажок `-display=:0` или `-display=:0.0`, менее вероятно с другим числом.
     Если ты рут и хочешь экран другого пользователя (или возможно если ты зашел по ssh?),
         сначала нужно сделать `export XAUTHORITY=/home/OTHER_USER/.Xauthority`.
+    Для защиты от доступа снаружи, добавь `-localhost=yes` и используй ssh-тоннель:
+        К ssh добавь флаг `-L localhost:5900:localhost:5900`, а из vnc коннекться к `localhost`.
 Как подключиться:
     На линуксе пакет `tigervnc-viewer`.
     Под винду на их сайте есть экзешник `vncviewer`.
@@ -655,7 +657,7 @@ systemctl reboot --firmware-setup
 Где лежат игры в Steam'e
 ~/.steam/steam/SteamApps/common
 
-[visual-customization] [minor]
+[visual-customization] [minor] [wallpaper]
 Как найти текущие обои/фон рабочего стола
 xfconf-query -c xfce4-desktop -l | grep last-image | xargs -n1 -- xfconf-query -c xfce4-desktop -p
 (будет список картинок для разных рабочих мест и т.п.)
