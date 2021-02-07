@@ -789,3 +789,22 @@ crontab -e
 [network] [wifi]
 Подключиться к роутеру по wifi без пароля
 Сначала нажми кнопку на роутере с двумя стрелочками, потом сделай `sudo wpa_cli wps_pbc`.
+
+[games] [wine]
+Устанавливаем BYOND и SS13
+Делаем вот так:
+    export WINEARCH=win32
+    export WINEPREFIX=~/.wine_ss13
+    winetricks wsh56 wsh57 jscript mfc42 vcrun6
+    winetricks ie8
+Потом ставим BYOND установщиком - все должно работать.
+Для удобного запуска делаем шелскрипт:
+    #!/bin/sh
+    export WINEARCH=win32
+    export WINEPREFIX=$HOME/.wine_ss13
+    wine $WINEPREFIX/'drive_c/Program Files/BYOND/bin/byond.exe'
+Некоторая информация по изменению "имени компьютера".
+Для обычного запуска видимо НЕ нужна, но может помочь обойти бан?
+    HKEY_CURRENT_USER --> Software --> Wine --> Network --> UseDnsComputerName
+    Set 'UseDnsComputerName' key to 'N'
+    HKLM\System\CurrentControlSet\Control\ComputerName\ComputerName = desired name
