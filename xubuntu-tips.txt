@@ -97,6 +97,24 @@
     sudo apt-get update
 Он слегка тупит, поэтому если менял порядок пунктов (или даже если нет), перед выходом из него сделай reload (он же F5) и проверь, что все нормально.
 
+[+install] [+repair] [boot] [grub]
+Переустанавливаем Linux без Live-USB, загружаясь целиком в оперативную память ("toram")
+Источник: https://askubuntu.com/questions/1318013/how-to-install-ubuntu-from-iso-file
+В `/boot/grub/grub.cfg` должен быть пункт меню вида:
+    menuentry "isoname ISO" {
+        set root=(hdX,Y)
+        set isofile="/[path]/[name].iso"
+            loopback loop $isofile
+            linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile toram --
+            initrd (loop)/casper/initrd
+    }
+Обрати внимание на параметр `toram`, он важен.
+Запускаем компьютер с этого пункта меню, и размонтируем все дисковые разделы.
+Чтобы размонтировать live-iso, делаем так:
+    sudo umount -lrf /isodevice
+Теперь мы должны работать полностью из оперативки.
+После установки и ребута, стоит сделать `sudo update-grub`.
+
 [+initial-setup] [reboot] [hang] [reisub] [oom-killer]
 Ядерные хоткеи REISUB, и как их включить
 Включаем так:
@@ -807,7 +825,7 @@ crontab -e
         export WINEPREFIX=$HOME/.wine_byond
         export WINEARCH=win32
         export WINEDEBUG=-all
-        wine $WINEPREFIX/drive_c/Program\ Files/BYOND/bin/byond.exe        
+        wine $WINEPREFIX/drive_c/Program\ Files/BYOND/bin/byond.exe
 СТАРЫЙ ВАРИАНТ:
     Делаем вот так:
         export WINEARCH=win32
