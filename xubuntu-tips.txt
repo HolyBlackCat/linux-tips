@@ -792,17 +792,34 @@ crontab -e
 
 [games] [wine]
 Устанавливаем BYOND и SS13
-Делаем вот так:
+НОВЫЙ ВАРИАНТ:
+    export WINEPREFIX=$HOME/.wine_byond
     export WINEARCH=win32
-    export WINEPREFIX=~/.wine_ss13
-    winetricks wsh56 wsh57 jscript mfc42 vcrun6
+    export WINEDEBUG=-all
+    winetricks wsh57 mfc42 vcrun2013
     winetricks ie8
-Потом ставим BYOND установщиком - все должно работать.
-Для удобного запуска делаем шелскрипт:
-    #!/bin/sh
-    export WINEARCH=win32
-    export WINEPREFIX=$HOME/.wine_ss13
-    wine $WINEPREFIX/'drive_c/Program Files/BYOND/bin/byond.exe'
+    winetricks allfonts # Может не сработать. Тогда: wine corefonts
+    wget http://dl.winehq.org/wine/wine-gecko/2.47.1/wine-gecko-2.47.1-x86.msi
+    wine uninstaller # Здесь нажать "установить", и выбрать скачанный файл.
+    Потом ставим BYOND установщиком - все должно работать.
+    Для удобного запуска делаем шелскрипт:
+        #!/bin/sh
+        export WINEPREFIX=$HOME/.wine_byond
+        export WINEARCH=win32
+        export WINEDEBUG=-all
+        wine $WINEPREFIX/drive_c/Program\ Files/BYOND/bin/byond.exe        
+СТАРЫЙ ВАРИАНТ:
+    Делаем вот так:
+        export WINEARCH=win32
+        export WINEPREFIX=~/.wine_ss13
+        winetricks wsh56 wsh57 jscript mfc42 vcrun6
+        winetricks ie8
+    Потом ставим BYOND установщиком - все должно работать.
+    Для удобного запуска делаем шелскрипт:
+        #!/bin/sh
+        export WINEARCH=win32
+        export WINEPREFIX=$HOME/.wine_ss13
+        wine $WINEPREFIX/'drive_c/Program Files/BYOND/bin/byond.exe'
 Некоторая информация по изменению "имени компьютера".
 Для обычного запуска видимо НЕ нужна, но может помочь обойти бан?
     HKEY_CURRENT_USER --> Software --> Wine --> Network --> UseDnsComputerName
