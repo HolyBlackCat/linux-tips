@@ -228,7 +228,7 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 [+initial-setup] [fonts]
 Какие шрифты выбрать
 Основной:  Trebuchet MS 9, или Verdana 8
-Моно:      Noto Mono 9 (Andale Mono 10 тоже норм)
+Моно:      Noto Mono 9 (Есть еще Consolas 10 - на нем жирный шрифт нормально отображается. Еще Andale Mono 10 норм.)
 Заголовки: Verdana Bold 9, или Trebuchet MS Bold 9
 Терминал:  Noto Mono 9
 (полный хинтинг, без АА)
