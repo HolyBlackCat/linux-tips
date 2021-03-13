@@ -843,3 +843,7 @@ crontab -e
     HKEY_CURRENT_USER --> Software --> Wine --> Network --> UseDnsComputerName
     Set 'UseDnsComputerName' key to 'N'
     HKLM\System\CurrentControlSet\Control\ComputerName\ComputerName = desired name
+
+[lmms] [vst]
+В LMMS нет плагина Vestige (необходимого для запуска VSTi-инструментов)
+Удалить пакет LMMS, и скачать оффициальный Appimage.
