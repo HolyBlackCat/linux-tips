@@ -636,6 +636,19 @@ Escape - вернуться в дефолтный режим.
 В firefox шрифты убогие
 Скачай офф. виртуалку с 10 виндой и достань из нее шрифты, тут где-то есть инструкция.
 
+[+useful-packages] [audio] [equalizer]
+sudo apt-get install pulseaudio-equalizer
+Дальше запускать командой `qpaeq`. Чтобы она не ругалась, надо сделать вот так:
+    pactl load-module module-equalizer-sink
+    pactl load-module module-dbus-protocol
+А потом в настройках звука переключится на свеже-появившийся "вывод с эквалайзером".
+Но это на один раз. Чтобы работало само, надо сделать:
+    sudo nano /etc/pulse/default.pa
+И туда в конец вписать:
+    load-module module-equalizer-sink
+    load-module module-dbus-protocol
+Говорят можно сделать юзер-специфичный конфиг, но у меня с ним не срослось.
+
 [minor] [sudo] [gui]
 Графическая замена sudo
 pkexec <команда>
