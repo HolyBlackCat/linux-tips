@@ -758,14 +758,44 @@ OpenGL на AMD на mesa-драйвере не умеет в compatibility-пр
 В зависимости от команды, перед этим возможно стоит поставить `--`.
 Есть еще `%u` и `%U` - для 1 и несколько URL (это надмножество файлов).
 
-[+repair]
-Стер не-скрытое содержимое папки home! Как восстановить базовую структуру папок?
-xdg-user-dirs-update --force
-xdg-user-dirs-gtk-update --force
-Первая команда создает папки, вторая добавляет их в закладки проводника.
-Если вторая команда барахлит, удали `.config/gtk-3.0/bookmarks` и попробуй заново.
+[+initial-setup] [+repair]
+Изменение и восстановление папок пользователя.
+Чтобы изменить папки, меняй этот файл: ~/.config/user-dirs.dirs
+Также есть глобальные (дефолтные?) настройки: /etc/xdg/user-dirs.defaults
+После изменений настроек наверное стоит удалить старые закладки и сделать `xdg-user-dirs-gtk-update`, а потом перезайти
+Eсли потерял папки, делай так:
+    xdg-user-dirs-update --force
+    xdg-user-dirs-gtk-update --force
+    Первая команда создает папки, вторая добавляет их в закладки проводника.
+    Если вторая команда барахлит, удали `.config/gtk-3.0/bookmarks` и попробуй заново.
 Для интереса, кастомные закладки можно добавлять перетаскиванием папки на панель проводника. Или из консоли, вот так:
     echo "file://"`python3 -c 'import urllib.parse;print(urllib.parse.quote(input()))' <<< $(realpath ПАПКА)` >>.config/gtk-3.0/bookmarks
+Неплохая идея: переименовать папки, чтобы они начинались с точки. Тогда их будет сложнее случайно удалить.
+    Скопируй папки:
+        mv 'Рабочий стол' .desktop
+        mv 'Загрузки' .downloads
+        mv 'Шаблоны' .templates
+        mv 'Общедоступные' .shared
+        mv 'Документы' .documents
+        mv 'Музыка' .music
+        mv 'Изображения' .images
+        mv 'Видео' .videos
+    Обнови названия папок в настройках: nano ~/.config/user-dirs.dirs
+        XDG_DESKTOP_DIR="$HOME/.desktop"
+        XDG_DOWNLOAD_DIR="$HOME/.downloads"
+        XDG_TEMPLATES_DIR="$HOME/.templates"
+        XDG_PUBLICSHARE_DIR="$HOME/.shared"
+        XDG_DOCUMENTS_DIR="$HOME/.documents"
+        XDG_MUSIC_DIR="$HOME/.music"
+        XDG_PICTURES_DIR="$HOME/.images"
+        XDG_VIDEOS_DIR="$HOME/.videos"
+    Обнови закладки проводника: nano ~/.config/gtk-3.0/bookmarks
+        file:///home/holyblackcat/.documents Документы
+        file:///home/holyblackcat/.images Изображения
+        file:///home/holyblackcat/.music Музыка
+        file:///home/holyblackcat/.videos Видео
+        file:///home/holyblackcat/.downloads Загрузки
+    Теперь перелогинься, и удали пустые папки со старыми именами, если они создались.
 
 [virtualbox] [usb]
 Пробрасываем USB-устройства в VirtualBox
