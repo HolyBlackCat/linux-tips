@@ -233,19 +233,28 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 Терминал:  Noto Mono 9
 (полный хинтинг, без АА)
 
-[+initial-setup] [laptop] [overheating] [battery]
+[+initial-setup] [+useful-packages] [laptop] [overheating] [battery]
+Настройка скорости процессора (в основном для ноутбуков?).
+    sudo apt install cpufrequtils
+Теперь можно посмотреть информацию в `cpufreq-info`.
+Частота процессора определяется governor-ом.
+Меняется он так: (вместо 3 - число ядер минус 1)
+    for i in {0..3}; do sudo cpufreq-set -c $i -g schedutil; done
+Вместо `schedutil` - имя governor-а. Их список смотри в `cpufreq-info`, и там же проверяй результат.
+Чтобы узнать список режимов, делай `cpufreq-info` и ищи там governors.
+Нормальные:
+* schedutil, ondemand (оба общего назначения, не уверен какой лучше, вроде первый)
+* performance
+* powersave
+
+[+initial-setup] [+useful-packages] [laptop] [overheating] [battery]
 Чтобы ноут не грелся и ел меньше батареи
-Вариант 1:
+Вариант 1: (точно совместим с cpufrequtils)
     sudo apt install laptop-mode-tools
     Ребут
 Вариант 2:
     sudo apt install tlp
     sudo tlp start (либо ребут)
-Режим энергосбережения: (работает с вариантом 1, на счет 2 не уверен)
-    sudo apt install cpufrequtils
-    Возможно ребут?
-    sudo cpufreq-set -g powersave (включает режим энергосбережения до ребута, есть еще `performance` - наоборот)
-        Чтобы узнать список режимов, делай `cpufreq-info` и ищи там governors.
 
 [+initial-setup] [screen] [144hz] [videocard] [drivers]
 Настраиваем 144-герцовый монитор
