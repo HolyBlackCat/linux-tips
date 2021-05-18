@@ -355,6 +355,12 @@ VertRefresh	56.0 - 75.0
 
 [+initial-setup] [gui-themes] [visual-customization]
 Темы офомления (для xfce)
+Самая нормальная:
+    git clone https://github.com/vinceliuice/Qogir-theme
+    cd Qogir-theme
+    sudo ./install.sh
+    Чтобы избавиться от переопределения значков, делай так:
+        sudo find /usr/share/themes/Qogir* -name 'gtk.css' -or -name 'gtk-dark.css' -exec sed -i 's|-gtk-icon-style: symbolic;|/*-gtk-icon-style: symbolic;*/|g' {} \;
 Великолепная! Но минус - если у xfce-панели поставить кастомный цвет фона, будет визуальный бажок.
     adapta-gtk-theme
 Хорошая, но онли рамки окон:
