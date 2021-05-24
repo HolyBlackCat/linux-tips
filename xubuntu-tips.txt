@@ -108,6 +108,8 @@
             linux (loop)/casper/vmlinuz boot=casper iso-scan/filename=$isofile toram --
             initrd (loop)/casper/initrd
     }
+ВНИМАНИЕ: Если у тебя GRUB 2.04 (проверь в `grub-install --version`), И если у тебя включен UEFI, то нужно второй строчкой (перед первым set) добавить:
+    rmmod tpm
 Обрати внимание на параметр `toram`, он важен.
 Запускаем компьютер с этого пункта меню, и размонтируем все дисковые разделы.
 Чтобы размонтировать live-iso, делаем так:
