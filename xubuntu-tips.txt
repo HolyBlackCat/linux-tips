@@ -656,6 +656,7 @@ Escape - вернуться в дефолтный режим.
 Скачай офф. виртуалку с 10 виндой и достань из нее шрифты, тут где-то есть инструкция.
 
 [+useful-packages] [audio] [equalizer]
+Нужен эквалайзер
 sudo apt-get install pulseaudio-equalizer
 Дальше запускать командой `qpaeq`. Чтобы она не ругалась, надо сделать вот так:
     pactl load-module module-equalizer-sink
@@ -667,6 +668,14 @@ sudo apt-get install pulseaudio-equalizer
     load-module module-equalizer-sink
     load-module module-dbus-protocol
 Говорят можно сделать юзер-специфичный конфиг, но у меня с ним не срослось.
+
+[+initial-setup] [bug-workaround] [audio] [video] [vlc]
+В VLC-player звук прерывается какое-то время после перемотки
+Источник: https://askubuntu.com/a/649101
+В настройках, в обычном "простом" режиме, сверху выбери Audio,
+потом "Output module:" = "ALSA audio output",
+и дальше "Device:" = "PulseAudio Sound Server".
+Потом перезапусти плеер.
 
 [minor] [sudo] [gui]
 Графическая замена sudo
