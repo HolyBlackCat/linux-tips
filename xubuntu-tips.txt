@@ -817,6 +817,15 @@ Eсли потерял папки, делай так:
         file:///home/holyblackcat/.downloads Загрузки
     Теперь перелогинься, и удали пустые папки со старыми именами, если они создались.
 
+[+repair] [bug-workaround] [pulseaudio] [audio]
+Аудио в какой-то начинает шипеть и на время лечится перезапуском pulseaudio
+Попробуй перезапустить pulseaudio:
+    systemctl --user restart pulseaudio.service
+Проблема скорее всего вернется. Тогда (а может и сразу) сделай вот что:
+    Открой конфиг: sudo nano /etc/pulse/default.pa
+    Там найди `load-module module-udev-detect` и подпиши через пробел `tsched=0`.
+    Потом перезапусти pulseaudio командой выше.
+
 [virtualbox] [usb]
 Пробрасываем USB-устройства в VirtualBox
 sudo apt install virtualbox-ext-pack #Ставим экстеншоны для VirtualBox.
