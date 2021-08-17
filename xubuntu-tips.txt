@@ -835,6 +835,33 @@ Eсли потерял папки, делай так:
     Там найди `load-module module-udev-detect` и подпиши через пробел `tsched=0`.
     Потом перезапусти pulseaudio командой выше.
 
+[+initial-setup] [epic-games] [wine]
+Устанавливаем Epic Games Store через Wine
+Во-первых, нужен НОВЫЙ Wine (`wine-staging`). Установи его как написано на https://wiki.winehq.org/Ubuntu :
+    wget https://dl.winehq.org/wine-builds/winehq.key
+    sudo apt-key add winehq.key
+    # Для убунты 20.04:
+    sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
+    # ОСТОРОЖНО
+    sudo apt install wine-staging
+Возможно он предложит удалить полезные вещи. Тогда стой, и попробуй `aptitude` вместо `apt`.
+Если будет говорить про `libllvm12`, попробуй удалить его (вместе с клангом, да) и попробовать снова.
+Или задаунгрейдить. Для этого сделай `apt show -a libllvm12` чтобы увидеть доступные версии. Будет две, бери старую.
+    Поставь ее с помощью `sudo apt install libllvm12=VERSION`.
+После этого верни на место кланг, указывая старую версию. Вместе со всеми зависимостями, зависимости выясняй методом проб и ошибок, и на каждой пиши эту старую версию.
+Потом отметь зависимости (но не нужные пакеты) командой `sudo apt-mark auto PACKAGES`, чтобы они не считались явно установленными, и потом могли быть удалены, когда перестанут быть нужны.
+Итак... Если успешно установил wine, экзешники будут в `/opt/wine-staging/bin/`. Запускай только оттуда!
+Предлагается сделать отдельный префикс:
+    export WINEPREFIX=~/.wine_epicgames
+    wineboot -i
+Если предложит Mono, соглашайся, пусть будет.
+Теперь, качай Epic Games Store. Ставь комадой:
+    wine msiexec /i ???.msi /q
+Перейди в папку с экзешником EGS. Он в `drive_c/Program Files (x86)/Epic Games/Launcher/Portal/Binaries/Win64`.
+Запускай командой:
+    /opt/wine-staging/bin/wine EpicGamesLauncher.exe -SkipBuildPatchPrereq -opengl
+Будет долго грузиться. Жди. И лучше не снимай фокус с окна, но не обязательно.
+
 [virtualbox] [usb]
 Пробрасываем USB-устройства в VirtualBox
 sudo apt install virtualbox-ext-pack #Ставим экстеншоны для VirtualBox.
