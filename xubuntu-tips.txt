@@ -876,6 +876,11 @@ Eсли потерял папки, делай так:
     Там найди `load-module module-udev-detect` и подпиши через пробел `tsched=0`.
     Потом перезапусти pulseaudio командой выше.
 
+[+initial-setup] [csd]
+Убираем CSD в диалогах выбора файлов
+CSD = гуй в заголовке окна, в т.ч. выбор имени файла.
+xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
+
 [+initial-setup] [epic-games] [wine]
 Устанавливаем Epic Games Store через Wine
 Разведай, были какие-то неофициальные клиенты под линукс. Лучше попробуй их, а то в wine клиент тормозит страшно.
