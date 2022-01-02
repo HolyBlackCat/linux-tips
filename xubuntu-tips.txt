@@ -568,8 +568,8 @@ Escape - вернуться в дефолтный режим.
             /^[^ ].*:$/{y=$0}
             x==""&&/k10temp/{x="cpu"}
             x==""&&/amdgpu/{x="gpu"}
-            x=="cpu"&&y=="Tdie:"&&/temp1_input/{cpu=$2}
-            x=="gpu"&&y=="edge:"&&/temp1_input/{gpu=$2}
+            x=="cpu"&&y=="Tdie:"&&/input/{cpu=$2}
+            x=="gpu"&&y=="edge:"&&/input/{gpu=$2}
             END {
                 "hddtemp -n /dev/sda" | getline hdd;
                 printf "CPU:%.0f GPU:%.0f HDD:%s\n",cpu,gpu,hdd
@@ -586,8 +586,8 @@ Escape - вернуться в дефолтный режим.
         /^[^ ].*:$/{y=$0}
         x==""&&/k10temp/{x="cpu"}
         x==""&&/amdgpu/{x="gpu"}
-        x=="cpu"&&y=="Tdie:"&&/temp1_input/{cpu=$2}
-        x=="gpu"&&y=="edge:"&&/temp1_input/{gpu=$2}
+        x=="cpu"&&y=="Tdie:"&&/input/{cpu=$2}
+        x=="gpu"&&y=="edge:"&&/input/{gpu=$2}
         END {
             printf "<txt><span color='\''#666'\''>CPU </span><span color='\''#0af'\''>%.0f</span>\n",cpu
             printf "<span color='\''#666'\''>GPU </span><span color='\''#f66'\''>%.0f</span></txt><tool>Сенсоры</tool>",gpu
