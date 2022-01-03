@@ -886,7 +886,16 @@ xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
 С какой-то версии Win+R стал показывать не список приложений, а просто одинокое текстовое поле.
 Чтобы вернуть как было, в настройках клавиатуры замени приложение с `xfrun4` на `xfce4-appfinder`.
 
-[+initial-setup] [epic-games] [wine]
+[+initial-setup] [hotkeys] [autorun]
+Убираем странное поведение хоткея Windows
+Хоткей Windows теперь стал работать как Ctrl+Escape, если одновременно с ним ничего не нажато. Этим он открывает меню whisker.
+Как убрать:
+Создаешь файл `.config/autostart/xcape-super-binding.desktop`. Пишешь туда:
+    [Desktop Entry]
+    Hidden=true
+То же самое происходит, когда отключаешь приложение в гуи автозагрузки, но почему-то этого там нет.
+
+[epic-games] [wine]
 Устанавливаем Epic Games Store через Wine
 Разведай, были какие-то неофициальные клиенты под линукс. Лучше попробуй их, а то в wine клиент тормозит страшно.
 Во-первых, нужен НОВЫЙ Wine (`wine-staging`). Установи его как написано на https://wiki.winehq.org/Ubuntu :
