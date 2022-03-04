@@ -307,7 +307,9 @@ sudo apt purge nvidia-driver-XXX --autoremove
     Стираем файлы в modprobe из пред. пункта.
 
 [+initial-setup] [videocard] [drivers] [nvidia] [tearing]
-Фикс тиринга на nvidia: (тиринг = tearing = диагональный разрыв при скроллинге)
+Фикс разрешения и тиринга (tearing) на nvidia
+Тиринг = tearing = диагональный разрыв при скроллинге.
+Видимо это чинит разрешение на новых мониках. Для старых (VGA?) смотри ниже.
 Добавить в параметры ядра (в grub-customizer, например):
     nvidia-drm.modeset=1
 Потом ребут.
@@ -327,7 +329,7 @@ sudo apt purge nvidia-driver-XXX --autoremove
     После сохранения конфига, проверь что он применился командой `lightdm --show-config` (там в списке должна быть твоя настройка).
 
 [videocard] [drivers] [nvidia] [resolution]
-Фикс разрешения на NVidia
+Фикс разрешения на NVidia (на старых мониках (VGA?), про новые см. выше)
 Сначала поставь и включи дрова от nvidia
 Дальше: https://askubuntu.com/questions/100900/ (копию см ниже)
 -
