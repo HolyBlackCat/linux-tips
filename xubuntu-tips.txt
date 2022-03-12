@@ -1080,3 +1080,28 @@ crontab -e
 [web] [artstation]
 Как скачивать изображения в полном разрешении с ArtStation
 В URL заменить `large` на `4k`.
+
+[mime] [fonts]
+Регистрация нового расширения файла, MIME-типа
+Это в том числе помогает привязать разные приложения к .fon и .exe, которые иначе считаются одинаковым типом файлов.
+Ниже пример для `.fon`:
+    sudo nano /usr/share/mime/packages/ms-fon.xml
+    Имя файла произвольное. Туда вставить следующее:
+        <?xml version="1.0" encoding="UTF-8"?>
+        <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+          <mime-type type="application/x-ms-fon">
+            <comment>FON font</comment>
+            <generic-icon name="font-x-generic"/>
+            <glob pattern="*.fon"/>
+          </mime-type>
+        </mime-info>
+    Где:
+        `application/x-ms-fon` - ID типа файла.
+            Префикс `x-` значит "экспериментальный"/"неофициальный", лучше использовать его для всех кастомных типов.
+            `application/` означает "специфичный для приложения".
+        `FON font` - читаемое название. Не делай слишком длинным, его будет видно в файловом менеджере.
+        `*.fon` - расширение. Тут все понятно.
+        `font-x-generic` - иконка. Этот тег необязательный.
+            Список иконок смотри в `/usr/share/icons/*/mimes/*/`, а конкретно в `/usr/share/icons/elementary-xfce/mimes/32/`.
+    Дальше не забыть сделать:
+        sudo update-mime-database /usr/share/mime
