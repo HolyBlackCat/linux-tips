@@ -777,24 +777,27 @@ GUI для интерактивного rebase в VSCode
 [+initial-setup] [git] [vscode]
 В VSCode, в подсказках слишком маленький размер шрифта на подписях справа
 Требуется исправление CSS. Есть расширения, которые это делают, но там все через одно место, и проще руками.
-Меняй файл: /usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.css
-Там длинная строка, nano не тянет, используй mousepad.
-Добавь в конец строку:
-    /* fix font size in suggest widget */ .suggest-widget .monaco-list .monaco-list-row>.contents>.main>.left>.qualifier-label{font-size:100% !important} .suggest-widget .monaco-list .monaco-list-row>.contents>.main>.right>.details-label{font-size:100% !important}
-Можно с комфортом делать это автоматически. Вот скрипт, который добавляет ее, если ее еще там нет:
+Ниже приложен скрипт, он делает две вещи:
+* Добавляется строка в файл css.
+* Исправляются контрольные суммы, чтобы не было варнинга.
+И то и другое можно делать руками. Если захочешь руками, используй mousepad; nano не тянет огромные строки.
     https://gist.github.com/HolyBlackCat/549f686857a3519fb14b59ea5b0cfbf2
-И он же сжатый (`base64 -d 1.txt | gzip -d >vscode-fix-suggest-font-size.sh`):
-    H4sICM5DIWEAA3ZzY29kZS1maXgtc3VnZ2VzdC1mb250LXNpemUuc2gApVPBbtRADL3nK9wtaNuq
-    mXQRQmgrIlUVrRAHEK047WUycRLTSSYdT5ItlH/Hme5qxYkDuSRje957fnaOj7KCuqzQ3CTJMdzQ
-    FhlCg1C5LgDTTwTqYoCHukYO5DqYqKwxwIlkjGt7bQKMhNM5BBdLPdVNAFfFg2RpRECLLXbh9FxY
-    poZMA8TgpMBPxCg3HXCrrV2/vNDLZS3MuA17BVhScP4ccMQ54Ia6gYF3elm3L6IPBEbHbO9dIeQs
-    skMDBYVW97GS1dzyVx1MI2XXd3dQkkcT7NOe8fvdNVRkkRXci1KENnZWSFfQOjkbGsmKSSVM+mlu
-    n7ofghAvC2AkuHUw9KML0mQjPRPzgGtoQuh5nWW1iBoKJT5mLRnv2FUhG9m4ErNYytnqzfu371ZJ
-    IoAfltmZKNr+PZ7daPZzOctA7ULpLqRa12njUkv89yH1bsqFvQsyHM5Vq6nLlcUq5Opx0JYqQp9a
-    XaD9NXOmM+d6dXHxGo6o7Z0Pugu//5cvLkyuSgyaLP+TbpncX327/XgvbgzsM260xyw65pHd4I2Y
-    pvs+c8NsZTY5/1BgZ5rDl1DxQ3B95FeGeZkkYbYwrWDx6gV9Ac/PcIKmcbD81I3iRQlB+7m9eSfU
-    8hJwSwFWp0lCFdQee0gftzcCIJNaHHAu53XoEpAnol1Zj7p8gj5uXqkStIyHdFxI6mqlVAzyUDqY
-    f1BIDSxiySZSbBaQ55s9zWaxOGB8+ZxUlPwBxck9pt0DAAA=
+И он же сжатый (разжимать `base64 -d 1.txt | gzip -d >vscode-fix-suggest-font-size.sh`, был сжат `gzip -c9 vscode-fix-suggest-font-size.sh | base64`):
+    H4sICNgnMmICA3ZzY29kZS1maXgtc3VnZ2VzdC1mb250LXNpemUuc2gApVRtb9NIEP7uXzGYIrdV
+    bRPEoVOgQVUF3AnxItK7L5dD2qzH8VB71+ys4wTCf2d22xKKkDjp8iW78/I8M8/O+O6dckmmXCpu
+    kuQuPKcNMvgGobbGA9MnBDLRwMNqhezJGhipWqGHQ/Fo2/VKe1gTjifgbQx1tGo82DpexEtrBGyx
+    Q+OPToRlbEg3QAxWAtxIjJJpgTvVttOrP3SSrIQZN/6mAqzIW3cCuMZgsMNKQDwMfF0yq+6q7j2H
+    VtHbO7sUfpbKfQNL8p3qYyQXoeu3yutGws7nc6jIofbt9ob07/k51NQiF3AhxSJ0sbmlNAadlbum
+    NbWiUwWj2gYFyHwQhJgsgIXgv0asOLgky6Hq+5YkXNVeupRm3BaGvlIeQ+zZ4G2nPGkRYSvyulDO
+    VX9So77koYtQam1JMGJ9o3KGzCr28sIK2Np6kbQRhYl5CKI4CRUVemGsaTOFxvuep2W5EkGGZSHP
+    WHaknWVb+3LN2lZYxlwuJw9+f/hokiTSzGlWHof829NxPRk3Y3FcQnFtyq9NRWeN0jZviW9fcmfH
+    mbAbL7PBs6JTZGZFi7WfFR8H1VJN6PJWLbH9HDjzwDmd3L9/D+5Q11vnlfFf/i9fnNdZUaFX1PIv
+    6bLk4uzdi2cXosbAruRGOSyjYg7ZDk6LaPLIpR2ClOVo3eUSjW72J6HiS2/7yF9o5iw5/+PZ+cv5
+    X6/mv0KVV6wG7YsPbE2WJD4on9eQHlwVlcJuB4eoGwvZn2YtElbglQuqhDEusseAG9maydF3qd/I
+    f5a9H7sfARKqYeWwh/zj5nmAmQvAt0Ieh6E1CcgvAp61MvvVFvq4bVWRYMu4d8clDFNcFNHIQyUL
+    I98lyDWkMSRHWKQLE3gWKcxmixuuRZrugeQbJjD7sm8BygK0kBPkPULGu8OnT07T//hG6RTSo3/e
+    p/8e77KDw676TcC/lx3UeAnZ596R7MbB5Esmps2mgtwJm5ylF3z0UA4sy59xeSrblx1lu+zWA+z7
+    ePMyqSn5CtAoQxKhBQAA
 
 [+useful-packages] [git] [passwords]
 Сохраняем пароли в гите
