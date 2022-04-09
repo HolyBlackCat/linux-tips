@@ -1108,3 +1108,13 @@ crontab -e
             Список иконок смотри в `/usr/share/icons/*/mimes/*/`, а конкретно в `/usr/share/icons/elementary-xfce/mimes/32/`.
     Дальше не забыть сделать:
         sudo update-mime-database /usr/share/mime
+
+[audio] [cue] [flac]
+Дробим длинный .flac-файл по данным из .cue
+.cue описывает, как длинный .flac разделяется на отдельные треки.
+Дробить так:
+    sudo apt-get install cuetools shntool
+    shnsplit -f MY_FILE.cue -t %n-%t -o flac MY_FILE.flac
+Еще советуют добавить
+    cuetag file.cue [0-9]*.flac
+Но похоже это не работает нормально, если в названиях песен есть спецсимволы.
