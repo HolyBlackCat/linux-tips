@@ -134,6 +134,22 @@ GPT вероятно лучше, MBR - запасной вариант.
     * Ребут (нажимай клавишы МЕДЛЕННО): R E I S U B
     * Убить процесс, который ест больше всего памяти: F
 
+[+initial-setup] [+useful-packages] [firefox]
+Ставим Firefox без snap
+Делай так:
+    sudo add-apt-repository ppa:mozillateam/ppa
+    sudo nano /etc/apt/preferences.d/mozillateam.pref
+Туда пишешь:
+    Package: firefox*
+    Pin: release o=LP-PPA-mozillateam
+    Pin-Priority: 501
+Дальше:
+    sudo apt update
+    sudo snap remove firefox
+    sudo apt install firefox firefox-locale-ru
+В логах проверяешь, что пакеты качаются с mozillateam/ppa.
+Проверяешь `which firefox` -> `/usr/bin/firefox`, без упоминания snap.
+
 [+initial-setup] [snap]
 Сносим систему snap-пакетов
 Ее не жалко, особенно на Xubuntu. Про ванильную убунту не уверен.
@@ -362,6 +378,47 @@ VertRefresh	56.0 - 75.0
     Finally, copy the file `/etc/X11/xorg.conf` to a safe place in case you mess it up later and need to restore it.
 Дальше по идее можно убрать `nomodeset` и заменить его на более пацанский `nvidia-drm.modeset=1` (а возможно на ничего).
 
+[+initial-setup] [+repair]
+Изменение и восстановление папок пользователя.
+Чтобы изменить папки, меняй этот файл: ~/.config/user-dirs.dirs
+Также есть глобальные (дефолтные?) настройки: /etc/xdg/user-dirs.defaults
+После изменений настроек наверное стоит удалить старые закладки и сделать `xdg-user-dirs-gtk-update`, а потом перезайти
+Eсли потерял папки, делай так:
+    xdg-user-dirs-update --force
+    xdg-user-dirs-gtk-update --force
+    Первая команда создает папки, вторая добавляет их в закладки проводника.
+    Если вторая команда барахлит, удали `.config/gtk-3.0/bookmarks` и попробуй заново.
+Для интереса, кастомные закладки можно добавлять перетаскиванием папки на панель проводника. Или из консоли, вот так:
+    echo "file://"`python3 -c 'import urllib.parse;print(urllib.parse.quote(input()))' <<< $(realpath ПАПКА)` >>.config/gtk-3.0/bookmarks
+Неплохая идея: переименовать папки, чтобы они начинались с точки. Тогда их будет сложнее случайно удалить.
+    Скопируй папки:
+        mv 'Рабочий стол' .desktop
+        mv 'Загрузки' .downloads
+        mv 'Шаблоны' .templates
+        mv 'Общедоступные' .shared
+        mv 'Документы' .documents
+        mv 'Музыка' .music
+        mv 'Изображения' .images
+        mv 'Видео' .videos
+    Обнови названия папок в настройках: nano ~/.config/user-dirs.dirs
+        XDG_DESKTOP_DIR="$HOME/.desktop"
+        XDG_DOWNLOAD_DIR="$HOME/.downloads"
+        XDG_TEMPLATES_DIR="$HOME/.templates"
+        XDG_PUBLICSHARE_DIR="$HOME/.shared"
+        XDG_DOCUMENTS_DIR="$HOME/.documents"
+        XDG_MUSIC_DIR="$HOME/.music"
+        XDG_PICTURES_DIR="$HOME/.images"
+        XDG_VIDEOS_DIR="$HOME/.videos"
+    Обнови закладки проводника: nano ~/.config/gtk-3.0/bookmarks
+        file:///home/holyblackcat/.documents Документы
+        file:///home/holyblackcat/.images Изображения
+        file:///home/holyblackcat/.music Музыка
+        file:///home/holyblackcat/.videos Видео
+        file:///home/holyblackcat/.downloads Загрузки
+    Теперь перелогинься, и удали пустые папки со старыми именами, если они создались.
+    Можно заметить, что в проводнике закладка рабочего стола называется `.desktop`. Неприятно, но легко не чинится:
+        Если попробовать добавить кастомную закладку для него, то она будет скрываться с панели только одновременно со встроенной.
+
 [+initial-setup] [gui-themes] [visual-customization]
 Темы офомления (для xfce)
 Самая нормальная:
@@ -443,7 +500,7 @@ sudo apt install xdotool
     В оригинале советовали использовать 1.7 вместо 1.4, на твое усмотрение.
 
 [+initial-setup] [visual-customization]
-Убираем квадратные скобки в названиях свернутых окон в панели
+БОЛЬШЕ НЕ ТРЕБУЕТСЯ: Убираем квадратные скобки в названиях свернутых окон в панели
 Открываем "редактор настроек" (xfce4-settings-editor), в нем открываем раздел xfce4-panel.
 Там находим пункт `/plugins/plugin-N`. N такое, чтобы напротив него было написано `tasklist`.
 Нажимаем `Создать свойство`, имя ставим `/plugins/plugin-N/label-decorations`, тип bool (логический), значение false.
@@ -568,9 +625,9 @@ Escape - вернуться в дефолтный режим.
             sensors -u | awk '
             /^$/{x=""}
             /^[^ ].*:$/{y=$0}
-            x==""&&/k10temp/{x="cpu"}
+            x==""&&/k10temp-pci-00c3/{x="cpu"}
             x==""&&/amdgpu/{x="gpu"}
-            x=="cpu"&&y=="Tdie:"&&/input/{cpu=$2}
+            x=="cpu"&&y=="Tctl:"&&/input/{cpu=$2}
             x=="gpu"&&y=="edge:"&&/input/{gpu=$2}
             END {
                 "hddtemp -n /dev/sda" | getline hdd;
@@ -586,9 +643,9 @@ Escape - вернуться в дефолтный режим.
         sensors -u | awk '
         /^$/{x=""}
         /^[^ ].*:$/{y=$0}
-        x==""&&/k10temp/{x="cpu"}
+        x==""&&/k10temp-pci-00c3/{x="cpu"}
         x==""&&/amdgpu/{x="gpu"}
-        x=="cpu"&&y=="Tdie:"&&/input/{cpu=$2}
+        x=="cpu"&&y=="Tctl:"&&/input/{cpu=$2}
         x=="gpu"&&y=="edge:"&&/input/{gpu=$2}
         END {
             printf "<txt><span color='\''#666'\''>CPU </span><span color='\''#0af'\''>%.0f</span>\n",cpu
@@ -597,7 +654,7 @@ Escape - вернуться в дефолтный режим.
 
 [+initial-setup] [+useful-packages]
 Полезные пакеты
-    gcc-11 g++-11
+    gcc-12 g++-12
     patchelf     (патчим исполняемые файлы, например меняем в них путь к динамическим библиотекам, т.е. rpath)
     git cmake cmake-qt-gui
     wine
@@ -625,6 +682,7 @@ Escape - вернуться в дефолтный режим.
     fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
     gnome-games  (набор казуальных игр)
     aisleriot    (разные пасьянсы в одном приложении)
+    radeontop    (мониторим видюшку AMD)
 Менее полезные:
     fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
     potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
@@ -640,8 +698,9 @@ Escape - вернуться в дефолтный режим.
 
 [+initial-setup] [+outdated] [visual-customization]
 Что за куча модулей в панели xfce?
-Оставь "область уведомлений", а за ней "модуль оповещений статуса" (фиолтеовый кружочек), убери "индикаторы" (серый кружочек) и наверное еще "модуль оповещений".
-Устарело, теперь все индикаторы в одном модуле...
+Сейчас самый модный - "Модуль стаусного трея" с иконкой-рупором. Остальные модули уведомлений не нужны.
+Если этого нет:
+    Оставь "область уведомлений", а за ней "модуль оповещений статуса" (фиолтеовый кружочек), убери "индикаторы" (серый кружочек) и наверное еще "модуль оповещений".
 
 [visual-customization] [icons] [bug-workaround]
 Иконка значка на рабочем столе сбрасывается!
@@ -729,9 +788,9 @@ sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa  (если не работа�
 wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
 sudo ./llvm.sh <версия>
-sudo apt install clang-tidy-13 clang-tools-13 #Дополнительные пакеты, которые сами не ставятся, но репозитории для них подхватываются.
-(Полный список полезных пакетов: clang-13 clang-tidy-13 clang-tools-13 lld-13 clangd-13 clang-format-13)
-(Где версия - одно число, например 13. Если не указать, скачается последняя стабильная.)
+sudo apt install clang-tidy-14 clang-tools-14 #Дополнительные пакеты, которые сами не ставятся, но репозитории для них подхватываются.
+(Полный список полезных пакетов: clang-14 clang-tidy-14 clang-tools-14 lld-14 clangd-14 clang-format-14)
+(Где версия - одно число, например 14. Если не указать, скачается последняя стабильная.)
 (Этот скрипт добавляет в апт репозиторий llvm, и скачивает оттуда нужные пакеты. Смотри какие именно в самом скрипте.)
 
 [boot] [uefi] [bios] [minor]
@@ -763,6 +822,11 @@ qpdf --empty --pages файл1.pdf диапазон1 файл2.pdf диапаз�
 Как понять, почему система долго грузится?
 systemd-analyze blame
 Если написать просто `systemd-analyze`, выдаст время загрузки.
+
+[+initial-setup] [git]
+Начальная настройка git
+git config --global user.name "HolyBlackCat"
+git config --global user.email "blckcat@inbox.ru"
 
 [+initial-setup] [git] [vscode]
 GUI для интерактивного rebase в VSCode
@@ -836,45 +900,6 @@ OpenGL на AMD на mesa-драйвере не умеет в compatibility-пр
 В зависимости от команды, перед этим возможно стоит поставить `--`.
 Есть еще `%u` и `%U` - для 1 и несколько URL (это надмножество файлов).
 
-[+initial-setup] [+repair]
-Изменение и восстановление папок пользователя.
-Чтобы изменить папки, меняй этот файл: ~/.config/user-dirs.dirs
-Также есть глобальные (дефолтные?) настройки: /etc/xdg/user-dirs.defaults
-После изменений настроек наверное стоит удалить старые закладки и сделать `xdg-user-dirs-gtk-update`, а потом перезайти
-Eсли потерял папки, делай так:
-    xdg-user-dirs-update --force
-    xdg-user-dirs-gtk-update --force
-    Первая команда создает папки, вторая добавляет их в закладки проводника.
-    Если вторая команда барахлит, удали `.config/gtk-3.0/bookmarks` и попробуй заново.
-Для интереса, кастомные закладки можно добавлять перетаскиванием папки на панель проводника. Или из консоли, вот так:
-    echo "file://"`python3 -c 'import urllib.parse;print(urllib.parse.quote(input()))' <<< $(realpath ПАПКА)` >>.config/gtk-3.0/bookmarks
-Неплохая идея: переименовать папки, чтобы они начинались с точки. Тогда их будет сложнее случайно удалить.
-    Скопируй папки:
-        mv 'Рабочий стол' .desktop
-        mv 'Загрузки' .downloads
-        mv 'Шаблоны' .templates
-        mv 'Общедоступные' .shared
-        mv 'Документы' .documents
-        mv 'Музыка' .music
-        mv 'Изображения' .images
-        mv 'Видео' .videos
-    Обнови названия папок в настройках: nano ~/.config/user-dirs.dirs
-        XDG_DESKTOP_DIR="$HOME/.desktop"
-        XDG_DOWNLOAD_DIR="$HOME/.downloads"
-        XDG_TEMPLATES_DIR="$HOME/.templates"
-        XDG_PUBLICSHARE_DIR="$HOME/.shared"
-        XDG_DOCUMENTS_DIR="$HOME/.documents"
-        XDG_MUSIC_DIR="$HOME/.music"
-        XDG_PICTURES_DIR="$HOME/.images"
-        XDG_VIDEOS_DIR="$HOME/.videos"
-    Обнови закладки проводника: nano ~/.config/gtk-3.0/bookmarks
-        file:///home/holyblackcat/.documents Документы
-        file:///home/holyblackcat/.images Изображения
-        file:///home/holyblackcat/.music Музыка
-        file:///home/holyblackcat/.videos Видео
-        file:///home/holyblackcat/.downloads Загрузки
-    Теперь перелогинься, и удали пустые папки со старыми именами, если они создались.
-
 [+repair] [bug-workaround] [pulseaudio] [audio]
 Аудио в какой-то начинает шипеть и на время лечится перезапуском pulseaudio
 Попробуй перезапустить pulseaudio:
@@ -898,10 +923,12 @@ xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
 Убираем странное поведение хоткея Windows
 Хоткей Windows теперь стал работать как Ctrl+Escape, если одновременно с ним ничего не нажато. Этим он открывает меню whisker.
 Как убрать:
-Создаешь файл `.config/autostart/xcape-super-binding.desktop`. Пишешь туда:
-    [Desktop Entry]
-    Hidden=true
-То же самое происходит, когда отключаешь приложение в гуи автозагрузки, но почему-то этого там нет.
+Это убирается в гуи автозапуска.
+Если не получается, то можно руками:
+    Создаешь файл `.config/autostart/xcape-super-binding.desktop`. Пишешь туда:
+        [Desktop Entry]
+        Hidden=true
+    То же самое происходит, когда отключаешь приложение в гуи автозагрузки.
 
 [autorun]
 Убираем автозапуск fcitx
@@ -916,22 +943,19 @@ xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
     radeontop
 Если полоска memory clock уперлась в правый край, то аффектит.
 Как чинить:
-    Скомпилить программу UMC, которая приложена ниже в base64+gzip.
+    Скомпилить программу UMC, которая приложена ниже в base64+gzip. Оригинал тут: https://sourceforge.net/projects/umc/files/
         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
     Разжимать командой `cat 1.txt | base64 -d | gzip -d >umc.c`.
     Собирать командой `gcc umc.c -o umc -lm`.
     Вызвать ее с параметрами: <w> <h> <refresh> -rbt
-    На основе ее выхлопа создать скрипт вида:
+    Что делать с результатом - пока не очень понятно.
+    Можно создать файл `~/.xprofile` и написать туда:
         xrandr --newmode "1920x1080x143.98"  346.500000  1920 1968 2000 2080  1080 1083 1087 1157  +HSync -VSync || true
-        xrandr --addmode HDMI-A-1 1920x1080x143.98 || true
-        while true; do
-        	xrandr --output HDMI-A-1 --mode 1920x1080x143.98 || true
-        	sleep 10
-        done
+        xrandr --addmode HDMI-A-1 "1920x1080x143.98" || true
+        xrandr --output HDMI-A-1 --mode "1920x1080x143.98" || true
     Где в первую строку засунуть выхлоп, а в следующих двух заменить HDMI-A-1 на имя монитора, которое можно понять из выхлопа `xrandr`.
-    Запускаем, проверяем что `radeontop` показывает нормальный memory clock.
-    Теперь в гуе добавляем это в автозапуск.
-    Ребутаемся и проверяем, что все норм.
+    Но сначала запускаем эти команды руками, проверяем что `radeontop` показывает нормальный memory clock.
+    Этот файлик должен авто-запускаться при логине, но нет никакой гарантии, что эти настройки не слетят, если кто-то поменяет режим дисплея.
 
 [epic-games] [wine]
 Устанавливаем Epic Games Store через Wine
