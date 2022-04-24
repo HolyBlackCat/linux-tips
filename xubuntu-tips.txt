@@ -948,13 +948,27 @@ xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
     Разжимать командой `cat 1.txt | base64 -d | gzip -d >umc.c`.
     Собирать командой `gcc umc.c -o umc -lm`.
     Вызвать ее с параметрами: <w> <h> <refresh> -rbt
-    Что делать с результатом - пока не очень понятно.
-    Можно создать файл `~/.xprofile` и написать туда:
+    Дальше:
+        sudo nano /etc/X11/xorg.conf
+    Туда набираем: (где после Modeline строка из этой программы, а вместо `HDMI-A-1` - имя порта из выхлопа `xrandr`)
+        Section "Device"
+            Identifier      "Radeon"
+            Option          "monitor-HDMI-A-1" "Samsung"
+        EndSection
+        Section "Monitor"
+            Identifier      "Samsung"
+            Modeline "1920x1080x143.98"  346.500000  1920 1968 2000 2080  1080 1083 1087 1157  +HSync -VSync
+        EndSection
+        Section "Screen"
+            Identifier      "Default Screen"
+            Monitor         "Samsung"
+            Device          "Radeon"
+        EndSection
+    Все что после `Identifier` - кастомные имена, можно ставить любые.
+    Если это почему-то не работает, альтернатива: создать файл `~/.xprofile` и написать туда:
         xrandr --newmode "1920x1080x143.98"  346.500000  1920 1968 2000 2080  1080 1083 1087 1157  +HSync -VSync || true
         xrandr --addmode HDMI-A-1 "1920x1080x143.98" || true
         xrandr --output HDMI-A-1 --mode "1920x1080x143.98" || true
-    Где в первую строку засунуть выхлоп, а в следующих двух заменить HDMI-A-1 на имя монитора, которое можно понять из выхлопа `xrandr`.
-    Но сначала запускаем эти команды руками, проверяем что `radeontop` показывает нормальный memory clock.
     Этот файлик должен авто-запускаться при логине, но нет никакой гарантии, что эти настройки не слетят, если кто-то поменяет режим дисплея.
 
 [epic-games] [wine]
