@@ -113,8 +113,8 @@ do:
 			gsub(/^\s*\[/, "[", $$1); gsub(/\]\s*$$/, "]", $$1); gsub(/\]\s*\[/, "] [", $$1);\
 			$(call,Add color to the tags.)\
 			$$1 = "$(call color,12)" $$1 "$(reset_color)";\
-			$(call,Highlight important tags starting with `+` with a different color.)\
-			gsub(/\[\+[^]]*\]/, "$(call color,13)&$(call color,12)", $$1);\
+			$(call,Highlight important tags starting with `-` with a different color.)\
+			gsub(/\[\-[^]]*\]/, "$(call color,13)&$(call color,12)", $$1);\
 			$(call,Print the list of tags, the index, and the first line.)\
 			print $$1 "\n$(call color,1)$(hash)$(call color,9)" item_index "$(call color,15) " $$2 "$(reset_color)";\
 			$(if $(force_full)$(filter f,$(MAKECMDGOALS)),print "$(call color,7)" body "$(reset_color)";)\
@@ -133,7 +133,7 @@ help:
 	$(info $(space)   $(call color,10)t$(call color,12)=...   $(reset_color)Print entries that have the specified [t]ags.)
 	$(info $(space)           The parameter is treated as a space-separated list of regexes, each one is implicitly wrapped in brackets.)
 	$(info $(space)           Entries are only printed if their tag lists match all of the provided regexes.)
-	$(info $(space)           Important tags tend to start with '+'.)
+	$(info $(space)           Important tags tend to start with '-'.)
 	$(info $(space)   $(call color,10)n$(call color,12)=...   $(reset_color)Print the entry with the specified index. Implies 'f'.)
 	$(info $(space)   $(call color,10)h$(call color,12)=...   $(reset_color)Print entries with [h]eaders matching the regex.)
 	$(info $(space)   $(call color,10)b$(call color,12)=...   $(reset_color)Print entries with [b]odies matching the regex.)
