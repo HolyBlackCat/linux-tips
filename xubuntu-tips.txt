@@ -134,7 +134,7 @@ GPT вероятно лучше, MBR - запасной вариант.
     * Ребут (нажимай клавишы МЕДЛЕННО): R E I S U B
     * Убить процесс, который ест больше всего памяти: F
 
-[-initial-setup] [-useful-packages] [firefox]
+[-initial-setup] [-useful-packages] [firefox] [snap]
 Ставим Firefox без snap
 Делай так:
     sudo add-apt-repository ppa:mozillateam/ppa
@@ -142,7 +142,7 @@ GPT вероятно лучше, MBR - запасной вариант.
 Туда пишешь:
     Package: firefox*
     Pin: release o=LP-PPA-mozillateam
-    Pin-Priority: 501
+    Pin-Priority: 1001
 Дальше:
     sudo apt update
     sudo snap remove firefox
@@ -160,6 +160,12 @@ GPT вероятно лучше, MBR - запасной вариант.
     rm -rf ~/snap
 Не уверен, что нужно:
     sudo rm -rf /var/cache/snapd/
+На всякий случай запрещаем установку snap обратно:
+    sudo nano /etc/apt/preferences.d/nosnap.pref
+Туда пишем:
+    Package: snapd
+    Pin: release a=*
+    Pin-Priority: -10
 
 [fonts]
 Куда ставить шрифты
