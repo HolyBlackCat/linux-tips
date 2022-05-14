@@ -1185,3 +1185,10 @@ crontab -e
         Show inactive tab boundaries -> Using a vertical bar
     2. https://www.userchrome.org/firefox-89-styling-proton-ui.html#menuspacing
         Уменьшил паддинг с 4 до 3, в строчке где комментарий предлагает это сделать.
+
+[-initial-setup] [firefox] [ublock-origin]
+Правила для Ublock origin
+    ! Баним яндекс-дзен
+    yandex.ru##.media-grid__media-content
+    ! Баним вопрос про куки на реддите
+    old.reddit.com###eu-cookie-policy
