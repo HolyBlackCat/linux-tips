@@ -716,16 +716,16 @@ Escape - вернуться в дефолтный режим.
 Поставь на панель виджет воркспейсов и переключи его в режим эскизов. Потом поиграй с количеством строк в нем, чтобы все выглядело хорошо.
 Он сам выставит относительное расположение, чтобы оно совпадало с эскизами. Потом эскизы (и наверное весь виджет) можно убрать.
 
-[-initial-setup] [firefox] [minor] [visual-customization]
+[firefox] [minor] [visual-customization]
 В firefox видео разворачивается на полный экран с медленной анимацией
 В `about:config` поставь `full-screen-api.transition-duration.leave`
 и `full-screen-api.transition-duration.enter` в `0 0`.
 
-[-initial-setup] [firefox] [minor]
+[firefox] [minor]
 В firefox скролл слишком медленный
 В `about:config` поставь `mousewheel.min_line_scroll_amount` в 30 или что-то подобное.
 
-[-initial-setup] [firefox] [minor] [visual-customization]
+[firefox] [minor] [visual-customization]
 В firefox шрифты убогие
 Скачай офф. виртуалку с 10 виндой и достань из нее шрифты, тут где-то есть инструкция.
 
