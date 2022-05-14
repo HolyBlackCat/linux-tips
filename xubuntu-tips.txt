@@ -1052,7 +1052,8 @@ sudo mount -o loop foo.iso target/directory
 
 [minor] [shell]
 Сменить пароль
-passwd
+sudo passwd "$USER"
+В принципе можно просто `passwd`, но тогда вроде появляются странные требования к сложности пароля.
 
 [minor] [shell]
 Сменить дефолтный шелл
