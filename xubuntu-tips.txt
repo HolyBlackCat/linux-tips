@@ -91,15 +91,6 @@ GPT вероятно лучше, MBR - запасной вариант.
 Если при `update-grub` он спросит, обновить ли конфиг, нажми "оставить текущий конфиг" (дефолт).
 Потом он спросит, куда его поставить: /dev/sda или /dev/sdaX. Выбери первое. Это эквивалентно автоматическому определению X, по идее.
 
-[boot] [grub]
-Настраиваем GRUB из гуи
-    sudo apt-get install grub-customizer
-    grub-customizer
-На старой убунте его нет в апт-гет. Тогда сначала сделай
-    sudo add-apt-repository ppa:danielrichter2007/grub-customizer
-    sudo apt-get update
-Он слегка тупит, поэтому если менял порядок пунктов (или даже если нет), перед выходом из него сделай reload (он же F5) и проверь, что все нормально.
-
 [-install] [-repair] [boot] [grub]
 Переустанавливаем Linux без Live-USB, загружаясь целиком в оперативную память ("toram")
 Источник: https://askubuntu.com/questions/1318013/how-to-install-ubuntu-from-iso-file
@@ -332,7 +323,7 @@ sudo apt purge nvidia-driver-XXX --autoremove
 Фикс разрешения и тиринга (tearing) на nvidia
 Тиринг = tearing = диагональный разрыв при скроллинге.
 Видимо это чинит разрешение на новых мониках. Для старых (VGA?) смотри ниже.
-Добавить в параметры ядра (в grub-customizer, например):
+Добавить в параметры ядра (`sudo nano /etc/default/grub` -> GRUB_CMDLINE_LINUX_DEFAULT):
     nvidia-drm.modeset=1
 Потом ребут.
 Рабочий стол может странно выглядеть:
@@ -594,7 +585,7 @@ sudo apt install xdotool
 
 [-initial-setup] [-useful-packages] [ssh]
 Настройка ssh-сервера
-sudo apt install openssh-server
+sudo apt install ssh
 Создай файл `~/.ssh/authorized_keys`, туда впиши строку с публичным ключом.
 Убедись, что ты владелец и файла и папки, и что стоят правильные права:
     chmod 700 ~/.ssh
@@ -666,6 +657,7 @@ Escape - вернуться в дефолтный режим.
     wine
     qalculate-gtk (калькулятор)
     audacious    (winamp-подобный плеер; ниже смотри где брать норм скины)
+    vlc vlc-l10n (проигрыватель)
     net-tools    (ifconfig и другие команды работы с сетью)
     rar unrar    (работа с rar-архивами)
     zstd         (поддержка zstd-архивов для tar и др.)
@@ -675,10 +667,8 @@ Escape - вернуться в дефолтный режим.
     youtube-dl   (скачивание видосов с ютуба, и многих вещей со многих сайтов)
     yt-dlp       (улучшенный форк yt-dlp)
     dconf-editor (редактор настроек)
-    ntpdate      (синхронизатор часов - вряд ли нужен на manjaro, там это в гуе включается?)
     htop         (модный консольный диспечер задач)
     gparted      (редактор разделов)
-    // grub-customizer    (гуи для настройки grub-а - убран из репозитория в 22.04 по причине кривизны?)
     gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
     duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
     ncdu         (то же самое, но минималистичный консольный вариант)
@@ -698,11 +688,12 @@ Escape - вернуться в дефолтный режим.
 
 [-initial-setup]
 Неочевидные ошибки в настройках
-Правильные насторйки такие:
-Диспечер окон (дополнительно) -> Эффекты -> Отображать полноэкранные окна сразу = да
+Диспечер окон (дополнительно) -> Эффекты -> Отображать полноэкранные окна сразу = правильно [ДА]
     Вроде как уменьшает лаги полноэкранных приложений, да и вообще система кажется отзывчивее.
-Терминал -> Прокручивать по мере вывода = нет
+Терминал -> Прокручивать по мере вывода = правильно [НЕТ]
     Тогда он будет прокручивать только если у тебя скролл уже до упора внизу (т.е. правильное поведение).
+Синхронизация времени не требует специальной настройки.
+    Хотя у тебя в настройках времени написано "вручную", это ок. Уже стоит пакет `systemd-timesyncd`, который сам с этим разбирается.
 
 [-initial-setup] [+outdated] [visual-customization]
 Что за куча модулей в панели xfce?
@@ -797,7 +788,7 @@ wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
 sudo ./llvm.sh <версия>
 sudo apt install clang-tidy-14 clang-tools-14 #Дополнительные пакеты, которые сами не ставятся, но репозитории для них подхватываются.
-(Полный список полезных пакетов: clang-14 clang-tidy-14 clang-tools-14 lld-14 clangd-14 clang-format-14)
+(Полный список полезных пакетов: clang-14 clang-tidy-14 clang-tools-14 lld-14 lldb-14 clangd-14 clang-format-14)
 (Где версия - одно число, например 14. Если не указать, скачается последняя стабильная.)
 (Этот скрипт добавляет в апт репозиторий llvm, и скачивает оттуда нужные пакеты. Смотри какие именно в самом скрипте.)
 
@@ -1164,3 +1155,33 @@ crontab -e
 Еще советуют добавить
     cuetag file.cue [0-9]*.flac
 Но похоже это не работает нормально, если в названиях песен есть спецсимволы.
+
+[-initial-setup] [firefox] [userchrome] [css]
+Ставим кастомный userChrome на Firefox
+Открой `about:support`, нажми каталог профиля -> открыть каталог. В этой папке создай папку `chrome`, в ней файл `userChrome.css`
+Открой `about:config`, там поставь `toolkit.legacyUserProfileCustomizations.stylesheets` в `true`.
+.
+Пример нормального `userChrome.css`. Разжимать `base64 -d 1.txt | gzip -d >userChrome.css`, был сжат `gzip -c9 userChrome.css | base64`
+    H4sICGSEf2ICA3VzZXJDaHJvbWUuY3NzANVW3W7bNhS+91OctTdWJlqy8oNWRQsMA1rsotiw+i7I
+    BSUxNheKFEgqTlYUaPcCfYE+RFCsN8PaZ5DfaIcU5cRq0hXYdrHAsBWS5+/7zvmoZG9vDxZ8ubJM
+    QttApVVDKrWWSamkZRc2aVSD6zWTLZiGllwuYfoAXrAGsjSbR4AOksnE7fuTuVR2OuOSuBXBjY3g
+    ibfmltXxV5yDlxOAhlYVRiKFUOVZDvvNBXzD60ZpS6V9BMkeaFa1JQOr3GYMmfua4zGlIcUfakAy
+    VrEKMDuAGgOtmCszh1YaZsfuzh9msxQInKJ9CA4FE2oNB+gNfbya5Fop67MjhGqt1g2VTJChNhLM
+    cm/xYDdjNPd/iYP7J62skrCghYHFmtEzE0DEPL6rfmmNBUsLKJWWTINZ0YbFoBrLlaRCXGLptTpn
+    ng0WkrTOl3NxH58KzM0wTfyiy9dl3IYVolUr+zwRJ5/YzC0XtDxb+r1gUihdoYmmFW9NDudUT2/x
+    Et294WhIPyfueyUlK+3ADHJD9RLpCVQ7DtMv2rya3DelVkIUrUUcSdvEsLvi+hdeOsOjZJ4mrk+H
+    YKEqi12+5pVd9QFvMnXjVKHQXT0cTMeEov95Mj9y/jNYKMnAB7YrBk8vHh55EntPsOZ2BdgfRPn9
+    mhngEkqGzvD3FGl1+IPhtqWOZ0/miJecm+mxYcIDcRLDcd0Ky7cLUU5q9SsRa+9/yzv+7xuBhJpK
+    JZTOQS8LOk1jCJ/ZYfQ3IAQ7q6nExtNM2hEcx4V28+U04/E9q1t27wT+8wqyw0Oc/e3Xv1HHpO83
+    RwwS549DQTWcc8MLLri9HLi5MWfHrv+DYvLqBKXMl26sY/XJGIdhJRgQgaFCuf0w+NnE54tpSUU5
+    vXPEiBO/KHano1vK+EHS0nKUCgdf7jSbamqxHh/Q2EvBvGiMivHSvOXpseMSufGLO4Tt7BQMpZMN
+    W8SjJdjQCRF8WWR6ZXajaJTgVRAVx/y1ia/dDDX0RMajRp5laTRGAoF4ijVXVJ/BtTc/YXf17P8V
+    jOuT29i7kXZQGw2Px24M3j9DA77qakk/J+zn/oq7vontmuELynDNjbIKboeXBsFO7djrzf0A8G16
+    7q9j+LHpNRhfItSp0/jMa/wjeMZQE6i7h15QC8/pJcwPwMv/fD/PDvP0AJ49X3yb7qcpTLt33afN
+    m+6P7n13FcPmzea37qr72P3eXW1e4/PH7lP3Abr3m9fdh+7PzdvIFfYXEhYKBI8JAAA=
+Он был сгенерирован 14 мая 2022 тут:
+    1. https://www.userchrome.org/firefox-89-styling-proton-ui.html#tabstyler
+        Tab corner rounding -> None
+        Show inactive tab boundaries -> Using a vertical bar
+    2. https://www.userchrome.org/firefox-89-styling-proton-ui.html#menuspacing
+        Уменьшил паддинг с 4 до 3, в строчке где комментарий предлагает это сделать.
