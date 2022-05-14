@@ -323,7 +323,7 @@ sudo apt purge nvidia-driver-XXX --autoremove
 Фикс разрешения и тиринга (tearing) на nvidia
 Тиринг = tearing = диагональный разрыв при скроллинге.
 Видимо это чинит разрешение на новых мониках. Для старых (VGA?) смотри ниже.
-Добавить в параметры ядра (`sudo nano /etc/default/grub` -> GRUB_CMDLINE_LINUX_DEFAULT):
+Добавить в параметры ядра (`sudo nano /etc/default/grub` -> GRUB_CMDLINE_LINUX_DEFAULT, потом `sudo update-grub`):
     nvidia-drm.modeset=1
 Потом ребут.
 Рабочий стол может странно выглядеть:
