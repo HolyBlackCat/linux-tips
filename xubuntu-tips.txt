@@ -1107,18 +1107,20 @@ crontab -e
 В LMMS нет плагина Vestige (необходимого для запуска VSTi-инструментов)
 Удалить пакет LMMS, и скачать оффициальный Appimage.
 
-[-useful-packages] [video] [youtube-dl]
-Как скачивать видео с youtube с помощью youtube-dl
-Он также поддерживает много разных сайтов, например твитер.
-    sudo apt install youtube-dl ffmpeg
+[-useful-packages] [video] [youtube-dl] [yt-dlp]
+Как скачивать видео с youtube с помощью youtube-dl или yt-dlp
+Они также поддерживает много разных сайтов, например твитер.
+    sudo apt install youtube-dl yt-dlp ffmpeg
+Кажется, что yt-dlp лучше, это форк.
 Если хочешь скачать видео, то просто делай:
-    youtube-dl ССЫЛКА
+    yt-dlp ССЫЛКА
 Если хочешь скачать только музыку из видео, то:
-    Сначала сделай:
-        youtube-dl -F ССЫЛКА
-    В списке выбери формат самого хорошего качества, желательно `audio-only`.
-    Потом сделай:
-        youtube-dl -x --audio-format=mp3 -f ФОРМАТ ССЫЛКА
+    yt-dlp -x --audio-format=mp3 ССЫЛКА
+Если хочешь скачать кастомный формат видео:
+    Получить список форматов:
+        yt-dlp -F ССЫЛКА
+    Скачать в формате:
+        yt-dlp --merge-output-format=mp4 -f ФОРМАТ ССЫЛКА
 
 [web] [artstation]
 Как скачивать изображения в полном разрешении с ArtStation
