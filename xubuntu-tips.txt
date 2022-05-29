@@ -52,6 +52,7 @@ GPT вероятно лучше, MBR - запасной вариант.
 Если используешь uefi:
     * efi - размер 536 мб (столько делает инсталлер убунты), ФС fat32, флаги boot, esp.
     Если устанавливаешь в uefi-режиме, а такого раздела нет, будет ругаться.
+    Если ругается "не могу смонтировать", значит забыл ФС=fat32.
 Если используешь не-uefi, видимо с gpt-отформатированным диском:
     Раздел размером 8 мб (можно побольше, с запасом?), неформатированный, флаг bios-grub.
     Это было предложено инсталлером manjaro, после выхода из редактора разделов без такого раздела.
@@ -253,7 +254,7 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 Терминал:  Noto Mono 9
 (полный хинтинг, без АА)
 
-[-initial-setup] [-useful-packages] [laptop] [overheating] [battery]
+[-useful-packages] [laptop] [overheating] [battery]
 Настройка скорости процессора (в основном для ноутбуков?).
     sudo apt install cpufrequtils
 Теперь можно посмотреть информацию в `cpufreq-info`.
@@ -269,12 +270,22 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-initial-setup] [-useful-packages] [laptop] [overheating] [battery]
 Чтобы ноут не грелся и ел меньше батареи
-Вариант 1: (точно совместим с cpufrequtils)
+Вариант 1:
+    sudo apt install tlp
+    sudo tlp start
+    sudo systemctl enable tlp.service
+Вариант 2:
     sudo apt install laptop-mode-tools
     Ребут
-Вариант 2:
-    sudo apt install tlp
-    sudo tlp start (либо ребут)
+
+[-initial-setup] [-useful-packages] [laptop] [battery]
+Бережем время жизни батареи
+Это достигается запретом на полную зарядку.
+    Поставить tlp, как написано выше.
+    sudo tlp-stat -b
+    Он напишет что-то про допустимые диапазоны значений. У меня предлагал `STOP_CHARGE_THRESH_BAT0` переключать между 0 и 1.
+    Идем в `sudo nano /etc/tlp.conf` и там раскомментируем нужную строку, с нужным значением (у меня 1). Они в начале последнего экрана.
+    Ребут, потом проверяем результат в `sudo tlp-stat -b`.
 
 [-initial-setup] [screen] [144hz] [videocard] [drivers]
 Настраиваем 144-герцовый монитор
