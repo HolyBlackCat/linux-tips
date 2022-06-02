@@ -1209,3 +1209,8 @@ crontab -e
     yandex.ru##.media-grid__media-content
     ! Баним вопрос про куки на реддите
     old.reddit.com###eu-cookie-policy
+
+
+[bug-workaround] [crash]
+Возможные причины крашей и зависаний
+* NO_HZ - Если в логах вылезает NOHZ, можно попробовать его отключить, добавив `nohz=off` во флаги ядра: `sudo nano /etc/default/grub`, в `GRUB_CMDLINE_LINUX_DEFAULT`, потом `sudo upgrade-grub`.
