@@ -156,8 +156,11 @@ GPT вероятно лучше, MBR - запасной вариант.
     sudo nano /etc/apt/preferences.d/nosnap.pref
 Туда пишем:
     Package: snapd
-    Pin: release a=*
+    Pin: release n=jammy*
     Pin-Priority: -10
+Где вместо `jammy` вывод команды `lsb_release -cs`.
+Это мутно. Альтернативная строчка `Pin`, если эта не помогает:
+    Pin: release a=*
 
 [fonts]
 Куда ставить шрифты
