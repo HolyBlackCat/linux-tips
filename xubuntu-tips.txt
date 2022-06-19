@@ -843,6 +843,7 @@ systemd-analyze blame
 Начальная настройка git
 git config --global user.name "HolyBlackCat"
 git config --global user.email "blckcat@inbox.ru"
+git config --global core.editor nano
 
 [-initial-setup] [git] [vscode]
 GUI для интерактивного rebase в VSCode
