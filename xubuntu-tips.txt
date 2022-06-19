@@ -435,6 +435,8 @@ Eсли потерял папки, делай так:
 Самая нормальная:
     git clone https://github.com/vinceliuice/Qogir-theme
     cd Qogir-theme
+    # После этого коммита у них отлетели иконки кнопок в заголовке окна, которые чинятся только установкой отдельной темы иконок: https://github.com/vinceliuice/Qogir-icon-theme
+    git checkout c7178471d3eb8b1d0f4ef8515c42bf4d687e020c
     sudo ./install.sh
     Чтобы избавиться от переопределения значков, делай так:
         sudo find /usr/share/themes/Qogir* -name 'gtk.css' -or -name 'gtk-dark.css' -exec sed -i 's|-gtk-icon-style: symbolic;|/*-gtk-icon-style: symbolic;*/|g' {} \;
