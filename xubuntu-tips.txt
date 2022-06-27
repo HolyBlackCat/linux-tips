@@ -749,6 +749,10 @@ Escape - вернуться в дефолтный режим.
 В firefox шрифты убогие
 Скачай офф. виртуалку с 10 виндой и достань из нее шрифты, тут где-то есть инструкция.
 
+[-initial-setup] [firefox] [scale] [scaling]
+Меняем глобальный масштаб в Firefox
+В `about:config`, меняй `layout.css.devPixelsPerPx` на нужный множитель. -1 = автоопределение.
+
 [-useful-packages] [audio] [equalizer]
 Нужен эквалайзер
 sudo apt-get install pulseaudio-equalizer
