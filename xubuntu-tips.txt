@@ -812,7 +812,7 @@ wget https://apt.llvm.org/llvm.sh
 chmod +x llvm.sh
 sudo ./llvm.sh <версия>
 sudo apt install clang-tidy-14 clang-tools-14 #Дополнительные пакеты, которые сами не ставятся, но репозитории для них подхватываются.
-(Полный список полезных пакетов: clang-14 clang-tidy-14 clang-tools-14 lld-14 lldb-14 clangd-14 clang-format-14)
+(Полный список полезных пакетов: clang-14 clang-tidy-14 clang-tools-14 lld-14 lldb-14 clangd-14 clang-format-14 libc++-14-dev libc++abi-14-dev)
 (Где версия - одно число, например 14. Если не указать, скачается последняя стабильная.)
 (Этот скрипт добавляет в апт репозиторий llvm, и скачивает оттуда нужные пакеты. Смотри какие именно в самом скрипте.)
 
