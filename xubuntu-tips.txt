@@ -589,12 +589,14 @@ sudo apt install xdotool
 Показать существующий стол удаленно:
     Поставь пакет `tigervnc-scraping-server`.
     Установи пароль команой `vncpasswd`.
-    Запусти сервер с помощью `x0tigervncserver -PasswordFile=/home/holyblackcat/.vnc/passwd`.
-    Может быть нужен флажок `-display=:0` или `-display=:0.0`, менее вероятно с другим числом.
+    Запусти сервер с помощью `x0tigervncserver -localhost=yes -PasswordFile=/home/holyblackcat/.vnc/passwd`.
+    Здесь `-localhost=yes` пропускает подключения только с localhost, потому что у нас кроме пароля ничего нет. `=no` - наоборот. Как-то еще можно настроить заход только по сертификату.
+    Может быть нужен флажок `-display=:0` или `-display=:0.0`, менее вероятно с другим числом (переменная окружения `DISPLAY`).
     Если ты рут и хочешь экран другого пользователя (или возможно если ты зашел по ssh?),
         сначала нужно сделать `export XAUTHORITY=/home/OTHER_USER/.Xauthority`.
-    Для защиты от доступа снаружи, добавь `-localhost=yes` и используй ssh-тоннель:
+    Чтобы подключиться с другой машины, используй SSH-тоннель:
         К ssh добавь флаг `-L localhost:5900:localhost:5900`, а из vnc коннекться к `localhost`.
+    Теоретически, к номеру порта приплюсовывается номер DISPLAY-я.
 Как подключиться:
     На линуксе пакет `tigervnc-viewer`.
     Под винду на их сайте есть экзешник `vncviewer`.
@@ -602,10 +604,16 @@ sudo apt install xdotool
 [-initial-setup] [-useful-packages] [ssh]
 Настройка ssh-сервера
 sudo apt install ssh
+!!ВАЖНО!! Отключи вход по паролю:
+    В `sudo nano /etc/ssh/ssh_config`, найди:
+        #PasswordAuthentication no
+    И поменяй на:
+        PasswordAuthentication yes
 Создай файл `~/.ssh/authorized_keys`, туда впиши строку с публичным ключом.
 Убедись, что ты владелец и файла и папки, и что стоят правильные права:
     chmod 700 ~/.ssh
     chmod 644 ~/.ssh/authorized_keys
+Если потом захочешь заходить на сервер через PuTTY (хороший виндовый клиент), приватный ключ надо будет переработать его `puttygen`-ом - пересохранить в родной формат.
 
 [vi]
 Текстовый редактор vi для чайников
