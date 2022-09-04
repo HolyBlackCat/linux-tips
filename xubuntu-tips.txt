@@ -141,6 +141,8 @@ GPT вероятно лучше, MBR - запасной вариант.
     sudo apt install firefox firefox-locale-ru
 В логах проверяешь, что пакеты качаются с mozillateam/ppa.
 Проверяешь `which firefox` -> `/usr/bin/firefox`, без упоминания snap.
+Вот тут есть альтернативный способ, попробуй его, если что-то снова отлетит:
+    https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04
 
 [-initial-setup] [snap]
 Сносим систему snap-пакетов
