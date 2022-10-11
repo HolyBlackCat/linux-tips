@@ -164,6 +164,14 @@ GPT вероятно лучше, MBR - запасной вариант.
 Это мутно. Альтернативная строчка `Pin`, если эта не помогает:
     Pin: release a=*
 
+[-initial-setup] [ads]
+Отключаем рекламу в apt
+    sudo rm /var/lib/ubuntu-advantage/messages/*.tmpl
+    sudo rm /etc/update-motd.d/88-esm-announce
+    sudo systemctl disable ubuntu-advantage
+Больше вариантов здесь:
+    https://askubuntu.com/q/1434512
+
 [fonts]
 Куда ставить шрифты
 Для себя: ~/.local/share/fonts/
