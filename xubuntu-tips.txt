@@ -614,11 +614,6 @@ sudo apt install xdotool
 [-initial-setup] [-useful-packages] [ssh]
 Настройка ssh-сервера
 sudo apt install ssh
-!!ВАЖНО!! Отключи вход по паролю:
-    В `sudo nano /etc/ssh/ssh_config`, найди:
-        #PasswordAuthentication no
-    И поменяй на:
-        PasswordAuthentication yes
 Создай файл `~/.ssh/authorized_keys`, туда впиши строку с публичным ключом.
 Убедись, что ты владелец и файла и папки, и что стоят правильные права:
     chmod 700 ~/.ssh
