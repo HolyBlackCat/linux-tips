@@ -1253,11 +1253,16 @@ crontab -e
 
 [-initial-setup] [firefox] [ublock-origin]
 Правила для Ublock origin
-    ! Баним яндекс-дзен
-    yandex.ru##.media-grid__media-content
     ! Баним вопрос про куки на реддите
     old.reddit.com###eu-cookie-policy
+Вот это уже устарело?
+    ! Баним яндекс-дзен
+    yandex.ru##.media-grid__media-content
 
+[-initial-setup] [firefox]
+Навсегда отключаем Firefox View
+Если его просто скрыть из гуя, то FF время от времени будет про него напоминать.
+Вместо этого, иди в `about:config` и там выключи `browser.tabs.firefox-view`.
 
 [bug-workaround] [crash]
 Возможные причины крашей и зависаний
