@@ -166,6 +166,8 @@ GPT вероятно лучше, MBR - запасной вариант.
 
 [-initial-setup] [ads]
 Отключаем рекламу в apt
+    sudo pro config set apt_news=false
+Если не работает, старый ручной вариант:
     sudo rm /var/lib/ubuntu-advantage/messages/*.tmpl
     sudo rm /etc/update-motd.d/88-esm-announce
     sudo systemctl disable ubuntu-advantage
