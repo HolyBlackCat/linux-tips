@@ -166,9 +166,10 @@ GPT вероятно лучше, MBR - запасной вариант.
 
 [-initial-setup] [ads]
 Отключаем рекламу в apt
-Делай раз
-    sudo pro config set apt_news=false
-Делай два
+1. sudo pro config set apt_news=false
+2. sudo nano /var/lib/ubuntu-advantage/apt-esm/etc/apt/sources.list.d/ubuntu-esm-apps.list
+    Там комментируем все строчки.
+Еще вариант:
     sudo ln -s -f /dev/null /etc/apt/apt.conf.d/20apt-esm-hook.conf
 Если не работает, старый ручной вариант:
     sudo rm /var/lib/ubuntu-advantage/messages/*.tmpl
