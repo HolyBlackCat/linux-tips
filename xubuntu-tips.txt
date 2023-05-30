@@ -657,8 +657,8 @@ Escape - вернуться в дефолтный режим.
             sensors -u | awk '
             /^$/{x=""}
             /^[^ ].*:$/{y=$0}
-            x==""&&/k10temp-pci-00c3/{x="cpu"}
-            x==""&&/amdgpu/{x="gpu"}
+            x==""&&/k10temp-pci-/{x="cpu"}
+            x==""&&/amdgpu-pci-/{x="gpu"}
             x=="cpu"&&y=="Tctl:"&&/input/{cpu=$2}
             x=="gpu"&&y=="edge:"&&/input/{gpu=$2}
             END {
@@ -675,8 +675,8 @@ Escape - вернуться в дефолтный режим.
         sensors -u | awk '
         /^$/{x=""}
         /^[^ ].*:$/{y=$0}
-        x==""&&/k10temp-pci-00c3/{x="cpu"}
-        x==""&&/amdgpu/{x="gpu"}
+        x==""&&/k10temp-pci-/{x="cpu"}
+        x==""&&/amdgpu-pci-/{x="gpu"}
         x=="cpu"&&y=="Tctl:"&&/input/{cpu=$2}
         x=="gpu"&&y=="edge:"&&/input/{gpu=$2}
         END {
