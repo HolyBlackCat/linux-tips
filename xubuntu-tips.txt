@@ -1293,3 +1293,12 @@ crontab -e
 [time] [date] [timezone]
 Меняем временную зону (timezone)
     sudo dpkg-reconfigure tzdata
+
+
+
+[fedora]
+Человеческое авто-обновление
+Всякий dnf-automatic - это фигня, потому что если выключишь ПК при нем работающем, все сломается (вроде?).
+Лучше раз в N дней запускать:
+    pkcon update --only-download
+    pkcon offline-trigger
