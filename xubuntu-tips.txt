@@ -897,8 +897,13 @@ systemd-analyze blame
     git config --global user.name "HolyBlackCat"
     git config --global user.email "blckcat@inbox.ru"
     git config --global core.editor nano
+    # Принудительно SSH вместо HTTPS для гитхаба. Это лучше, чем руками указывать SSH-ный URL, потому что на сабмодули будет действовать само.
+    # Отменить можно так: git config --global --unset url.git@github.com:.insteadOf
+    git config --global url.git@github.com:.insteadOf https://github.com/
     # Дефолтное имя ветки, если тебе это важно:
     git config --global init.defaultBranch master
+    # -- Проверить текущий конфиг:
+    git config --all --show-origin
 
 [-initial-setup] [git] [vscode]
 GUI для интерактивного rebase в VSCode
