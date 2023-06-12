@@ -775,7 +775,7 @@ Escape - вернуться в дефолтный режим.
 Поставь на панель виджет воркспейсов и переключи его в режим эскизов. Потом поиграй с количеством строк в нем, чтобы все выглядело хорошо.
 Он сам выставит относительное расположение, чтобы оно совпадало с эскизами. Потом эскизы (и наверное весь виджет) можно убрать.
 
-[firefox] [minor] [visual-customization]
+[firefox] [+outdated] [minor] [visual-customization]
 В firefox видео разворачивается на полный экран с медленной анимацией
 В `about:config` поставь `full-screen-api.transition-duration.leave`
 и `full-screen-api.transition-duration.enter` в `0 0`.
@@ -792,10 +792,6 @@ Escape - вернуться в дефолтный режим.
 Меняем глобальный масштаб в Firefox
 В `about:config`, меняй `layout.css.devPixelsPerPx` на нужный множитель. -1 = автоопределение.
 На ноутбуке хороший масштаб - 1.24.
-
-[-initial-setup] [firefox] [extensions]
-Убираем кнопку "Расширения" с панели Firefox
-В `about:config`, меняй `extensions.unifiedExtensions.enabled` на false.
 
 [-useful-packages] [audio] [equalizer]
 Нужен эквалайзер
@@ -1245,29 +1241,34 @@ crontab -e
 Открой `about:config`, там поставь `toolkit.legacyUserProfileCustomizations.stylesheets` в `true`.
 .
 Пример нормального `userChrome.css`. Разжимать `base64 -d 1.txt | gzip -d >userChrome.css`, был сжат `gzip -c9 userChrome.css | base64`
-    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
+    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
+    AeIL3jonCwAA
 Он был сгенерирован 14 мая 2022 тут:
     1. https://www.userchrome.org/firefox-89-styling-proton-ui.html#tabstyler
         Tab corner rounding -> None
         Show inactive tab boundaries -> Using a vertical bar
     2. https://www.userchrome.org/firefox-89-styling-proton-ui.html#menuspacing
         Уменьшил паддинг с 4 до 3, в строчке где комментарий предлагает это сделать.
+    3. Руками добавлена часть, убирающая кнопку управления расширениями, отсюда: https://github.com/black7375/Firefox-UI-Fix/issues/702
 
 [-initial-setup] [firefox] [ublock-origin]
 Правила для Ublock origin
