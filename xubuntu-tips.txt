@@ -530,8 +530,8 @@ sudo apt install xdotool
     }
     В оригинале советовали использовать 1.7 вместо 1.4, на твое усмотрение.
 
-[-initial-setup] [visual-customization]
-БОЛЬШЕ НЕ ТРЕБУЕТСЯ: Убираем квадратные скобки в названиях свернутых окон в панели
+[-initial-setup] [+outdated] [visual-customization]
+Убираем квадратные скобки в названиях свернутых окон в панели
 Открываем "редактор настроек" (xfce4-settings-editor), в нем открываем раздел xfce4-panel.
 Там находим пункт `/plugins/plugin-N`. N такое, чтобы напротив него было написано `tasklist`.
 Нажимаем `Создать свойство`, имя ставим `/plugins/plugin-N/label-decorations`, тип bool (логический), значение false.
