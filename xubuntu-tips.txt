@@ -1323,3 +1323,10 @@ crontab -e
 Глушим поганую пищалку/динамик
 Федора как-то имитирует винтажную пищалку через динамики?!
 sudo sh -c 'rmmod pcspkr; echo "blacklist pcspkr" >>/etc/modprobe.d/_custom-blacklist.conf'
+
+[fedora]
+Улучшаем скорость пакетного менеджера dnf
+sudo nano /etc/dnf/dnf.conf
+    max_parallel_downloads=4
+    fastestmirror=True
+Настройка max downloads выбрана на глазок, гугл советует 10.
