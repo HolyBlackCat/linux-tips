@@ -1327,6 +1327,11 @@ sudo sh -c 'rmmod pcspkr; echo "blacklist pcspkr" >>/etc/modprobe.d/_custom-blac
 [fedora]
 Улучшаем скорость пакетного менеджера dnf
 sudo nano /etc/dnf/dnf.conf
-    max_parallel_downloads=4
-    fastestmirror=True
-Настройка max downloads выбрана на глазок, гугл советует 10.
+    max_parallel_downloads=6
+Число max downloads скопировано из nobara linux.
+
+[fedora]
+Выбираем таймзону/часовой пояс
+    sudo timedatectl set-timezone Europe/Moscow
+Посмотреть статус можно так:
+    timedatectl
