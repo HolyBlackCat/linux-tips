@@ -450,14 +450,15 @@ Eсли потерял папки, делай так:
 
 [-initial-setup] [gui-themes] [visual-customization]
 Темы офомления (для xfce)
-Самая нормальная:
+Самая нормальная - Qogir
     git clone https://github.com/vinceliuice/Qogir-theme
     cd Qogir-theme
-    # После этого коммита у них отлетели иконки кнопок в заголовке окна, которые чинятся только установкой отдельной темы иконок: https://github.com/vinceliuice/Qogir-icon-theme
-    git checkout c7178471d3eb8b1d0f4ef8515c42bf4d687e020c
     sudo ./install.sh
-    Чтобы избавиться от переопределения значков, делай так:
-        sudo find /usr/share/themes/Qogir* -name 'gtk.css' -or -name 'gtk-dark.css' -exec sed -i 's|-gtk-icon-style: symbolic;|/*-gtk-icon-style: symbolic;*/|g' {} \;
+    Ниже устаревшая информация:
+        После этого коммита у них отлетели иконки кнопок в заголовке окна, которые чинятся только установкой отдельной темы иконок: https://github.com/vinceliuice/Qogir-icon-theme
+            git checkout c7178471d3eb8b1d0f4ef8515c42bf4d687e020c
+        Чтобы избавиться от переопределения значков, делай так:
+            sudo find /usr/share/themes/Qogir* -name 'gtk.css' -or -name 'gtk-dark.css' -exec sed -i 's|-gtk-icon-style: symbolic;|/*-gtk-icon-style: symbolic;*/|g' {} \;
 Великолепная! Но минус - если у xfce-панели поставить кастомный цвет фона, будет визуальный бажок.
     adapta-gtk-theme
 Хорошая, но онли рамки окон:
@@ -688,48 +689,59 @@ Escape - вернуться в дефолтный режим.
 
 [-initial-setup] [-useful-packages]
 Полезные пакеты
-    gcc-12 g++-12
     patchelf     (патчим исполняемые файлы, например меняем в них путь к динамическим библиотекам, т.е. rpath)
-    git cmake cmake-qt-gui ninja-build
+    git cmake ninja-build
     kdiff3       (разрешитель конфликтов для git-а)
     wine
-    libavcodec-extra (дополнительные кодеки, которые могут быть защищены патентами - часть пакета ubuntu-restricted-extras)
     qalculate-gtk (калькулятор)
-    audacious    (winamp-подобный плеер; ниже смотри где брать норм скины)
-    audacity     (звуковой редактор; бинарники с сайта у них кривые)
-    vlc vlc-l10n (проигрыватель)
+    audacious    (музкальный проигрыватель)
+    vlc          (проигрыватель видео)
     net-tools    (ifconfig и другие команды работы с сетью)
-    rar unrar    (работа с rar-архивами)
+    unrar        (работа с rar-архивами)
     zstd         (поддержка zstd-архивов для tar и др.)
     geeqie       (нормальный просмотрщик изображений)
-    krita krita-l10n (граф. редактор и локализации для него)
+    krita        (граф. редактор и локализации для него)
     deluge       (торрент-клиент, более приличный чем дефолтный transmission)
     xdotool      (управление окнами из консоли; альтернатива: wmctrl)
-    youtube-dl   (скачивание видосов с ютуба, и многих вещей со многих сайтов)
-    yt-dlp       (улучшенный форк yt-dlp)
+    yt-dlp       (скачивание видосов с ютуба, и многих вещей со многих сайтов; это форк, оригинал был youtube-dl)
     dconf-editor (редактор настроек)
     htop         (модный консольный диспечер задач)
     gparted      (редактор разделов)
     gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
-    duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
     ncdu         (то же самое, но минималистичный консольный вариант)
     xfce4-genmon-plugin (показ на панели вывода произвольных команд)
-    imagemagick  (конвертер форматов картинок)
-    ffmpeg       (конвертер форматов видео)
-    virtualbox virtualbox-ext-pack (виртуальная машина)
-    rename       (массовое переименование файлов регулярками)
-    hardinfo     (информация о системе)
-    fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
+    ffmpeg       (конвертер форматов видео) ######### На федоре есть -freeworld? И для хрома еще посмотри
     gnome-games  (набор казуальных игр)
     aisleriot    (разные пасьянсы в одном приложении)
     radeontop    (мониторим видюшку AMD)
     cloc         (счетчик строк кода)
     piper        (настраиваем подсветку мышек и т.п.)
-Менее полезные:
     fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
     potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
     qpdf         (разные манипуляции с pdf)
+Только федора:
+    gcc g++
+    cmake-gui
+    audacity-freeworld (сначала поставь rpmfusion; без суффикса есть в стандартной репе, но он хуже?)
+    ImageMagick  (конвертер форматов картинок)
+    VirtualBox   (виртуальная машина)
+Только убунта:
+    gcc-13 g++-13
+    cmake-qt-gui
+    rar
+    imagemagick  (конвертер форматов картинок)
+    audacity     (звуковой редактор; бинарники с сайта у них кривые)
     renderdoc    (отладчик графики)
+    duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
+    rename       (массовое переименование файлов регулярками)
+    hardinfo     (информация о системе)
+    fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
+    libavcodec-extra (дополнительные кодеки, которые могут быть защищены патентами - часть пакета ubuntu-restricted-extras)
+    virtualbox virtualbox-ext-pack (виртуальная машина)
+    * Дополнения к пакетам:
+        * Локализации:
+            vlc-l10n
+            krita-l10n
 
 [-initial-setup]
 Неочевидные ошибки в настройках
@@ -775,6 +787,11 @@ Escape - вернуться в дефолтный режим.
 Это кастомизируется через одно место.
 Поставь на панель виджет воркспейсов и переключи его в режим эскизов. Потом поиграй с количеством строк в нем, чтобы все выглядело хорошо.
 Он сам выставит относительное расположение, чтобы оно совпадало с эскизами. Потом эскизы (и наверное весь виджет) можно убрать.
+
+[firefox] [-initial-setup]
+Переносим существующий профиль
+Обычно достаточно просто скопировать папку .mozilla (на всякий случай лучше `cp -af`).
+Если что-то не фурычит, открывай `about:profiles`, там выбирай профиль `default-release`, а старый потом сноси.
 
 [firefox] [+outdated] [minor] [visual-customization]
 В firefox видео разворачивается на полный экран с медленной анимацией
@@ -1335,3 +1352,34 @@ sudo nano /etc/dnf/dnf.conf
     sudo timedatectl set-timezone Europe/Moscow
 Посмотреть статус можно так:
     timedatectl
+
+[fedora]
+Разрешаем монтировать диски без админских прав.
+	sudo nano /etc/polkit-1/localauthority/50-local.d/10-disk-mounting.pkla
+Туда пишем:
+    [udisks]
+    Identity=unix-group:wheel
+    Action=org.freedesktop.udisks2.*
+    ResultAny=yes
+    ResultInactive=no
+    ResultActive=yes
+
+[fedora] [-initial-setup]
+Лечим двойной логин при запуске (настраиваем имя ПК)
+    sudo hostnamectl set-hostname hbc-laptop
+
+[fedora]
+Лечим кривые ассоциации открытия папок с Catfish
+Все просто - настройки->приложения по умолчанию->утилиты->проводник.
+Даже если там уже стоит thunar, его надо повторно выбрать.
+
+[fedora] [icons]
+Привычные иконочки почти как на Xubuntu
+	sudo dnf install elementary-xfce-icon-theme
+
+[fedora]
+Добавляем RPMFusion - репозиторий с дополнительными пакетами
+	sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+Ставим всякие кодеки:
+	sudo dnf groupinstall multimedia --allowerasing
+	sudo dnf groupupdate multimedia
