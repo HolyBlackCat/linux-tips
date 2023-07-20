@@ -420,7 +420,7 @@ Eсли потерял папки, делай так:
 Для интереса, кастомные закладки можно добавлять перетаскиванием папки на панель проводника. Или из консоли, вот так:
     echo "file://"`python3 -c 'import urllib.parse;print(urllib.parse.quote(input()))' <<< $(realpath ПАПКА)` >>.config/gtk-3.0/bookmarks
 Неплохая идея: переименовать папки, чтобы они начинались с точки. Тогда их будет сложнее случайно удалить.
-    Скопируй папки:
+    Перемести папки:
         mv 'Рабочий стол' .desktop
         mv 'Загрузки' .downloads
         mv 'Шаблоны' .templates
@@ -429,6 +429,15 @@ Eсли потерял папки, делай так:
         mv 'Музыка' .music
         mv 'Изображения' .images
         mv 'Видео' .videos
+    Или, если они названы по-английски:
+        mv 'Desktop' .desktop
+        mv 'Downloads' .downloads
+        mv 'Templates' .templates
+        mv 'Public' .shared
+        mv 'Documents' .documents
+        mv 'Music' .music
+        mv 'Pictures' .images
+        mv 'Videos' .videos
     Обнови названия папок в настройках: nano ~/.config/user-dirs.dirs
         XDG_DESKTOP_DIR="$HOME/.desktop"
         XDG_DOWNLOAD_DIR="$HOME/.downloads"
@@ -447,6 +456,8 @@ Eсли потерял папки, делай так:
     Теперь перелогинься, и удали пустые папки со старыми именами, если они создались.
     Можно заметить, что в проводнике закладка рабочего стола называется `.desktop`. Неприятно, но легко не чинится:
         Если попробовать добавить кастомную закладку для него, то она будет скрываться с панели только одновременно со встроенной.
+Как убрать пункт "недавные":
+    ПКМ по заголовку "места" над списком закладок.
 
 [-initial-setup] [gui-themes] [visual-customization]
 Темы офомления (для xfce)
@@ -516,8 +527,8 @@ sudo apt install xdotool
 
 [-initial-setup] [autorun] [messengers]
 Автозапуск мессенджеров
-Телеграм умеет стартовать в трее: `путь/до/Telegram -startintray`.
-Дискорд тоже: `discord --start-minimized`
+Телеграм умеет стартовать в трее: `путь/до/Telegram -startintray` (на федоре, если телеграм из пакета - то `telegram-desktop -startintray).
+Дискорд тоже: `discord --start-minimized` (на федоре с большой буквы - `Discord --start-minimized`).
 
 [-initial-setup] [visual-customization]
 Меньше промежутки между значками на рабочем столе
@@ -721,10 +732,15 @@ Escape - вернуться в дефолтный режим.
     qpdf         (разные манипуляции с pdf)
 Только федора:
     gcc g++
+    clang clang-tools-extra lld
     cmake-gui
-    audacity-freeworld (сначала поставь rpmfusion; без суффикса есть в стандартной репе, но он хуже?)
     ImageMagick  (конвертер форматов картинок)
     VirtualBox   (виртуальная машина)
+    engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
+Федора с rpmfusion:
+    audacity-freeworld (без суффикса есть в стандартной репе, но он хуже?)
+    discord
+    telegram-desktop
 Только убунта:
     gcc-13 g++-13
     cmake-qt-gui
@@ -1342,10 +1358,14 @@ crontab -e
 sudo sh -c 'rmmod pcspkr; echo "blacklist pcspkr" >>/etc/modprobe.d/_custom-blacklist.conf'
 
 [fedora]
-Улучшаем скорость пакетного менеджера dnf
+Настраиваем пакетный менеджер dnf
 sudo nano /etc/dnf/dnf.conf
-    max_parallel_downloads=6
-Число max downloads скопировано из nobara linux.
+	Увеличиваем число параллельных загрузок (число скопировано из nobara linux)
+		max_parallel_downloads=6
+	Меняем дефолтное действие с no на yes:
+		defaultyes=True
+
+
 
 [fedora]
 Выбираем таймзону/часовой пояс
