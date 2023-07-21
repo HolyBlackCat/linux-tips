@@ -230,16 +230,17 @@ GPT вероятно лучше, MBR - запасной вариант.
 Самый модный, но слегка пиратский вариант:
     Скачай офф. вируалку винды (якобы для тестов браузера Edge), образ для виртуалбокс.
     Распотроши архиватором пока не дойдешь до файла с расширением `.vmdk`.
-        sudo apt install libguestfs-tools
-        sudo mkdir /mnt/foo
-        sudo guestmount -a 'MSEdge - Win10-disk001.vmdk' -i --ro /mnt/foo
-        sudo cp -r /mnt/foo/Windows/Fonts/ .
-        sudo chown -R "$USER:$USER" Fonts
-        sudo umount /mnt/foo
-        sudo rm -r /mnt/foo
-    Полученную папочку переименуй во что-нибудь, и положи:
-        в `~/.local/share/fonts/` (для себя), или
-        в `/usr/local/share/fonts` (для всех - тогда chown не нужен?)
+        sudo apt install libguestfs-tools # федора - sudo dnf install libguestfs-tools
+        # На федоре после установки надо перезайти в систему.
+        mkdir ./mount
+        guestmount -a WinDev*Eval-disk001.vmdk -i --ro ./mount
+        cp -r ./mount/Windows/Fonts/ -T ./WindowsFonts
+        umount ./mount
+        rm -r ./mount
+    Копируем в систему: (тут owner исправляется автоматически)
+        sudo cp -r WindowsFonts /usr/local/share/fonts
+    Или, копируем только себе:
+        cp -r WindowsFonts ~/.local/share/fonts/
 
 [clock] [windows-dual-boot]
 Фикс кривых часов при дуал-буте с виндой
@@ -591,12 +592,14 @@ sudo apt install xdotool
     Дописать ту же строку в `~/.inputrc`.
     Если нет такого файла, создать его и в начало поставить строку `$include /etc/inputrc`.
 
-[-initial-setup] [clock]
+[-initial-setup] [clock] [date] [time]
 Нормальные форматы даты/времени:
     Короткий: (для часов в таскбаре)
         %-d %b, %R
-    Длинный: (для тултипа часов в таскбаре и др.)
+    Длинный: (для lightdm-gtk-greeter)
         %A, %-d %B %Y, %R:%S
+    Тултип часов:
+        %A,  %-d %B %Y,  %R:%S%nМесяц %-m,  зона %Z (%:::z)
     Для времени изменения файлов:
         %d.%m.%Y, %H:%M
 
@@ -705,7 +708,7 @@ Escape - вернуться в дефолтный режим.
     kdiff3       (разрешитель конфликтов для git-а)
     wine
     qalculate-gtk (калькулятор)
-    audacious    (музкальный проигрыватель)
+    audacious    (музкальный проигрыватель; на федоре на забудь поставить плагины на форматы файлов, ниже есть инструкция)
     vlc          (проигрыватель видео)
     net-tools    (ifconfig и другие команды работы с сетью)
     unrar        (работа с rar-архивами)
@@ -730,6 +733,7 @@ Escape - вернуться в дефолтный режим.
     fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
     potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
     qpdf         (разные манипуляции с pdf)
+    libguestfs-tools (монтировать диски от виртуальных машин)
 Только федора:
     gcc g++
     clang clang-tools-extra lld
@@ -737,6 +741,7 @@ Escape - вернуться в дефолтный режим.
     ImageMagick  (конвертер форматов картинок)
     VirtualBox   (виртуальная машина)
     engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
+    lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
 Федора с rpmfusion:
     audacity-freeworld (без суффикса есть в стандартной репе, но он хуже?)
     discord
@@ -1367,8 +1372,6 @@ sudo nano /etc/dnf/dnf.conf
 	Меняем дефолтное действие с no на yes:
 		defaultyes=True
 
-
-
 [fedora]
 Выбираем таймзону/часовой пояс
     sudo timedatectl set-timezone Europe/Moscow
@@ -1405,3 +1408,13 @@ sudo nano /etc/dnf/dnf.conf
 Ставим всякие кодеки:
 	sudo dnf groupinstall multimedia --allowerasing
 	sudo dnf groupupdate multimedia
+
+[fedora]
+Устанавливаем кодеки, чтобы плееры нормально работали
+Сначала подключи RPMFusion, как написано выше.
+    sudo dnf install audacious-plugins\*
+    sudo dnf install libavcodec-freeworld xmms2-freeworld # Не уверен, нужно ли. Лишним не будет?
+Также, взято отсюда: https://docs.fedoraproject.org/en-US/quick-docs/assembly_installing-plugins-for-playing-movies-and-music/
+    sudo dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel
+    sudo dnf install lame\* --exclude=lame-devel
+    sudo dnf group upgrade --with-optional Multimedia
