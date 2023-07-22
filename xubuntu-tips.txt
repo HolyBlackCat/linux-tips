@@ -734,6 +734,7 @@ Escape - вернуться в дефолтный режим.
     potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
     qpdf         (разные манипуляции с pdf)
     libguestfs-tools (монтировать диски от виртуальных машин)
+    lm_sensors   (датчики температуры и прочего)
 Только федора:
     gcc g++
     clang clang-tools-extra lld
@@ -743,6 +744,7 @@ Escape - вернуться в дефолтный режим.
     engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
     tiled        (редактор карт)
+    freecad      (инженерное проектирование)
 Федора с rpmfusion:
     audacity-freeworld (без суффикса есть в стандартной репе, но он хуже?)
     discord
