@@ -177,19 +177,21 @@ GPT вероятно лучше, MBR - запасной вариант.
 Их же переустанови: (имена пакетов можно копировать, прямо с версиями)
     sudo dnf reinstall пакеты...
 
-[-initial-setup] [reboot] [hang] [reisub] [oom-killer]
-Ядерные хоткеи REISUB, и как их включить
+[-initial-setup] [reboot] [hang] [reisub] [reib] [oom-killer]
+Ядерные хоткеи REIB, и как их включить
 Включаем так:
     sudo nano /etc/sysctl.d/10-magic-sysrq.conf
-    kernel.sysrq = 244
+    kernel.sysrq = 196
 Все операции начинаются так:
     Зажать Alt
     Если ты в гуи, зажать Ctrl
     Нажать PrintScreen
     Можно отпустить все кроме Alt.
 Дальше, на выбор:
-    * Ребут (нажимай клавишы МЕДЛЕННО): R E I S U B
+    * Ребут (нажимай клавишы медленно): R E I B
     * Убить процесс, который ест больше всего памяти: F
+REIB vs REISUB
+    SU - это для аккуратного размонтирования файловых систем. Якобы для современных журналируемых систем не нужно.
 
 [-initial-setup] [-useful-packages] [firefox] [snap]
 Ставим Firefox без snap
