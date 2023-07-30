@@ -593,7 +593,7 @@ sudo apt install xdotool
 
 [-initial-setup] [autorun] [messengers]
 Автозапуск мессенджеров
-Телеграм умеет стартовать в трее: `путь/до/Telegram -startintray` (на федоре, если телеграм из пакета - то `telegram-desktop -startintray).
+Телеграм умеет стартовать в трее: `путь/до/Telegram -startintray` (на федоре, если телеграм из пакета - то `telegram-desktop -startintray` - но пакет у них кривой, см. https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730).
 Дискорд тоже: `discord --start-minimized` (на федоре с большой буквы - `Discord --start-minimized`).
 
 [-initial-setup] [visual-customization]
@@ -811,10 +811,11 @@ Escape - вернуться в дефолтный режим.
     lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
     tiled        (редактор карт)
     freecad      (инженерное проектирование)
+    gucharmap    (таблица символов, видимо та же, что по дефолту стоит на убунте)
 Федора с rpmfusion:
     audacity-freeworld (без суффикса есть в стандартной репе, но он хуже?)
     discord
-    telegram-desktop
+    # telegram-desktop (пакет кривой, лучше ставь оффициальный бинарник - см. https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
 Только убунта:
     gcc-13 g++-13
     cmake-qt-gui
