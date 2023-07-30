@@ -803,7 +803,7 @@ Escape - вернуться в дефолтный режим.
     lm_sensors   (датчики температуры и прочего)
 Только федора:
     gcc g++
-    clang clang-tools-extra lld
+    clang clang-tools-extra lld lldb
     cmake-gui
     ImageMagick  (конвертер форматов картинок)
     VirtualBox   (виртуальная машина)
