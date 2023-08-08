@@ -722,11 +722,12 @@ sudo apt install xdotool
 [-initial-setup] [-useful-packages] [ssh]
 Настройка ssh-сервера
 sudo apt install ssh
+На федоре выключи авторизацию по паролю!! `sudo mousepad /etc/ssh/sshd_config`, там найди PasswordAuthentication, раскомментируй и исправь на no.
 На федоре не забудь `sudo systemctl enable sshd`.
 Создай файл `~/.ssh/authorized_keys`, туда впиши строку с публичным ключом.
 Убедись, что ты владелец и файла и папки, и что стоят правильные права:
     chmod 700 ~/.ssh
-    chmod 644 ~/.ssh/authorized_keys # Вроде 664 тоже норм?
+    chmod 644 ~/.ssh/authorized_keys
 Если потом захочешь заходить на сервер через PuTTY (хороший виндовый клиент), приватный ключ надо будет переработать его `puttygen`-ом - пересохранить в родной формат.
 
 [vi]
