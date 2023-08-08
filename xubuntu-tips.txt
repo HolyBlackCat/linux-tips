@@ -193,7 +193,7 @@ GPT вероятно лучше, MBR - запасной вариант.
 REIB vs REISUB
     SU - это для аккуратного размонтирования файловых систем. Якобы для современных журналируемых систем не нужно.
 
-[-initial-setup] [-useful-packages] [firefox] [snap]
+[-initial-setup] [-useful-packages] [firefox] [snap] [ubuntu]
 Ставим Firefox без snap
 Делай так:
     sudo add-apt-repository ppa:mozillateam/ppa
@@ -211,7 +211,7 @@ REIB vs REISUB
 Вот тут есть альтернативный способ, попробуй его, если что-то снова отлетит:
     https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04
 
-[-initial-setup] [snap]
+[-initial-setup] [snap] [ubuntu]
 Сносим систему snap-пакетов
 Ее не жалко, особенно на Xubuntu. Про ванильную убунту не уверен.
 Можно куда-то сохранить список установленных snap-пакетов: сохранить вывод `snap list`.
@@ -231,7 +231,7 @@ REIB vs REISUB
 Это мутно. Альтернативная строчка `Pin`, если эта не помогает:
     Pin: release a=*
 
-[-initial-setup] [ads]
+[-initial-setup] [ads] [ubuntu]
 Отключаем рекламу в apt
 1. sudo pro config set apt_news=false
 2. sudo nano /var/lib/ubuntu-advantage/apt-esm/etc/apt/sources.list.d/ubuntu-esm-apps.list
@@ -244,6 +244,26 @@ REIB vs REISUB
     sudo systemctl disable ubuntu-advantage
 Больше вариантов здесь:
     https://askubuntu.com/q/1434512
+
+[-initial-setup] [bash] [prompt]
+Настраиваем prompt в bash
+Раззипуй этот шелскрипт (`base64 -d 1.txt | gzip -d >_hbc_bash_prompt.sh`, был сжат `gzip -c9 _hbc_bash_prompt.sh | base64 >1.txt`):
+    H4sICELp0WQCA19oYmNfYmFzaF9wcm9tcHQuc2gAdVTbUtswEH33V2xJZgwDmISWTjtMpoVACw9c
+    hktf4oyj2OtYRZE8lpzAMPx7d+Uk5eonS6vdc87ukVpwYtTDoRLpXV+40EJaW2emMBa2gLIy09Jt
+    wawbBC041dYJpWAuXQEjW2cG0hKSYpwmfDppTkeUt4Mu3aFlLhVG2c4o4vR+gekdyBzmGFYIUsMh
+    ZUUUuSkk4TZhq0NHJ5TadmgdZlsgPStTSswgJwj4hZmpBG2OXuF4FimRUOik0cSEkAlwAGv37cfD
+    g+uT5M/x1fXpxfn20xp86sE9DANXoG7oCT1BoOVCNjgDArJ6On0AbfR2hrmolYOZUDVy0MqJFgoM
+    pVRg00qWzvK+NpxbpwVRj4LL627P6z8x5s6Xz2udMj+YoMZKOKknz2BXDRFliTrzFTkqqko8RHDB
+    aHNp8Y36mUNWDGZGBypJ7SN8EMqZCXLSFhUe1w4mcoYahG4qcn/hL818hSdJhXV1njOyV3B1cXZ5
+    k/Qvzs4Ozo82e+uJn3lDl/s9FTrbYIkHUDQihYNcVsQgNxWgoFYsjgHeY1qz+i0QzlGEplpbbsHI
+    VaIcwRiVmUfBC4wMx/Uk4fj6BjwGQF+SnBz2kwW185urg8tee3397e5md2MjeAqC9zivirXgNzrf
+    ZSWoE3hPPUlNhhGcTrRhszo2rqbZ4nwpxZJNKdQIwizylZRJyRLH/d5a+8ea32H/DaD9lhn0etCF
+    4dCf8i6ExUfpHb/IZbDgd73g57CaSnadk46m7qPssDAexDjs7Mdz2hjE9c+4GMYiHobLApeV1O61
+    vOcEj/t8IzrvEiKEzQZi0Nn/3p3Gw1arWdFvrEN/EJXF1xmL0H8dt5aMSC6x9Kpk5JDUmephJWMJ
+    8vnb/t7+7pc9rs5SYAm9yzvzWK/AV/puCn5SMpkKqri8MwpzByb3/4upvdR8e3rEY3hfNb0JzVuY
+    GkU12cpcqDLGRR+05ivza6/YwcedaUP4zojrcnVR+CY1MOx7CD+4ECH4/4/uRIe9Txj/AC7/wIPn
+    BQAA
+Потом сделай `sudo cp _hbc_bash_prompt.sh /etc/profile.d/`.
 
 [fonts]
 Куда ставить шрифты
