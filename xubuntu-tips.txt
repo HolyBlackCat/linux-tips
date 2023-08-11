@@ -263,7 +263,7 @@ REIB vs REISUB
     8vnb/t7+7pc9rs5SYAm9yzvzWK/AV/puCn5SMpkKqri8MwpzByb3/4upvdR8e3rEY3hfNb0JzVuY
     GkU12cpcqDLGRR+05ivza6/YwcedaUP4zojrcnVR+CY1MOx7CD+4ECH4/4/uRIe9Txj/AC7/wIPn
     BQAA
-Потом сделай `sudo cp _hbc_bash_prompt.sh /etc/profile.d/`.
+Потом сделай `sudo cp _hbc_bash_prompt.sh /etc/profile.d/`. (В федоре это нормально работает, а в убунте почему-то нет, надо думать.)
 
 [fonts]
 Куда ставить шрифты
@@ -833,6 +833,7 @@ Escape - вернуться в дефолтный режим.
     tiled        (редактор карт)
     freecad      (инженерное проектирование)
     gucharmap    (таблица символов, видимо та же, что по дефолту стоит на убунте)
+    p7zip p7zip-plugins (архиватор 7z - без него гуй engrampa не понимает .7z-архивы)
 Федора с rpmfusion:
     audacity-freeworld (без суффикса есть в стандартной репе, но он хуже?)
     discord
