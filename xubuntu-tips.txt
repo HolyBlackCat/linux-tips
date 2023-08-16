@@ -1519,3 +1519,10 @@ sudo nano /etc/dnf/dnf.conf
 По умолчанию стоит файрвол, который видимо не пропускает в сеть неизвестные приложения?
 Известные пропускает автоматически (sshd, например).
 В гуе можно временно открыть определенный порт, но по умолчанию это происходит до перезагрузки?
+
+[fedora] [chrome]
+Ставим Chrome
+Он лучше, чем Chromium (поддержка всяких кодеков и т.п.).
+    sudo dnf install fedora-workstation-repositories
+    sudo dnf config-manager --set-enabled google-chrome
+    sudo dnf install google-chrome-stable
