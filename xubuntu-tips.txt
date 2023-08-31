@@ -614,7 +614,7 @@ sudo apt install xdotool
 [-initial-setup] [autorun] [messengers]
 Автозапуск мессенджеров
 Телеграм умеет стартовать в трее: `путь/до/Telegram -startintray` (на федоре, если телеграм из пакета - то `telegram-desktop -startintray` - но пакет у них кривой, см. https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730).
-Дискорд тоже: `discord --start-minimized` (на федоре с большой буквы - `Discord --start-minimized`).
+Дискорд тоже: `discord --start-minimized` (если ставил моим скриптом на федоре, `/usr/local/share/Discord/Discord --start-minimized`).
 
 [-initial-setup] [visual-customization]
 Меньше промежутки между значками на рабочем столе
@@ -837,7 +837,7 @@ Escape - вернуться в дефолтный режим.
     menulibre    (гуй управления .desktop-файлами)
 Федора с rpmfusion:
     audacity-freeworld (без суффикса есть в стандартной репе, но он хуже?)
-    discord
+    # discord (его обновляют с задержкой, можно остаться без мессенджера; ниже есть ручная инструкция)
     # telegram-desktop (пакет кривой, лучше ставь оффициальный бинарник - см. https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
 Только убунта:
     gcc-13 g++-13
@@ -1526,3 +1526,17 @@ sudo nano /etc/dnf/dnf.conf
     sudo dnf install fedora-workstation-repositories
     sudo dnf config-manager --set-enabled google-chrome
     sudo dnf install google-chrome-stable
+
+[fedora] [discord]
+Ставим Discord
+Создай такой скрипт и запусти. Им же потом можно обновлять, даже не закрывая дискорд:
+    cd ~/.downloads
+    rm -f discord.tar.gz
+    wget 'https://discordapp.com/api/download/stable?platform=linux&format=tar.gz' -O discord.tar.gz
+    pkill -e -INT Discord
+    sudo rm -rf /usr/local/share/Discord
+    sudo tar -xf discord.tar.gz -C /usr/local/share
+    sudo cp /usr/local/share/Discord/discord.desktop /usr/local/share/applications/discord.desktop
+    sudo sed 's|/usr/share/discord/Discord|/usr/local/share/Discord/Discord|' -i /usr/local/share/applications/discord.desktop
+    sudo cp /usr/local/share/Discord/discord.png /usr/local/share/icons/
+    rm discord.tar.gz
