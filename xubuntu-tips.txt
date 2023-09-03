@@ -822,6 +822,7 @@ Escape - вернуться в дефолтный режим.
     qpdf         (разные манипуляции с pdf)
     libguestfs-tools (монтировать диски от виртуальных машин)
     lm_sensors   (датчики температуры и прочего)
+    peek         (запись гифок с экрана)
 Только федора:
     gcc g++
     clang clang-tools-extra lld lldb
