@@ -1453,6 +1453,7 @@ crontab -e
     docker pull mathicsorg/mathics
 Запускаем так: (это из мануала)
     docker run --rm -it --name mathics-web -p 8000:8000 -v /tmp:/usr/src/app/data mathicsorg/mathics --mode ui
+Если вычисление зависло, Ctrl+C в терминале его останавливает. Если второй раз тыкнуть, сервер закроется.
 Синтаксис для чайников: (справа-сверху вопросик со справкой)
     Quit[] - сбросить состояние
     Clear[var] - сбросить одну переменную
