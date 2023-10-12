@@ -1590,3 +1590,9 @@ sudo nano /etc/dnf/dnf.conf
     sudo sed 's|/usr/share/discord/Discord|/usr/local/share/Discord/Discord|' -i /usr/local/share/applications/discord.desktop
     sudo cp /usr/local/share/Discord/discord.png /usr/local/share/icons/
     rm discord.tar.gz
+
+
+
+[manjaro] [boot] [bug-workaround]
+Manjaro зависает при загрузке каждый второй раз
+У меня такое было в virtualbox. Вроде помогло `pamac reinstall plymouth`, а может само починилось.
