@@ -1566,6 +1566,12 @@ Manjaro зависает при загрузке через раз
 1. Из кнопки whisker menu. Там ищем иконку xfce4-menu, или если такой нет, ищи по слову whisker.
 2. Из аватарки пользователя при логине - в lightdm gtk greeter settings выбираем "иконка" -> "avatar-default".
 
+[manjaro] [steam]
+Что за два ярлыка Steam (runtime vs native)
+Runtime лучше, советую переименовать его просто в "Steam".
+Смотри https://wiki.archlinux.org/title/Steam/Troubleshooting
+Runtime использует родные стимовские либы. Native использует системные либы.
+
 
 
 [fedora]
