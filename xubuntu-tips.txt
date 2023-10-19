@@ -1533,12 +1533,17 @@ Manjaro, похоже, требует задать этот пароль при 
     sudo passwd -l root
 
 [manjaro] [boot] [bug-workaround]
-Manjaro зависает при загрузке каждый второй раз
-У меня такое было в virtualbox. Вроде помогло `pamac reinstall plymouth`, а может само починилось.
+Manjaro зависает при загрузке через раз
+Непонятно. Возможно кривая поддержка btrfs? Возможно помогает отдельный раздел boot с ext4?
+Вроде помогло так:
+    sudo nano /etc/default/grub
+    # Убрать оттуда `quiet splash`
+    sudo update-grub
+    # Может быть дело просто в update-grub, хз. Но так хотя бы увидишь лог, если зависнет.
 
 [manjaro] [-initial-setup]
 Убираем брендинг manjaro
-1. Из кнопки whisker menu. Там ищем иконку xfce4-menu.
+1. Из кнопки whisker menu. Там ищем иконку xfce4-menu, или если такой нет, ищи по слову whisker.
 2. Из аватарки пользователя при логине - в lightdm gtk greeter settings выбираем "иконка" -> "avatar-default".
 
 
