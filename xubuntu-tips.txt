@@ -814,7 +814,7 @@ Escape - вернуться в дефолтный режим.
         ubuntu -> [ставь новую версию из кастомного репозитория]
         fedora -> + clang-tools-extra
     patchelf     (патчим исполняемые файлы, например меняем в них путь к динамическим библиотекам, т.е. rpath)
-    git
+    git make pkg-config
     cmake
         ubuntu -> + cmake-qt-gui
         fedora -> + cmake-gui
