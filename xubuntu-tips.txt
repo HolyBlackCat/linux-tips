@@ -134,7 +134,7 @@ GPT вероятно лучше, MBR - запасной вариант.
 Теперь мы должны работать полностью из оперативки.
 После установки и ребута, стоит сделать `sudo update-grub`.
 
-[-install] [-initial-setup]
+[-install] [-initial-setup] [fedora]
 Глушим сообщение Booting Fedora...
     sudo nano /etc/default/grub
 Туда в начало: (первая строка уже есть, заменить, второй может не быть)
@@ -170,6 +170,7 @@ GPT вероятно лучше, MBR - запасной вариант.
 
 [-repair] [boot] [grub]
 Чиним удаленный раздел boot в Fedora
+(Но вообще лучше бы ему не быть отдельным разделом...)
 Создай этот раздел в gparted. Размер = 1024мб, фс=ext4
 Залезь с live usb в chroot (выше инструкция)
 Посмотри какие пакеты ставятся в `/boot`:
@@ -179,7 +180,7 @@ GPT вероятно лучше, MBR - запасной вариант.
 
 [-initial-setup] [reboot] [hang] [reisub] [reib] [oom-killer]
 Ядерные хоткеи REIB, и как их включить
-Включаем так:
+Включаем так: (на убунте)
     sudo nano /etc/sysctl.d/10-magic-sysrq.conf
     kernel.sysrq = 196
 Все операции начинаются так:
@@ -195,6 +196,7 @@ REIB vs REISUB
 
 [-initial-setup] [-useful-packages] [firefox] [snap] [ubuntu]
 Ставим Firefox без snap
+Это только для убунты, очевидно. У всех остальных он и так нормальный.
 Делай так:
     sudo add-apt-repository ppa:mozillateam/ppa
     sudo nano /etc/apt/preferences.d/mozillateam.pref
@@ -211,28 +213,31 @@ REIB vs REISUB
 Вот тут есть альтернативный способ, попробуй его, если что-то снова отлетит:
     https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04
 
-[-initial-setup] [snap] [ubuntu]
+[-initial-setup] [snap]
 Сносим систему snap-пакетов
-Ее не жалко, особенно на Xubuntu. Про ванильную убунту не уверен.
-Можно куда-то сохранить список установленных snap-пакетов: сохранить вывод `snap list`.
-Потом снести пакет `snapd`.
-Например на убунте так:
-    sudo apt autoremove --purge snapd gnome-software-plugin-snap
-    rm -rf ~/snap
-Не уверен, что нужно:
-    sudo rm -rf /var/cache/snapd/
-На всякий случай запрещаем установку snap обратно:
-    sudo nano /etc/apt/preferences.d/nosnap.pref
-Туда пишем:
-    Package: snapd
-    Pin: release n=jammy*
-    Pin-Priority: -10
-Где вместо `jammy` вывод команды `lsb_release -cs`.
-Это мутно. Альтернативная строчка `Pin`, если эта не помогает:
-    Pin: release a=*
+На manjaro: (тут она особо не мешает, но все равно нафиг ее)
+    sudo pamac remove snapd libpamac-snap-plugin
+На убунте:
+    Ее не жалко, особенно на Xubuntu. Про ванильную убунту не уверен.
+    Можно куда-то сохранить список установленных snap-пакетов: сохранить вывод `snap list`.
+    Потом снести пакет `snapd`.
+    Например на убунте так:
+        sudo apt autoremove --purge snapd gnome-software-plugin-snap
+        rm -rf ~/snap
+    Не уверен, что нужно:
+        sudo rm -rf /var/cache/snapd/
+    На всякий случай запрещаем установку snap обратно:
+        sudo nano /etc/apt/preferences.d/nosnap.pref
+    Туда пишем:
+        Package: snapd
+        Pin: release n=jammy*
+        Pin-Priority: -10
+    Где вместо `jammy` вывод команды `lsb_release -cs`.
+    Это мутно. Альтернативная строчка `Pin`, если эта не помогает:
+        Pin: release a=*
 
 [-initial-setup] [ads] [ubuntu]
-Отключаем рекламу в apt
+Отключаем рекламу в apt на убунте
 1. sudo pro config set apt_news=false
 2. sudo nano /var/lib/ubuntu-advantage/apt-esm/etc/apt/sources.list.d/ubuntu-esm-apps.list
     Там комментируем все строчки.
@@ -263,7 +268,7 @@ REIB vs REISUB
     8vnb/t7+7pc9rs5SYAm9yzvzWK/AV/puCn5SMpkKqri8MwpzByb3/4upvdR8e3rEY3hfNb0JzVuY
     GkU12cpcqDLGRR+05ivza6/YwcedaUP4zojrcnVR+CY1MOx7CD+4ECH4/4/uRIe9Txj/AC7/wIPn
     BQAA
-Потом сделай `sudo cp _hbc_bash_prompt.sh /etc/profile.d/`. (В федоре это нормально работает, а в убунте почему-то нет, надо думать.)
+Потом сделай `sudo cp _hbc_bash_prompt.sh /etc/profile.d/`. (В федоре это нормально работает, а в убунте и manjaro почему-то нет, надо думать.)
 
 [fonts]
 Куда ставить шрифты
@@ -289,7 +294,7 @@ REIB vs REISUB
       </match>
     </fontconfig>
 
-[-initial-setup] [fonts] [fonts-antialiasing]
+[fonts] [fonts-antialiasing]
 Отключение антиалиасинга везде, с мясом
     cd /etc/fonts/conf.d
     sudo rm 10-antialias.conf
@@ -315,7 +320,10 @@ REIB vs REISUB
 Самый модный, но слегка пиратский вариант:
     Скачай офф. вируалку винды (якобы для тестов браузера Edge), образ для виртуалбокс.
     Распотроши архиватором пока не дойдешь до файла с расширением `.vmdk`.
-        sudo apt install libguestfs-tools # федора - sudo dnf install libguestfs-tools
+    (Если застрянешь на .ova, делай `tar -xf ...ova`.)
+        убунта: sudo apt install libguestfs-tools
+	федора: sudo dnf install libguestfs-tools
+	manjaro: pamac install guestfs-tools
         # На федоре после установки надо перезайти в систему.
         mkdir ./mount
         guestmount -a WinDev*Eval-disk001.vmdk -i --ro ./mount
@@ -323,9 +331,9 @@ REIB vs REISUB
         umount ./mount
         rm -r ./mount
     Копируем в систему: (тут owner исправляется автоматически)
-        sudo cp -r WindowsFonts /usr/local/share/fonts
+        sudo cp -r WindowsFonts -T /usr/local/share/fonts/WindowsFonts
     Или, копируем только себе:
-        cp -r WindowsFonts ~/.local/share/fonts/
+        cp -r WindowsFonts -T ~/.local/share/fonts/WindowsFonts
 
 [clock] [windows-dual-boot]
 Фикс кривых часов при дуал-буте с виндой
@@ -363,6 +371,7 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-useful-packages] [laptop] [overheating] [battery]
 Настройка скорости процессора (в основном для ноутбуков?).
+(на manjaro не ставь, там конфликт какой-то)
     sudo apt install cpufrequtils
 Теперь можно посмотреть информацию в `cpufreq-info`.
 Частота процессора определяется governor-ом.
@@ -377,6 +386,7 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-initial-setup] [-useful-packages] [laptop] [overheating] [battery]
 Чтобы ноут не грелся и ел меньше батареи
+На manjaro TLP стоит из коробки.
 Вариант 1:
     sudo apt install tlp
     sudo tlp start
@@ -388,6 +398,7 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 [-initial-setup] [-useful-packages] [laptop] [battery]
 Бережем время жизни батареи
 Это достигается запретом на полную зарядку.
+    На manjaro возможно оно как-то само включается? Проверить.
     Поставить tlp, как написано выше.
     sudo tlp-stat -b
     Он напишет что-то про допустимые диапазоны значений. У меня предлагал `STOP_CHARGE_THRESH_BAT0` переключать между 0 и 1.
@@ -547,7 +558,8 @@ Eсли потерял папки, делай так:
 
 [-initial-setup] [gui-themes] [visual-customization]
 Темы офомления (для xfce)
-Самая нормальная - Qogir
+Самая нормальная - Matcha
+Следом за ней - Qogir
     git clone https://github.com/vinceliuice/Qogir-theme
     cd Qogir-theme
     # После этого коммита у них отлетели иконки кнопок в заголовке окна, которые чинятся только установкой отдельной темы иконок: https://github.com/vinceliuice/Qogir-icon-theme
@@ -613,11 +625,13 @@ sudo apt install xdotool
 
 [-initial-setup] [autorun] [messengers]
 Автозапуск мессенджеров
-Телеграм умеет стартовать в трее: `путь/до/Telegram -startintray` (на федоре, если телеграм из пакета - то `telegram-desktop -startintray` - но пакет у них кривой, см. https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730).
-Дискорд тоже: `discord --start-minimized` (если ставил моим скриптом на федоре, `/usr/local/share/Discord/Discord --start-minimized`).
+Телеграм умеет стартовать в трее: `путь/до/Telegram -startintray`
+    (если телеграм из пакета - то `telegram-desktop -startintray` - но на федоре пакет кривой, см. https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730).
+Дискорд тоже: `discord --start-minimized`
+    (если ставил моим скриптом на федоре, `/usr/local/share/Discord/Discord --start-minimized`).
 
-[-initial-setup] [visual-customization]
-Меньше промежутки между значками на рабочем столе
+[visual-customization]
+Меньше промежутки между значками на рабочем столе (по дефолту не делай)
 На выбор:
     A. Настройка "Показывать значки на основном дисплее" (не знаю, почему она влияет). Или...
     B. Создай файл `~/.config/gtk-3.0/gtk.css`, если его нет. Впиши туда:
@@ -628,7 +642,7 @@ sudo apt install xdotool
     }
     В оригинале советовали использовать 1.7 вместо 1.4, на твое усмотрение.
 
-[-initial-setup] [+outdated] [visual-customization]
+[+outdated] [visual-customization]
 Убираем квадратные скобки в названиях свернутых окон в панели
 Открываем "редактор настроек" (xfce4-settings-editor), в нем открываем раздел xfce4-panel.
 Там находим пункт `/plugins/plugin-N`. N такое, чтобы напротив него было написано `tasklist`.
@@ -744,7 +758,10 @@ Escape - вернуться в дефолтный режим.
 [-initial-setup] [drivers] [sensors]
 Мониторим температуру
 Проц/видюха/...:
-    sudo apt install lm-sensors
+    Убунта:
+        sudo apt install lm-sensors
+    Manjaro:
+        pamac install lm_sensors
     sensors
 Жесткий диск:
     sudo apt install hddtemp
@@ -790,24 +807,40 @@ Escape - вернуться в дефолтный режим.
 
 [-initial-setup] [-useful-packages]
 Полезные пакеты
+    firefox
+        manjaro -> + firefox-i18n-ru
+    gcc
+    clang lld lldb
+        ubuntu -> [ставь новую версию из кастомного репозитория]
+        fedora -> + clang-tools-extra
     patchelf     (патчим исполняемые файлы, например меняем в них путь к динамическим библиотекам, т.е. rpath)
-    git cmake ninja-build
+    git
+    cmake
+        ubuntu -> + cmake-qt-gui
+        fedora -> + cmake-gui
+    ninja
+        fedora -> ninja-build
     kdiff3       (разрешитель конфликтов для git-а)
     wine
     qalculate-gtk (калькулятор)
     audacious    (музкальный проигрыватель; на федоре на забудь поставить плагины на форматы файлов, ниже есть инструкция)
     vlc          (проигрыватель видео)
+        ubuntu -> + vlc-l10n
     net-tools    (ifconfig и другие команды работы с сетью)
     unrar        (работа с rar-архивами)
+        ubuntu -> + rar (на других дистрибутивах это какой-то странный несвободный пакет)
     zstd         (поддержка zstd-архивов для tar и др.)
     geeqie       (нормальный просмотрщик изображений)
     krita        (граф. редактор и локализации для него)
+        ubuntu -> + krita-l10n
     deluge       (торрент-клиент, более приличный чем дефолтный transmission)
     xdotool      (управление окнами из консоли; альтернатива: wmctrl)
     yt-dlp       (скачивание видосов с ютуба, и многих вещей со многих сайтов; это форк, оригинал был youtube-dl)
+        manjaro -> не устанавливай опциональную зависимость phantomjs, выдает "пакет не найден"
     dconf-editor (редактор настроек)
     htop         (модный консольный диспечер задач)
     gparted      (редактор разделов)
+    btrfs-assistant
     gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
     ncdu         (то же самое, но минималистичный консольный вариант)
     xfce4-genmon-plugin (показ на панели вывода произвольных команд)
@@ -820,43 +853,43 @@ Escape - вернуться в дефолтный режим.
     fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
     potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
     qpdf         (разные манипуляции с pdf)
-    libguestfs-tools (монтировать диски от виртуальных машин)
+    guestfs_tools (монтировать диски от виртуальных машин)
+        ^ manjaro  |  ubuntu,fedora -> libguestfs-tools
     lm_sensors   (датчики температуры и прочего)
     peek         (запись гифок с экрана)
-Только федора:
-    gcc g++
-    clang clang-tools-extra lld lldb
-    cmake-gui
-    ImageMagick  (конвертер форматов картинок)
-    VirtualBox   (виртуальная машина)
+    imagemagick
+        fedora -> ImageMagick
+    virtualbox
+        manjaro -> когда спросит про host modules, выбирай dkms
+        fedora -> VirtualBox
+        ubuntu -> + virtualbox-ext-pack
+    tiled        (редактор карт)
+    gucharmap    (таблица символов, видимо та же, что по дефолту стоит на убунте)
+    freecad      (инженерное проектирование)
+    audacity     (звуковой редактор; бинарники с сайта у них кривые)
+        fedora -> audacity-freeworld (из rpmfusion, без суффикса есть в стандартной репе, но он хуже?)
+    telegram-desktop
+        fedora -> пакет кривой, качай оффициальный бинарник (https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
+    renderdoc    (отладчик графики)
+    fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
+    radeontop    (состояние видюхи AMD)
+    lmms         (музыкальный редактор)
+        ubuntu -> вроде не работают плагины VST? Ставь официальный AppImage вместо пакета, там работют.
+Только федора: (забытые пакеты, которые почему-то не стоят из коробки)
     engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
-    tiled        (редактор карт)
-    freecad      (инженерное проектирование)
-    gucharmap    (таблица символов, видимо та же, что по дефолту стоит на убунте)
     p7zip p7zip-plugins (архиватор 7z - без него гуй engrampa не понимает .7z-архивы)
     menulibre    (гуй управления .desktop-файлами)
 Федора с rpmfusion:
-    audacity-freeworld (без суффикса есть в стандартной репе, но он хуже?)
     # discord (его обновляют с задержкой, можно остаться без мессенджера; ниже есть ручная инструкция)
-    # telegram-desktop (пакет кривой, лучше ставь оффициальный бинарник - см. https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
 Только убунта:
-    gcc-13 g++-13
-    cmake-qt-gui
-    rar
-    imagemagick  (конвертер форматов картинок)
-    audacity     (звуковой редактор; бинарники с сайта у них кривые)
-    renderdoc    (отладчик графики)
     duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
+        fedora -> собирается из AUR, нафиг его
     rename       (массовое переименование файлов регулярками)
+        fedora -> собирается из AUR, нафиг его
     hardinfo     (информация о системе)
-    fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
+        fedora -> собирается из AUR, нафиг его
     libavcodec-extra (дополнительные кодеки, которые могут быть защищены патентами - часть пакета ubuntu-restricted-extras)
-    virtualbox virtualbox-ext-pack (виртуальная машина)
-    * Дополнения к пакетам:
-        * Локализации:
-            vlc-l10n
-            krita-l10n
 
 [-initial-setup]
 Неочевидные ошибки в настройках
@@ -865,10 +898,13 @@ Escape - вернуться в дефолтный режим.
     Вроде как уменьшает лаги полноэкранных приложений, да и вообще система кажется отзывчивее.
 * Терминал -> Прокручивать по мере вывода = (правильно) НЕТ
     Тогда он будет прокручивать только если у тебя скролл уже до упора внизу (т.е. правильное поведение).
-* Синхронизация времени не требует специальной настройки.
-    Хотя у тебя в настройках времени написано "вручную", это ок. Уже стоит пакет `systemd-timesyncd`, который сам с этим разбирается.
-* Сеансы и запуск -> Дополнительные -> Запускать службы GNOME при входе в систему = (правильно) ДА
-    Это дает как минимум гуй для разблокировки ssh-ключей - удобно.
+* Синхронизация времени.
+    Проверь `systemctl status systemd-timesyncd` и `systemctl status ntpd`, может быть оно уже включено.
+    * Manjaro -> ТРЕБУЕТ ВКЛЮЧЕНИЯ в manjaro settings manager
+    * В настройках xfce может быть ошибочно написано "вручную". Проверяй командами выше.
+ТОЛЬКО FEDORA:
+    * Сеансы и запуск -> Дополнительные -> Запускать службы GNOME при входе в систему = (правильно) ДА
+        Это дает как минимум гуй для разблокировки ssh-ключей - удобно.
 
 [-initial-setup] [video] [codecs] [dvd]
 Чиним не воспроизводящиеся dvd-диски
@@ -890,6 +926,8 @@ Escape - вернуться в дефолтный режим.
 Сейчас самый модный - "Модуль стаусного трея" с иконкой-рупором. Остальные модули уведомлений не нужны.
 Если этого нет:
     Оставь "область уведомлений", а за ней "модуль оповещений статуса" (фиолтеовый кружочек), убери "индикаторы" (серый кружочек) и наверное еще "модуль оповещений".
+Для управления питанием ставь отдельный модуль в панель, а не включай иконку в трее в менеджере питания.
+    Это дает изменение яркости скроллом, как минимум.
 
 [visual-customization] [icons] [bug-workaround]
 Иконка значка на рабочем столе сбрасывается!
@@ -1035,7 +1073,7 @@ systemd-analyze blame
     # Дефолтное имя ветки, если тебе это важно:
     git config --global init.defaultBranch master
     # -- Проверить текущий конфиг:
-    git config --all --show-origin
+    git config --list --show-origin
 
 [-initial-setup] [git] [vscode]
 GUI для интерактивного rebase в VSCode
@@ -1047,7 +1085,7 @@ GUI для интерактивного rebase в VSCode
 2. VSCode как редактор для всего.
     git config --global core.editor 'code -w'
 
-[-initial-setup] [git] [vscode]
+[git] [vscode]
 В VSCode, в подсказках слишком маленький размер шрифта на подписях справа
 Требуется исправление CSS. Есть расширения, которые это делают, но там все через одно место, и проще руками.
 Ниже приложен скрипт, он делает две вещи:
@@ -1132,7 +1170,7 @@ xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
 Убираем странное поведение хоткея Windows
 1. Хоткей Windows теперь стал работать как Ctrl+Escape, если одновременно с ним ничего не нажато. Этим он открывает меню whisker.
     Как убрать:
-    Это убирается в гуи автозапуска.
+    Это убирается в гуи автозапуска (убирай xcape)
     Если не получается, то можно руками:
         Создаешь файл `.config/autostart/xcape-super-binding.desktop`. Пишешь туда:
             [Desktop Entry]
@@ -1494,6 +1532,15 @@ Manjaro, похоже, требует задать этот пароль при 
 Заблокировать/отключить пароль:
     sudo passwd -l root
 
+[manjaro] [boot] [bug-workaround]
+Manjaro зависает при загрузке каждый второй раз
+У меня такое было в virtualbox. Вроде помогло `pamac reinstall plymouth`, а может само починилось.
+
+[manjaro] [-initial-setup]
+Убираем брендинг manjaro
+1. Из кнопки whisker menu. Там ищем иконку xfce4-menu.
+2. Из аватарки пользователя при логине - в lightdm gtk greeter settings выбираем "иконка" -> "avatar-default".
+
 
 
 [fedora]
@@ -1590,14 +1637,3 @@ sudo nano /etc/dnf/dnf.conf
     sudo sed 's|/usr/share/discord/Discord|/usr/local/share/Discord/Discord|' -i /usr/local/share/applications/discord.desktop
     sudo cp /usr/local/share/Discord/discord.png /usr/local/share/icons/
     rm discord.tar.gz
-
-
-
-[manjaro] [boot] [bug-workaround]
-Manjaro зависает при загрузке каждый второй раз
-У меня такое было в virtualbox. Вроде помогло `pamac reinstall plymouth`, а может само починилось.
-
-[manjaro] [-initial-setup]
-Убираем брендинг manjaro
-1. Из кнопки whisker menu. Там ищем иконку xfce4-menu.
-2. Из аватарки пользователя при логине - в lightdm gtk greeter settings выбираем "иконка" -> "avatar-default".
