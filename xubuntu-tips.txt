@@ -840,7 +840,7 @@ Escape - вернуться в дефолтный режим.
     dconf-editor (редактор настроек)
     htop         (модный консольный диспечер задач)
     gparted      (редактор разделов)
-    btrfs-assistant
+    btrfs-assistant (управление файловой системой btrfs)
     gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
     ncdu         (то же самое, но минималистичный консольный вариант)
     xfce4-genmon-plugin (показ на панели вывода произвольных команд)
@@ -870,11 +870,19 @@ Escape - вернуться в дефолтный режим.
         fedora -> audacity-freeworld (из rpmfusion, без суффикса есть в стандартной репе, но он хуже?)
     telegram-desktop
         fedora -> пакет кривой, качай оффициальный бинарник (https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
+    discord
+        ^ manjaro only?
     renderdoc    (отладчик графики)
     fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
     radeontop    (состояние видюхи AMD)
     lmms         (музыкальный редактор)
         ubuntu -> вроде не работают плагины VST? Ставь официальный AppImage вместо пакета, там работют.
+    visual-studio-code-bin
+        ^ manjaro
+    visual-studio-code-bin
+        ^ manjaro
+    elementary-xfce-icons
+        ^ manjaro
 Только федора: (забытые пакеты, которые почему-то не стоят из коробки)
     engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
@@ -1120,6 +1128,19 @@ GUI для интерактивного rebase в VSCode
 Готово! Для управления паролями из гуи сделай:
     sudo apt install seahorse
 Чтобы сбросить настроку, повтори `git config ...` с "" вместо последнего параметра, и в гуе сотри все пароли.
+
+[-initial-setup] [keyboard] [shortcuts]
+Нормальные шорткаты:
+    Win+C              qalculate-gtk
+    Win+E              mousepad
+    Win+F              exo-open --launch FileManager
+    Win+R              xfce4-appfinder
+    Win+T              xfce4-terminal
+    Win+W              exo-open --launch WebBrowser
+    Win+L              xflock4
+    Ctrl+Shift+Escape  xfce4-taskmanager
+    Win+PgUp/PgDown - пред/след рабочее место
+    Shift+Win+PgUp/PgDown - окно на пред/след рабочее место
 
 [-useful-packages] [file-formats]
 Открываем rpm-пакеты как архивы
