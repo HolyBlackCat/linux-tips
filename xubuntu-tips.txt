@@ -899,6 +899,10 @@ Escape - вернуться в дефолтный режим.
         fedora -> собирается из AUR, нафиг его
     libavcodec-extra (дополнительные кодеки, которые могут быть защищены патентами - часть пакета ubuntu-restricted-extras)
 
+[-initial-setup] [flatpak] [flathub]
+Добавляем flathub - дефолтный репозиторий flatpak
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
 [-initial-setup]
 Неочевидные ошибки в настройках
 Заметь: на Федоре настройки хоткеев для оконного менеджера могут работать через жопу после изменения и до перезахода в систему.
