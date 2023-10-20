@@ -1547,7 +1547,7 @@ crontab -e
 Ставим Minecraft
 Manjaro -> pamac install minecraft-launcher
     Это AUR, но оффициальный, сюда ведет ссылка с офсайта.
-
+    Он ставит все в `~/.minecraft`, как и другие официальные способы.
 
 [-initial-setup] [manjaro] [root] [password]
 Убираем root password, проверяем его наличие
