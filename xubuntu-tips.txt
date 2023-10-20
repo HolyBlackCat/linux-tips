@@ -134,6 +134,12 @@ GPT вероятно лучше, MBR - запасной вариант.
 Теперь мы должны работать полностью из оперативки.
 После установки и ребута, стоит сделать `sudo update-grub`.
 
+[-repair] [fstab] [gparted]
+Узнаем GUID-ы разделов для fstab
+Гуиды иногда меняются при редактировании (сдвигании?) разделов в gparted. Но не всегда.
+Посмотреть гуиды можно так:
+    lsblk -p -o NAME,SIZE,PARTLABEL,UUID
+
 [-install] [-initial-setup] [fedora]
 Глушим сообщение Booting Fedora...
     sudo nano /etc/default/grub
@@ -695,7 +701,7 @@ sudo apt install xdotool
 Нормальные форматы даты/времени:
     Короткий: (для часов в таскбаре)
         %-d %b, %R
-    Длинный: (для lightdm-gtk-greeter)
+    Длинный: (для lightdm-gtk-greeter, почему-то двойные пробелы там не работают)
         %A, %-d %B %Y, %R:%S
     Тултип часов:
         %A,  %-d %B %Y,  %R:%S%nМесяц %-m,  зона %Z (%:::z)
@@ -1144,6 +1150,17 @@ GUI для интерактивного rebase в VSCode
     Ctrl+Shift+Escape  xfce4-taskmanager
     Win+PgUp/PgDown - пред/след рабочее место
     Shift+Win+PgUp/PgDown - окно на пред/след рабочее место
+    PrintScreen        xfce4-screenshooter -fc
+    Shift+PrintScreen  xfce4-screenshooter -rc
+    Alt+PrintScreen    xfce4-screenshooter -wc
+
+[-initial-setup] [lightdm]
+Двигаем панель в lightdm gtk greeter
+    sudo nano /etc/lightdm/lightdm-gtk-greeter.conf
+Туда пиши:
+    panel-position = top
+или
+    panel-position = bottom
 
 [-useful-packages] [file-formats]
 Открываем rpm-пакеты как архивы
