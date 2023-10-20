@@ -1543,6 +1543,10 @@ crontab -e
         Total[x] - суммировать элементы
     Против странных крашей в Simplify иногда помогает не использовать цифры в именах переменных, но не всегда, см. https://github.com/Mathics3/mathics-core/issues/920
 
+[-useful-packages]
+Ставим Minecraft
+Manjaro -> pamac install minecraft-launcher
+    Это AUR, но оффициальный, сюда ведет ссылка с офсайта.
 
 
 [-initial-setup] [manjaro] [root] [password]
