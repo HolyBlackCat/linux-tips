@@ -815,7 +815,7 @@ Escape - вернуться в дефолтный режим.
 Полезные пакеты
     firefox
         manjaro -> + firefox-i18n-ru
-    gcc
+    gcc gdb
     clang lld lldb
         ubuntu -> [ставь новую версию из кастомного репозитория]
         fedora -> + clang-tools-extra
@@ -889,6 +889,7 @@ Escape - вернуться в дефолтный режим.
         ^ manjaro
     elementary-xfce-icons
         ^ manjaro
+    tree         (печатаем дерево папок)
 Только федора: (забытые пакеты, которые почему-то не стоят из коробки)
     engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
