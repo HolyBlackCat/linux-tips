@@ -1304,6 +1304,7 @@ xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
 
 [virtualbox] [usb]
 Пробрасываем USB-устройства в VirtualBox
+Также это чинит постоянный ворнинг про "не получается опросить USB-устройства".
     sudo apt install virtualbox-ext-pack #Ставим экстеншоны для VirtualBox.
     sudo usermod -aG vboxusers $USER #Добавляем себя в специальную группу, чтобы разрешить доступ к USB.
 Наверное стоит перезайти в систему.
