@@ -1302,6 +1302,21 @@ xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
     /opt/wine-staging/bin/wine EpicGamesLauncher.exe -SkipBuildPatchPrereq -opengl
 Будет долго грузиться. Жди. И лучше не снимай фокус с окна, но не обязательно.
 
+[virtualbox] [btrfs] [cow] [copy-on-write]
+Virtualbox тормозит на BTRFS, из-за его copy-on-write. Как чинить
+Отключаем copy-on-write на ПАПКЕ:
+    chattr +C папка
+На существующем файле нельзя отключить, только на папке или на пустом файле можно.
+Отключай на папке куда будут создаваться виртуалки.
+
+[virtualbox] [dkms] [drivers] [manjaro]
+На Manjaro DKMS для Virtualbox ругается на недостающие хедеры
+Хедеры надо поставить, пока не совсем ясно, какой способ самый правильный.
+Пока рекомендую так:
+    pamac install linux-headers
+Он спросит какие хедеры, выбирай для текущего ядра (как в `uname -r`).
+Еще, он похоже всегда ставит для текущего ядра в дополнение к тому, что ты выбрал, поэтому ошибиться сложно.
+
 [virtualbox] [usb]
 Пробрасываем USB-устройства в VirtualBox
 Также это чинит постоянный ворнинг про "не получается опросить USB-устройства".
