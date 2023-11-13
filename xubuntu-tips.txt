@@ -895,13 +895,15 @@ Escape - вернуться в дефолтный режим.
     radeontop    (состояние видюхи AMD)
     lmms         (музыкальный редактор)
         ubuntu -> вроде не работают плагины VST? Ставь официальный AppImage вместо пакета, там работют.
+    tree         (печатаем дерево папок)
     visual-studio-code-bin
         ^ manjaro
     visual-studio-code-bin
         ^ manjaro
     elementary-xfce-icons
         ^ manjaro
-    tree         (печатаем дерево папок)
+    onlyoffice-desktopeditors
+        ^ manjaro
 Только федора: (забытые пакеты, которые почему-то не стоят из коробки)
     engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
@@ -1594,6 +1596,7 @@ crontab -e
 Manjaro -> pamac install minecraft-launcher
     Это AUR, но оффициальный, сюда ведет ссылка с офсайта.
     Он ставит все в `~/.minecraft`, как и другие официальные способы.
+    Когда попросит выбрать java runtime, `jre-openjdk` выглядит правильно.
 
 [-initial-setup] [manjaro] [root] [password]
 Убираем root password, проверяем его наличие
