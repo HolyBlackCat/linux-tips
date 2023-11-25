@@ -875,6 +875,7 @@ Escape - вернуться в дефолтный режим.
         ^ manjaro  |  ubuntu,fedora -> libguestfs-tools
     lm_sensors   (датчики температуры и прочего)
     peek         (запись гифок с экрана)
+    gifski       (конвертер видео в качественные гифки)
     imagemagick
         fedora -> ImageMagick
     virtualbox
@@ -896,6 +897,7 @@ Escape - вернуться в дефолтный режим.
     lmms         (музыкальный редактор)
         ubuntu -> вроде не работают плагины VST? Ставь официальный AppImage вместо пакета, там работют.
     tree         (печатаем дерево папок)
+    obs-studio   (записываем видео с экрана)
     visual-studio-code-bin
         ^ manjaro
     visual-studio-code-bin
