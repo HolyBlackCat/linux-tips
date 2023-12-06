@@ -1746,3 +1746,12 @@ sudo nano /etc/dnf/dnf.conf
     sudo sed 's|/usr/share/discord/Discord|/usr/local/share/Discord/Discord|' -i /usr/local/share/applications/discord.desktop
     sudo cp /usr/local/share/Discord/discord.png /usr/local/share/icons/
     rm discord.tar.gz
+
+[manjaro] [aur]
+Чиним отлетевшее обновление пакетов из AUR.
+Это исправляет ошибки вида: "Не удалось сгенерировать информацию по ??" (в гуи pamac),
+    или "ОШИБКА: install-файл (??.install) не существует или не является обычным файлом." (в консоли pamac).
+Через гуи чинится так:
+    Настройки -> Сторонние -> AUR -> Каталог сборки -> Очистить
+Или возможно через консоли так:
+    pamac clean -bu
