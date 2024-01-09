@@ -1584,6 +1584,16 @@ crontab -e
     sudo dpkg-reconfigure tzdata
 
 [-initial-setup] [-useful-packages]
+Как поставить докер
+Пакет:
+    Manjaro: pamac install docker
+Общая настройка:
+    systemctl enable docker
+    systemctl start docker
+    sudo usermod -aG docker $USER
+    Перезайти в систему.
+
+[-initial-setup] [-useful-packages]
 Ставим Mathics3, опенсурсную систему компьютерной алгебры
     Есть еще SageMath - он постарее, но уж очень корявый.
 Это имитация Wolfram Mathematica. Неполная, но какие-то простые функции одинаковые и там и там. Можно пробовать гуглить как будто используешь Mathematica.
