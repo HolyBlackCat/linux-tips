@@ -1559,6 +1559,13 @@ crontab -e
 Если его просто скрыть из гуя, то FF время от времени будет про него напоминать.
 Вместо этого, иди в `about:config` и там выключи `browser.tabs.firefox-view`.
 
+[-initial-setup] [-useful-packages] [lock-screen]
+Менее лагучая блокировка экрана
+На manjaro по дефолту экран медленно анлочится - нужно сначала потыкать мышкой, чтобы он проснулся, и только потом вводить пароль.
+Это чинится установкой: pamac install xfce4-screensaver
+А потом в редакторе настроек включаем его:
+    xfce4-session -> General -> LockCommand = пустая строка
+
 [bug-workaround] [crash]
 Возможные причины крашей и зависаний
 * NO_HZ - Если в логах вылезает NOHZ, можно попробовать его отключить, добавив `nohz=off` во флаги ядра: `sudo nano /etc/default/grub`, в `GRUB_CMDLINE_LINUX_DEFAULT`, потом `sudo upgrade-grub`.
