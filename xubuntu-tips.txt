@@ -1562,9 +1562,12 @@ crontab -e
 [-initial-setup] [-useful-packages] [lock-screen]
 Менее лагучая блокировка экрана
 На manjaro по дефолту экран медленно анлочится - нужно сначала потыкать мышкой, чтобы он проснулся, и только потом вводить пароль.
-Это чинится установкой: pamac install xfce4-screensaver
+Это чинится так:
+    pamac install xfce4-screensaver
+    pamac remove light-locker
 А потом в редакторе настроек включаем его:
     xfce4-session -> General -> LockCommand = пустая строка
+В принципе light-locker можно не удалять, но тогда нужно дополнительно отключить его в настройках питания, а то иногда сам включается.
 
 [bug-workaround] [crash]
 Возможные причины крашей и зависаний
