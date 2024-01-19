@@ -1562,13 +1562,31 @@ crontab -e
 [-initial-setup] [-useful-packages] [lock-screen]
 Менее лагучая блокировка экрана
 На manjaro по дефолту экран медленно анлочится - нужно сначала потыкать мышкой, чтобы он проснулся, и только потом вводить пароль.
-Это чинится так:
+Возможно есть простой фикс - в настройках электропитания поставить, чтобы лочилось при начале скринсейвере, а не при конце - проверь.
+А вот этот фикс точно рабочий:
     pamac install xfce4-screensaver
 Потом в редакторе настроек включаем его:
     xfce4-session -> General -> LockCommand = пустая строка
 Потом в настройках питания -> безопасность ставим "блокировать экран" = "никогда", и снимаем галочку "блокировать при переходе в ждущий режим".
 Просто удалять пакет `light-locker` похоже вредно, потому что эти настройки скрываются, но их эффект не пропадает до конца. Возможно можно удалить после
     изменения настроек.
+
+[-initial-setup] [mount] [root]
+Mount разделов в xfce без рутовых прав
+Раньше работало из коробки, но в manjaro теперь не работает. Хмм.
+Чинится так:
+    sudo nano /etc/polkit-1/rules.d/10-nopwd-mount.rules
+Туда пишем это: (из https://superuser.com/q/1192269)
+    // Allow udisks2 to mount devices without authentication for users in the "wheel" group.
+    polkit.addRule(function(action, subject) {
+        if ((action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
+             action.id == "org.freedesktop.udisks2.filesystem-mount") &&
+            subject.isInGroup("wheel")) {
+            return polkit.Result.YES;
+        }
+    });
+Потом ребут.
+
 
 [bug-workaround] [crash]
 Возможные причины крашей и зависаний
