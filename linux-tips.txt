@@ -851,7 +851,8 @@ Escape - вернуться в дефолтный режим.
     geeqie       (нормальный просмотрщик изображений)
     krita        (граф. редактор и локализации для него)
         ubuntu -> + krita-l10n
-    deluge       (торрент-клиент, более приличный чем дефолтный transmission)
+    deluge-gtk   (торрент-клиент, более приличный чем дефолтный transmission)
+        ubuntu -> deluge
     xdotool      (управление окнами из консоли; альтернатива: wmctrl)
     yt-dlp       (скачивание видосов с ютуба, и многих вещей со многих сайтов; это форк, оригинал был youtube-dl)
         manjaro -> не устанавливай опциональную зависимость phantomjs, выдает "пакет не найден"
@@ -1780,7 +1781,7 @@ sudo nano /etc/dnf/dnf.conf
     sudo dnf install google-chrome-stable
 
 [fedora] [discord]
-Ставим Discord
+Ставим Discord, если нет пакета
 Создай такой скрипт и запусти. Им же потом можно обновлять, даже не закрывая дискорд:
     cd ~/.downloads
     rm -f discord.tar.gz
@@ -1792,6 +1793,13 @@ sudo nano /etc/dnf/dnf.conf
     sudo sed 's|/usr/share/discord/Discord|/usr/local/share/Discord/Discord|' -i /usr/local/share/applications/discord.desktop
     sudo cp /usr/local/share/Discord/discord.png /usr/local/share/icons/
     rm discord.tar.gz
+
+[-initial-setup] [discord]
+Делаем так, чтобы Discord не настаивал на обновлении
+Открываем:
+    nano ~/.config/discord/settings.json
+Должен открыться json. Туда дописываем:
+    "SKIP_HOST_UPDATE": true
 
 [manjaro] [aur]
 Чиним отлетевшее обновление пакетов из AUR.
