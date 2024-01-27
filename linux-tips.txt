@@ -1809,3 +1809,88 @@ sudo nano /etc/dnf/dnf.conf
     Настройки -> Сторонние -> AUR -> Каталог сборки -> Очистить
 Или возможно через консоли так:
     pamac clean -bu
+
+[-initial-setup] [wacom] [tablet]
+Настраиваем планшет Wacom
+Мануалы, на всякий:
+    https://wiki.archlinux.org/title/Graphics_tablet
+    https://man.archlinux.org/man/wacom.4
+1. Обычные настройки
+    Ставим программу xsetwacom (и правильный драйвер) - это для xorg, вероятно на wayland будет другой пакет?
+        pamac install xf86-input-wacom
+    Ребут, чтобы драйвер врубился.
+    - Экспериментируем с настройками:
+        Ищем номер (id) девайса, и запоминаем его (их может быть несколько, я выбрал stylus вместо eraser)
+            xsetwacom --list devices
+        ID иногда меняется на перевтыке, но пофиг, потому что он нужен только временно, чтобы играть с настройками.
+        Маппим на правильный монитор: (чтобы координаты мышки были нормальные)
+            В xrandr находим имя монитора планшета (мой - `HDMI-A-0`)
+            Делаем так: (9 = id)
+                xsetwacom --set 9 MapToOutput HDMI-A-0
+        Кнопка на стилусе:
+            По дефолту это средняя кнопка, так менять на правую:
+                xsetwacom --set 9 button 2 3
+                    Первое число - id кнопки (1 = тычка в экран, 2+ - кнопки на стилусе)
+                    Второе число - эффект (1 = левая, 2 = средняя, 3 = правая)
+            По дефолту она срабатывает сразу когда нажата. Можно отложить срабатывание до тычки в экран:
+                xsetwacom --set 9 TabletPCButton on
+    - Делаем настройки перманентными:
+        Есть вариант через конфиги xorg, но там нельзя делать MapToOutput, поэтому даже не пробуем.
+        Делаем скрипт для применения настроек:
+            sudo mkdir -p /usr/local/share/scripts
+            sudo nano /usr/local/share/scripts/setup_wacom_tablet.sh
+        Туда пишем:
+            #!/bin/bash
+            for i in $(seq 8); do
+                TABLET_ID=$(xsetwacom --list devices | grep -Po -m1 '(?<=id: )\d+(?=\s+type: STYLUS)')
+                [[ $TABLET_ID ]] && break
+                sleep 1
+            done
+            [[ $TABLET_ID ]] || echo "Timed out while waiting for the tablet!"
+            [[ $TABLET_ID ]] || exit
+            xsetwacom --set $TABLET_ID MapToOutput HDMI-A-0
+            xsetwacom --set $TABLET_ID button 2 3
+        Проверь, что первая команда у тебя находит id-шник.
+        Тут `seq 8` - это сколько секунд ждать планшет.
+        Сделай исполняемым:
+            sudo chmod +x /usr/local/share/scripts/setup_wacom_tablet.sh
+        Теперь сделай systemd unit для него:
+                (возможно необязательно, но так как-то получше, см. ниже)
+                (заметь, это user а не system - потому что `xsetwacom` нужны работающие иксы)
+            sudo mkdir -p /usr/local/lib/systemd/user/
+            sudo nano /usr/local/lib/systemd/user/wacom-custom-settings.service
+        Туда пиши:
+            [Unit]
+            Description=Wacom custom configuration
+            [Service]
+            Type=oneshot
+            ExecStart=/usr/local/share/scripts/setup_wacom_tablet.sh
+        Теперь автозапуск при подключении планшета (но это не срабатывает если он уже был воткнут при включении, ниже отдельно настраиваем)
+        Узнай usb vendor id планшета. В выводе `lsusb`, будет `ABCD:EFGH`, первые 4 цифры - этот самый vendor id. У меня - 056a
+        Cоздай правило:
+            sudo nano /etc/udev/rules.d/99-wacom.rules
+        Туда пиши: (idVendor вставь свой) (вообще, он умеет и скрипты напрямую запускать, но, говорят, долгие команды нехорошо сюда писать? поэтому systemd)
+            ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="056a", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}+="wacom-custom-settings.service"
+        И дополнительно автозапуск при логине
+            Прогуляйся в меню автозапуска, и туда добавь команду: systemctl --user status wacom-custom-settings
+            Наверное можно сделать автозапуск через systemd, но у меня быстро не взлетело, поэтому пофиг
+        Ребут и проверяй. Потом кнопкой выключи и включи планшет, проверь что не слетело.
+2. Настройки экрана (например яркость)
+    Эти настройки все перманентные, записываются на планшет.
+    Источник: https://www.davidrevoy.com/article710/cintiqs-on-gnu-linux-how-to-setup-brightness-contrast-and-more
+    Поставь утилиту: (она в целом для настройки любых экранов)
+        pamac install ddcutil
+    Для работы нужно включить модуль (он выключается при ребуте, но пофиг, ведь настройки запоминаются)
+        sudo modprobe i2c-dev
+    Узнай ID (у автора эта команда плюсом выключала дисплей, поэтому редирект в файл на всякий)
+        sudo modprobe detect >1.txt
+    У меня ID = WAC
+    Посмотри список фичей:
+        sudo ddcutil --mfg=WAC capabilities
+    У меня яркость (ака backlight) имеет id 6b, и дефолтное значение 75
+    Читать яркость:
+        sudo ddcutil --mfg=WAC getvcp 6b
+    Менять яркость: (запоминается планшетом) (50 - норм значение)
+        sudo ddcutil --mfg=WAC setvcp 6b 50
+    Еще там можно язык гуя поменять, у меня на русский так: (обрати внимание, правое число всегда десятичное! даже если в выводе предлагают hex)
+        sudo ddcutil --mfg=WAC setvcp cc 9
