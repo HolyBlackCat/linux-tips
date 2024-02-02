@@ -1121,12 +1121,17 @@ systemd-analyze blame
     git config --global core.editor nano
     git config --global merge.tool kdiff3 # Запускать командой `git mergetool` когда есть конфликты.
     git config --global diff.guitool kdiff3
-    # Принудительно SSH вместо HTTPS для гитхаба. Это лучше, чем руками указывать SSH-ный URL, потому что на сабмодули будет действовать само.
-    # Отменить можно так: git config --global --unset url.git@github.com:.insteadOf
-    git config --global url.git@github.com:.insteadOf https://github.com/
-    # Дефолтное имя ветки, если тебе это важно:
+Принудительно SSH вместо HTTPS для гитхаба при пуше.
+    Это лучше, чем руками указывать SSH-ный URL, потому что на сабмодули будет действовать само.
+    Только для пушей: (удобно для публичных реп)
+        git config --global url.git@github.com:.pushInsteadOf https://github.com/
+        # Отменить можно так: git config --global --unset url.git@github.com:.pushInsteadOf
+    И для пушей, и для пуллов: (удобно для приватных реп) (можно вписать это локально только для одной приватной репы, если там сабмодули)
+        git config --global url.git@github.com:.insteadOf https://github.com/
+        # Отменить можно так: git config --global --unset url.git@github.com:.insteadOf
+Дефолтное имя ветки, если тебе это важно:
     git config --global init.defaultBranch master
-    # -- Проверить текущий конфиг:
+Проверить текущий конфиг:
     git config --list --show-origin
 
 [-initial-setup] [git] [vscode]
@@ -1896,3 +1901,97 @@ sudo nano /etc/dnf/dnf.conf
         sudo ddcutil --mfg=WAC setvcp 6b 50
     Еще там можно язык гуя поменять, у меня на русский так: (обрати внимание, правое число всегда десятичное! даже если в выводе предлагают hex)
         sudo ddcutil --mfg=WAC setvcp cc 9
+
+[docker]
+Докер для чайников
+Скачать образ
+    docker image pull IMAGE
+Создать интерактивный контейнер
+    docker container create -it --name <NEW_CONTAINER> <IMAGE> /usr/bin/bash
+  Дополнительные опции: (перед именем контейнера)
+    Дефолтный юзер (можно потом поменять)
+        -u <USERNAME>
+    Проброс видюшки
+        Общая часть
+            -env=DISPLAY --volume=/tmp/.X11-unix:/tmp/.X11-unix:ro
+        Добавить для AMD (для NVidia надо исследовать)
+            --device /dev/dri
+        По слухам, может понадобиться запустить эту команду на хосте. Но похоже при этом способе не нужно. `xhost +local:docker`
+Запустить контейнер:
+    docker container start <CONTAINER>
+Остановить контейнер:
+    docker container stop <CONTAINER>
+Подключиться к работающему контейнеру:
+    docker attach <CONTAINER>
+Запустить разовую команду (неважно, в работающем контейнере или нет?)
+    docker container exec -it <CONTAINER> /usr/bin/bash
+  Из под рута:
+    docker container exec -it -u root <CONTAINER> /usr/bin/bash
+  Здесь `-it` значит "интерактивно". Если не нужно, можно не писать.
+Полезная команда для убунты в докере - подготовить ее к интерактивной работе и доставить всякие полезные пакеты.
+    unminimize
+Убираем варнинг убунты про локали (ругается например perl):
+    sudo apt install locales
+    sudo locale-gen en_US.UTF-8
+    sudo update-locale LANG=en_US.UTF-8
+Меняем дефолтного юзера (какой-то тупой способ, но работает)
+    * Останавливаем контейнер
+    * sudo nano $(docker inspect --format='/var/lib/docker/containers/{{.Id}}/config.v2.json' CONTAINER)
+        * Там ищем `"User": ""`, и вместо пустой строки пишем юзернейм.
+    * sudo systemctl restart docker
+Создаем image из контейнера:
+    docker commit <CONTAINER> <NEW_IMAGE>
+Подключаем GPU к уже существующему контейнеру
+    Надо было при создании указывать! Теперь делай `docker commit`, и пересоздавай контейнер из image.
+
+
+[sudo] [user]
+Даем sudo-права
+Это чинит `user is not in the sudoers file.  This incident will be reported.`
+    sudo adduser USERNAME sudo
+
+[user]
+Создаем пользователя
+Создаем:
+    sudo useradd -m -g sudo USERNAME
+    # -m - создать домашнюю директорию
+    # -g sudo - добавить в группу, которая умеет делать sudo - опционально, конечно
+Задаем пароль:
+    sudo passwd USERNAME
+Задаем нормальный шелл:
+    sudo chsh USERNAME
+    # Вводим /bin/bash
+Включаем цветной промпт в терминале:
+    nano ~/.bashrc
+    # Раскомментируем там `force_color_prompt=yes`.
+
+[ssh] [ssh-agent]
+Настраиваем ssh-agent
+Это программа, которая запоминает ssh-ключи и пароли от них
+Проверить известные ключи:
+    ssh-add -l
+Запустить агент, если не запущен:
+    eval `ssh-agent -s`
+Добавить ключ:
+    ssh-add <FILE>
+Убрать ключ:
+    ssh-add -d <FILE>
+Убрать все добавленные вручную ключи:
+    ssh-add -D
+
+[git] [ssh]
+Используем конкретный ssh-ключ для конкретного репозитория
+Редактируем конфиг:
+    nano ~/.ssh/config
+Туда пишем: (`work_github` - произвольное имя)
+    Host work_github
+        HostName github.com
+        User git
+        AddKeysToAgent yes
+        IdentitiesOnly yes
+        IdentityFile ~/.ssh/work_git
+Теперь клонируем так:
+    git clone work_github:RepoUser/RepoName
+Если есть сабмодули, то в папке с репозиторием делаем так:
+    git config url.work_github:.insteadOf https://github.com/
+    А потом обновляем сабмодули
