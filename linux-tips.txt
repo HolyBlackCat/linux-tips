@@ -271,22 +271,26 @@ REIB vs REISUB
 [-initial-setup] [bash] [prompt]
 Настраиваем prompt в bash
 Раззипуй этот шелскрипт (`base64 -d 1.txt | gzip -d >_hbc_bash_prompt.sh`, был сжат `gzip -c9 _hbc_bash_prompt.sh | base64 >1.txt`):
-    H4sICELp0WQCA19oYmNfYmFzaF9wcm9tcHQuc2gAdVTbUtswEH33V2xJZgwDmISWTjtMpoVACw9c
-    hktf4oyj2OtYRZE8lpzAMPx7d+Uk5eonS6vdc87ukVpwYtTDoRLpXV+40EJaW2emMBa2gLIy09Jt
-    wawbBC041dYJpWAuXQEjW2cG0hKSYpwmfDppTkeUt4Mu3aFlLhVG2c4o4vR+gekdyBzmGFYIUsMh
-    ZUUUuSkk4TZhq0NHJ5TadmgdZlsgPStTSswgJwj4hZmpBG2OXuF4FimRUOik0cSEkAlwAGv37cfD
-    g+uT5M/x1fXpxfn20xp86sE9DANXoG7oCT1BoOVCNjgDArJ6On0AbfR2hrmolYOZUDVy0MqJFgoM
-    pVRg00qWzvK+NpxbpwVRj4LL627P6z8x5s6Xz2udMj+YoMZKOKknz2BXDRFliTrzFTkqqko8RHDB
-    aHNp8Y36mUNWDGZGBypJ7SN8EMqZCXLSFhUe1w4mcoYahG4qcn/hL818hSdJhXV1njOyV3B1cXZ5
-    k/Qvzs4Ozo82e+uJn3lDl/s9FTrbYIkHUDQihYNcVsQgNxWgoFYsjgHeY1qz+i0QzlGEplpbbsHI
-    VaIcwRiVmUfBC4wMx/Uk4fj6BjwGQF+SnBz2kwW185urg8tee3397e5md2MjeAqC9zivirXgNzrf
-    ZSWoE3hPPUlNhhGcTrRhszo2rqbZ4nwpxZJNKdQIwizylZRJyRLH/d5a+8ea32H/DaD9lhn0etCF
-    4dCf8i6ExUfpHb/IZbDgd73g57CaSnadk46m7qPssDAexDjs7Mdz2hjE9c+4GMYiHobLApeV1O61
-    vOcEj/t8IzrvEiKEzQZi0Nn/3p3Gw1arWdFvrEN/EJXF1xmL0H8dt5aMSC6x9Kpk5JDUmephJWMJ
-    8vnb/t7+7pc9rs5SYAm9yzvzWK/AV/puCn5SMpkKqri8MwpzByb3/4upvdR8e3rEY3hfNb0JzVuY
-    GkU12cpcqDLGRR+05ivza6/YwcedaUP4zojrcnVR+CY1MOx7CD+4ECH4/4/uRIe9Txj/AC7/wIPn
-    BQAA
+    H4sICM1E2GUCA19oYmNfYmFzaF9wcm9tcHQuc2gAdVRtT+NGEP7uXzElkQICTKC9qhWKWshxhQ9A
+    xEulKo6cjT22t2x2Le86ITrdf+/M2nHvgFiKlN2ZnWeeZ156cG3U5lKJ5GUs3MBCUltnlrAQtoCy
+    MsvSHcHqNAh6cKOtE0rBWroC5rZODSQlxMUiidk7brxDeneCLjmhYyYVhunJPOTn4wKTF5AZrHFQ
+    IUgNl/QqJMtTIQm3MVs9cOSh1LFD6zA9AumzMqXEFDKCgC+YmkrQ5fwNjs8ioSQUOmk0ZULIBDiF
+    vdf+18uLx+v476uHx5v7u+Nve/DTCF5hFrgCdZOe0DkCHVva4AwISOvlcgPa6OMUM1ErByuhamSj
+    lbkWCgw9qcAmlSyd5Xtt+G2dFJR6GEweT0ee/7UxLz58VuuE84McNVbCSZ1/B9sJIsoSdeojslVU
+    ldiEcM9oa2nxHfuVQ2YMZkUOlST5CB+EciZHfnREgRe1g1yuUIPQTUTWF/6lmnd4klhYV2cZI3sG
+    D/e3k6d4fH97e3H3+XC0H/uaN+my3kuh0wOmeAFFQ1I4yGRFGWSmAhQkResG+IpJzeyPQDhHFqpq
+    bVmCuatEOYcFKrMOgx8wUlzUecz2/QP4GgB9cXx9OY7b1O6eHi4mo/7+/vvbw9ODg+BbEHyUcxes
+    B3+h8yorQUrgK2mSmBRDuMm14WZ13LiaaovrLRVLbUqmhhCmoY+kTEItcTUe7fX/2Ava4P+YGpYy
+    Lxw9J7rcV6mXnBG5X0UlLfWDp+4l25i6glRaV8mFVytsQz1rRkdN+hpF3iQcCUm6lqS2hSvtqBd5
+    QA1VGvnE0opOfv4prpFo0H0zb4NPar6k1mtaXGQcbH6ssKuK98OkMNB/L3VDl+dt+pEZKBCcwWzm
+    3fzYQfuRXkN/yORWs8e2IJTCUvKYOelUmymP1CCaRjgbnkdruphG9Z9RMYtENBtsA0yIuXtbz+8z
+    vBrzChh+mBAhHDYQ0+H576fLaNbrNSf6G+mBd0Rl8e2L1vQ/j2dLk0djYWmNpjQSiTPVpqOxBfn5
+    t/NP52e/fOLoTAW20Gd8s450B97xeyp4h6YyERRxuyQUZg5Mtm0sLvmPnJ9vPsNoF2tags3yT4yi
+    mNyIHKgyxoU7pPmV8+t32cFuZfow+KDEddm1Jq+OBoYHHQY7NsAA/P9dS2DIw04Y/wH/ptts2AYA
+    AA==
 Допиши в `nano ~/.bashrc` в конец `source path/to/_hbc_bash_prompt.sh`.
+Может требоваться ручная подстройка в зависимости от дистрибутива. Проверь, что после зафейлившихся команд рисуется красный символ, но только один раз.
+Если это криво работает, читай комменты в скрипте.
 
 [fonts]
 Куда ставить шрифты
