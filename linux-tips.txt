@@ -2011,3 +2011,10 @@ sudo nano /etc/dnf/dnf.conf
 Если есть сабмодули, то в папке с репозиторием делаем так:
     git config url.work_github:.insteadOf https://github.com/
     А потом обновляем сабмодули
+
+[ssh] [ssh-agent] [manjaro] [bug-workaround]
+Не стартует ssh-agent автоматически
+Это какая-то временная кривизна, лечится так: export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gcr/ssh
+Если тебе это помогло, добавь это в автозапуск:
+    sudo nano /etc/profile.d/gcr-ssh-agent.sh
+И туда вписываешь эту команду.
