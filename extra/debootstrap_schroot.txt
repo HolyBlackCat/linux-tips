@@ -1,0 +1,108 @@
+Способ настроить удобное сборочное окружение ubuntu в chroot на любом другом дистрибутиве. 
+
+
+pamac install debootstrap schroot
+
+sudo mkdir -p /home/holyblackcat/.chroots/builder-ubuntu-stable
+
+# Replace `jammy` with the ubuntu release name
+sudo debootstrap --variant=minbase jammy /home/holyblackcat/.chroots/builder-ubuntu-stable http://archive.ubuntu.com/ubuntu/
+
+sudo nano /etc/schroot/chroot.d/builder_ubuntu_stable.conf
+
+    [builder_ubuntu_stable]
+    type=directory
+    directory=/home/holyblackcat/.chroots/builder-ubuntu-stable
+    users=holyblackcat #Which users can access this chroot.
+    root-users=holyblackcat #Which users can access it without password.
+
+Где:
+    users - кому можно юзать этот chroot
+    root-users - кому можно его юзать без ввода пароля
+
+
+sudo nano /etc/schroot/default/fstab
+    В конец дописываешь это, чтобы примонтировать съемные носители:
+
+    /run/media      /run/media      none    rw,bind         0       0
+
+
+Как чинить ошибки:    
+*   E: 20nssdatabases: /usr/bin/stat: cannot statx '/etc/networks': No such file or directory
+    E: builder_ubuntu_stable-a483703b-716c-4ac2-b084-755772b069d8: Chroot setup failed: stage=setup-start
+        Делай (снаружи)
+            sudo nano /etc/schroot/default/nssdatabases
+        И закомментируй там networks
+*   "not in sudoers file"
+    Тут дело в том, что убунта использует группу `admin`, а арч и прочие - `wheel` для тех же целей.
+    Помогает это: (снаружи)
+        sudo groupadd admin
+        sudo usermod -a -G admin $USER
+    Дальше релогин (либо `newgrp admin` чтобы временно получить шелл с этой группой без релогина)
+*   chown: invalid group: 'root:staff'
+    dpkg: error processing package fontconfig-config (--configure):
+        Снаружи chroot:  sudo groupadd staff
+        Потом внутри chroot:  sudo dpkg --configure -a
+*   dpkg: unrecoverable fatal error, aborting:
+     unknown system group 'messagebus' in statoverride file; the system group got removed
+        Снаружи chroot:  sudo groupadd messagebus
+        Потом внутри chroot повтори установку пакета, потому что с такой ошибкой ничего не установилось.
+
+Теперь можно открыть шелл так:  schroot -c builder_ubuntu_stable
+    Припиши `-u root` чтобы открыть рута.
+
+Минимальные пакеты:
+    schroot -c builder_ubuntu_stable -u root apt install sudo software-properties-common apt-utils
+    schroot -c builder_ubuntu_stable -u root add-apt-repository universe
+    schroot -c builder_ubuntu_stable -u root apt install nano wget aptitude file
+        Если спросит, перезаписать ли файл, можно нажимать `N`.
+
+Ставим новый GCC:
+    Сначала смотрим, есть ли он вообще. В одном из двух мест:
+        https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/ppa?field.series_filter=jammy
+        https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test?field.series_filter=jammy
+    Потом ставим так: (суффикс /test или /ppa, смотря что нашел выше)
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo apt upgrade
+        sudo apt install gcc-13 g++-13
+    Если что, первая команда отменяется с ключом -r
+
+Регистро-независимые подсказки в bash
+    Внутри chroot делай:  sudo nano /etc/inputrc
+    В конец допиши
+        set completion-ignore-case On
+
+Новый кланг:
+    VER=18
+    wget https://apt.llvm.org/llvm.sh
+    chmod +x llvm.sh
+    sudo ./llvm.sh $VER
+    rm llvm.sh
+    sudo apt install clang-tidy-$VER clang-format-$VER clang-tools-$VER
+    sudo apt install libc++-$VER-dev libc++abi-$VER-dev
+    unset VER
+
+
+Как запускать приложения из chroot снаружи него
+    LD_LIBRARY_PATH не помогает. Пишут, что им невозможно нормально подменить glibc,
+        потому что его версия должна совпадать с версией ld.so (динамического линковщика, т.е. загрузчика шареных библиотек в рантайме)
+    Помогает вот такой маневр:
+        ~/.chroots/builder-ubuntu-stable/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 --library-path ~/.chroots/builder-ubuntu-stable/usr/lib/x86_64-linux-gnu/ ИМЯ_ЭКЗЕШНИКА
+    Это как LD_LIBRARY_PATH, но лучше
+
+
+Сессии
+    Это помогает для ускорения запуска приложений
+
+    Создать: (вообще имена могут совпадать, но для наглядности)
+        schroot -c builder_ubuntu_stable -b -n builder_ubuntu_stable_session
+    Уничтожить:
+        schroot -e -c builder_ubuntu_stable_session
+    Список: (и сессии, и chroot-ы)
+        schroot -la
+    
+    Запустить команду в сессии:
+        schroot -r -c builder_ubuntu_stable_session ...
+
+    Сессии протухают при ребуте, их можно реанимировать так: (избыточный вызов ничего не делает)
+        schroot --recover-session -c builder_ubuntu_stable_session
