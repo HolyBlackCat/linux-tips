@@ -385,11 +385,15 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-initial-setup] [fonts]
 Какие шрифты выбрать
-Основной:  Trebuchet MS 9, или Verdana 8
-Моно:      Noto Mono 9 (Есть еще Consolas 10 - на нем жирный шрифт нормально отображается. Еще Andale Mono 10 норм.)
-Заголовки: Verdana Bold 9, или Trebuchet MS Bold 9
-Терминал:  Noto Mono 9
-(полный хинтинг, без АА)
+Основной:  Noto Sans 10 или Noto Sans 9,  или Trebuchet MS 9, или Verdana 8
+Моно:      Noto Mono 10 или Noto Mono 9,  или Consolas 10 или Andale Mono 10
+Заголовки: Noto Sans Bold 10,             или Verdana Bold 9, или Trebuchet MS Bold 9
+Терминал:  Noto Mono 11 или Noto Mono 9
+(везде light hinting)
+Что интересно, Manjaro не показывает Noto Mono в выборе шрифта в терминале - там это называется Monospace.
+Но это на деле тот же шрифт (конкретно на manjaro), можно проверить так:
+    fc-match Monospace
+    fc-match Sans
 
 [-useful-packages] [laptop] [overheating] [battery]
 Настройка скорости процессора (в основном для ноутбуков?).
