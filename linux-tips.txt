@@ -2023,3 +2023,10 @@ sudo nano /etc/dnf/dnf.conf
 Выбираем быстрое зеркало
     sudo apt install netselect-apt
     sudo netselect-apt
+
+[-initial-setup] [mint]
+Выключаем звездочки при вводе пароля в sudo
+Это называется "password feedback".
+В mint делаем так:
+    sudo nano /etc/sudoers.d/0pwfeedback
+    Там закомментируем единственную строчку
