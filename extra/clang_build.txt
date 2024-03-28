@@ -1,0 +1,57 @@
+Убунта: sudo apt install perl
+Арч: perl
+Федора: perl-core (!!)
+
+
+git clone https://github.com/llvm/llvm-project clang
+
+cd clang
+git tag | grep '^llvmorg-' | sort -t- -n -k2
+VER=18.1.2
+git checkout llvmorg-$VERSUFFIX
+cd ..
+
+# This works for: v18 (larger not tested yet) 
+# The dylib flags were taken from Arch, they should reduce the binary size greatly by using shared libraries instead of static linking.
+#   The dylib flags seem to be incompatible with `-DCMAKE_SKIP_RPATH=ON`, which then causes build errors.
+#   But `CMAKE_SKIP_RPATH` appears to be useless anyway, since the RPATH it sets is relative to $ORIGIN.
+# About LLVM_DEFAULT_TARGET_TRIPLE:
+#   By default it seems to use x86_64-unknown-linux-gnu, which is slightly uglier than x86_64-pc-linux-gnu.
+#   Most linux distros I tried use -pc-, even though Fedora uses -redhat-.
+# About: CLANG_DEFAULT_CXX_STDLIB:
+#   Seems to be optional, but I want to be on the safe side.
+# About: CLANG_DEFAULT_LINKER
+#   Also optional, but having LLD by default is always nice
+# NOTE: I can't find a (simple) option to add a version suffix (hence DEFAULT_LINKER `lld` is unsuffixed, for example).
+#   The build system duplicates `clang` to `clang-$VER`, but not the other tools.
+# NOTE: This is a single-stage build, not a multi-stage bootstrap. Should be good enough?
+# Extra settings that we didn't enable yet:
+#   -DLLVM_ENABLE_LTO=Thin  - when somebody else enables this, we can too? But nobody seems to yet?
+mkdir -p ~/.clang/$VER
+cmake -S clang/llvm -B build-clang -GNinja -Wno-dev \
+    -DCMAKE_INSTALL_PREFIX="$(realpath ~/.clang/$VER)" \
+    -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_CXX_COMPILER=clang++ \
+    -DLLVM_USE_LINKER=lld \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DLLVM_PARALLEL_LINK_JOBS=2 \
+    -DLLVM_ENABLE_PROJECTS=all \
+    -DLLVM_ENABLE_RUNTIMES=all \
+    -DCLANG_DEFAULT_PIE_ON_LINUX=ON \
+    -DCLANG_LINK_CLANG_DYLIB=ON \
+    -DLLVM_LINK_LLVM_DYLIB=ON \
+    \
+    -DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-pc-linux-gnu \
+    -DCLANG_DEFAULT_CXX_STDLIB=libstdc++ \
+    -DCLANG_DEFAULT_LINKER=lld \
+
+# v17 needs
+    -DLLVM_ENABLE_PROJECTS='bolt;clang;clang-tools-extra;compiler-rt;cross-project-tests;libclc;lld;lldb;mlir;openmp;polly;pstl'
+# instead of `...=all`.
+# This is the list taken from ./llvm/CMakeLists.txt, from `set(LLVM_ALL_PROJECTS`, minus `libc`, which doesn't build.
+# Bug: https://github.com/llvm/llvm-project/issues/67398
+
+
+
+cmake --build build-clang -j12
+cmake --install build-clang

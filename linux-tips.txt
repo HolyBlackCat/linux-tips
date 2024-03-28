@@ -2034,3 +2034,11 @@ sudo nano /etc/dnf/dnf.conf
 В mint делаем так:
     sudo nano /etc/sudoers.d/0pwfeedback
     Там закомментируем единственную строчку
+
+[path] [env] [env-variables]
+Где менять переменные окружения
+Для одного пользователя
+    ~/.bashrc
+        * LightDM применяет этот же файл глобально для гуя, вроде?
+        * Есть еще ~/.bash_profile - он для login shells, а .bashrc - теоретически только для non-login shells,
+          но на практике .bash_profile инклудит .bashrc (проверял в manjaro)

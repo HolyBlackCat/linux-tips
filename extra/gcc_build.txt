@@ -1,0 +1,64 @@
+# On Fedora:
+sudo dnf install gmp-devel mpfr-devel libmpc-devel isl-devel libzstd-devel zlib-devel
+
+
+git clone git://gcc.gnu.org/git/gcc.git
+cd gcc
+
+# Get releases:
+git tag | grep '^releases/gcc-' | sort -t- -n -k2
+# Switch to release:
+git checkout releases/gcc-13.2.0
+
+
+cd ..
+mkdir gcc-build
+mkdir root-build
+cd gcc-build
+
+# This is a mixture of flags that Arch and MSYS2 pass. Should be good enough.
+# I tried to set the libdir to `lib`, but always got a combination of `lib` and `lib64`, which seems to be hardcoded. So I got rid of all those flags, and now we just get `lib64`.
+../gcc/configure \
+    --program-suffix=-13 \
+    --enable-link-serialization=2 \
+    --prefix="$(realpath ../root-gcc)" \
+    --build=x86_64-linux-gnu \
+    --host=x86_64-linux-gnu \
+    --target=x86_64-linux-gnu \
+    --disable-libssp \
+    --disable-libstdcxx-pch \
+    --disable-multilib \
+    --disable-werror \
+    --enable-__cxa_atexit \
+    --enable-bootstrap \
+    --enable-cet=auto \
+    --enable-checking=release \
+    --enable-clocale=gnu \
+    --enable-default-pie \
+    --enable-default-ssp \
+    --enable-gnu-indirect-function \
+    --enable-gnu-unique-object \
+    --enable-graphite \
+    --enable-languages='c,c++,fortran,lto' \
+    --enable-libatomic \
+    --enable-libgomp \
+    --enable-libstdcxx-backtrace \
+    --enable-libstdcxx-debug \
+    --enable-libstdcxx-time \
+    --enable-linker-build-id \
+    --enable-lto \
+    --enable-offload-defaulted \
+    --enable-plugin \
+    --enable-shared \
+    --enable-static \
+    --enable-threads=posix \
+    --enable-threads=posix \
+    --enable-vtable-verify=no \
+    --with-build-config=bootstrap-lto \
+    --with-libiconv \
+    --with-linker-hash-style=gnu \
+    --with-system-zlib \
+    --with-tune=generic \
+
+make -s -j6
+make install
