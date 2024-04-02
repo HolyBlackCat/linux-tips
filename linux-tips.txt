@@ -2037,8 +2037,8 @@ sudo nano /etc/dnf/dnf.conf
 
 [path] [env] [env-variables]
 Где менять переменные окружения
-Для одного пользователя
-    ~/.bashrc
-        * LightDM применяет этот же файл глобально для гуя, вроде?
-        * Есть еще ~/.bash_profile - он для login shells, а .bashrc - теоретически только для non-login shells,
-          но на практике .bash_profile инклудит .bashrc (проверял в manjaro)
+    sudo nano ~/.xprofile
+        export FOO=BAR
+Есть еще ~/.bashrc - только для баша, и только для одного пользователя. (туда хорошо писать кастомный prompt)
+    Есть еще ~/.bash_profile - он для login shells, а .bashrc - теоретически только для non-login shells,
+    но на практике .bash_profile инклудит .bashrc (проверял в manjaro)
