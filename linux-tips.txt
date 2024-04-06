@@ -585,6 +585,11 @@ Eсли потерял папки, делай так:
 [-initial-setup] [gui-themes] [visual-customization]
 Темы офомления (для xfce)
 Самая нормальная - Matcha
+    арч:
+        pacman -S gtk-engine-murrine gtk-engines
+    git clone https://github.com/vinceliuice/Matcha-gtk-theme
+    cd Matcha-gtk-theme
+    sudo ./install.sh
 Следом за ней - Qogir
     git clone https://github.com/vinceliuice/Qogir-theme
     cd Qogir-theme
@@ -833,14 +838,17 @@ Escape - вернуться в дефолтный режим.
 
 [-initial-setup] [-useful-packages]
 Полезные пакеты
+    less
     firefox
-        manjaro -> + firefox-i18n-ru
+        arch,manjaro -> + firefox-i18n-en-us firefox-i18n-ru
+    noto-fonts   (минимальные нормальные шрифты)
+        ^ arch, другие сами его ставят
     gcc gdb
     clang lld lldb
         ubuntu -> [ставь новую версию из кастомного репозитория]
         fedora -> + clang-tools-extra
     patchelf     (патчим исполняемые файлы, например меняем в них путь к динамическим библиотекам, т.е. rpath)
-    git make pkg-config
+    git make pkgconf
     cmake
         ubuntu -> + cmake-qt-gui
         fedora -> + cmake-gui
@@ -868,11 +876,13 @@ Escape - вернуться в дефолтный режим.
     htop         (модный консольный диспечер задач)
     gparted      (редактор разделов)
     btrfs-assistant (управление файловой системой btrfs)
+        arch -> нет такого, только в aur
     gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
     ncdu         (то же самое, но минималистичный консольный вариант)
     xfce4-genmon-plugin (показ на панели вывода произвольных команд)
     ffmpeg       (конвертер форматов видео) ######### На федоре есть -freeworld? И для хрома еще посмотри
     gnome-games  (набор казуальных игр)
+        ^ ubuntu | manjaro,arch - тут это какой-то левый лаунчер, не ставь
     aisleriot    (разные пасьянсы в одном приложении)
     radeontop    (мониторим видюшку AMD)
     cloc         (счетчик строк кода)
@@ -880,15 +890,15 @@ Escape - вернуться в дефолтный режим.
     fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
     potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
     qpdf         (разные манипуляции с pdf)
-    guestfs_tools (монтировать диски от виртуальных машин)
-        ^ manjaro  |  ubuntu,fedora -> libguestfs-tools
+    guestfs-tools (монтировать диски от виртуальных машин)
+        ^ manjaro,arch  |  ubuntu,fedora -> libguestfs-tools
     lm_sensors   (датчики температуры и прочего)
     peek         (запись гифок с экрана)
     gifski       (конвертер видео в качественные гифки)
     imagemagick
         fedora -> ImageMagick
     virtualbox
-        manjaro -> когда спросит про host modules, выбирай dkms
+        arch,manjaro -> когда спросит про host modules, выбирай dkms (потому что второй только для обычного kernel, а вдруг у тебя lts)
         fedora -> VirtualBox
         ubuntu -> + virtualbox-ext-pack
     tiled        (редактор карт)
@@ -910,13 +920,11 @@ Escape - вернуться в дефолтный режим.
     perl-rename  (массовое переименование файлов)
         ubuntu -> rename  (проверь)
     visual-studio-code-bin
-        ^ manjaro
-    visual-studio-code-bin
-        ^ manjaro
+        ^ manjaro, arch-aur
     elementary-xfce-icons
-        ^ manjaro
+        ^ manjaro, arch-aur
     onlyoffice-desktopeditors
-        ^ manjaro
+        ^ manjaro, arch-aur -> onlyoffice-bin
 Только федора: (забытые пакеты, которые почему-то не стоят из коробки)
     engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)

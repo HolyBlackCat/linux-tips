@@ -1,0 +1,60 @@
+LiveUSB арча - чисто консольный. Возможно стоит иметь еще один гуишный, чисто для комфорта.
+
+Запускаем `archinstall`.
+
+Archinstall language - оставляем english, это же только инсталлер
+Mirrors - выбираем свою страну
+Locale
+    keyboard layout - НЕ ТРОГАЕМ, а то потом на входе в систему застрянем
+    locale language - ru_RU.UTF-8
+    locale encoding - не трогаем, оставляем UTF-8
+
+Disk configuration: best effort, brtfs, compress=yes...
+    Что интересно, на отдельных subvolumes он с этим показывает compress=false
+
+bootloader -> systemd-boot
+    unified kernel images - false (это что-то для secure boot, чтобы закатывать в image всякие настройки и подписывать их разом)
+
+swap - yes (но в виртуалке выключи, что-то ее подкрашивает)
+
+hostname - выбери
+
+root password - не трогаем, не создаем
+
+user account - создаем
+
+profile -> type -> desktop -> xfce (greeter оставляем lightdm-gtk-greeter)
+    тут же для virtualbox выбираем их драйвер
+
+audio - pipewire (самый новый модный вариант)
+
+kernels - linux-lts (а обычное долой?)
+
+network configuration - NetworkManager
+
+timezone - выбрать
+
+optional repositories - add multilib (нужен для Wine - если забыл, его можно потом раскомментировать в sudo nano /etc/pacman.conf - заметь, там нужно раскомментить две строки: [multilib] и за ней Include=...)
+
+install
+
+В chroot (или потом) делаем:
+    sudo nano /etc/pacman.conf #-> раскомментируем parallel downloads
+
+reboot
+
+Настройка AUR (через yay):
+
+    pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
+    cd .. && rm -rf yay
+
+    Если он тут захочет ставить ??-debug пакеты (рядом с каждым установленным), но надо `sudo nano /etc/makepkg.conf`
+        и там поставить `!` перед `debug` в строке `OPTIONS=...`.
+
+    # Initial setup from readme at: https://github.com/Jguer/yay
+    yay -Y --gendb
+    yay -Syu --devel
+    yay -Y --devel --save
+
+Дальше обновляйся через `yay` (без аргументов - как `pacman -Syu`, но в остальном флаги как у pacman-а)
+Пакеты из AUR ищи и ставь через `yay` (флаги как у `pacman`), а обычные можно как раньше.
