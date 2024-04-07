@@ -6,10 +6,13 @@
 git clone https://github.com/llvm/llvm-project clang
 
 cd clang
-git tag | grep '^llvmorg-' | sort -t- -n -k2
-VER=18.1.2
-git checkout llvmorg-$VERSUFFIX
+git fetch
+git tag | grep -P '^llvmorg-.*(?<!init)$' | sort -t- -n -k2
+VER=18.1.3
+git checkout llvmorg-$VER
 cd ..
+
+Make sure you remove any existing custom Clangs from PATH to make sure the new ones don't depend on existing ones' libs.
 
 # This works for: v18 (larger not tested yet) 
 # The dylib flags were taken from Arch, they should reduce the binary size greatly by using shared libraries instead of static linking.

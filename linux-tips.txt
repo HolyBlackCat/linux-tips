@@ -75,7 +75,7 @@ GPT вероятно лучше, MBR - запасной вариант.
         Дальше делай вот что (sic, второй раз `sda` без цифры):
             sudo mount /dev/sda7 /mnt
             sudo grub-install --boot-directory=/mnt/boot /dev/sda
-        После запуска нормальной системы на всякий случай сделай `sudo update-grub`.
+        После запуска нормальной системы на всякий случай обнови конфиг grub, тут где-то есть инструкция.
 
 [-repair] [boot] [grub]
 При включении вылезает консоль `grub` (НЕ `recovery/rescue`)
@@ -132,22 +132,13 @@ GPT вероятно лучше, MBR - запасной вариант.
 Чтобы размонтировать live-iso, делаем так:
     sudo umount -lrf /isodevice
 Теперь мы должны работать полностью из оперативки.
-После установки и ребута, стоит сделать `sudo update-grub`.
+После установки и ребута, стоит обновить конфиг grub, тут есть инструкция.
 
 [-repair] [fstab] [gparted]
 Узнаем GUID-ы разделов для fstab
 Гуиды иногда меняются при редактировании (сдвигании?) разделов в gparted. Но не всегда.
 Посмотреть гуиды можно так:
     lsblk -p -o NAME,SIZE,PARTLABEL,UUID
-
-[-install] [-initial-setup] [fedora]
-Глушим сообщение Booting Fedora...
-    sudo nano /etc/default/grub
-Туда в начало: (первая строка уже есть, заменить, второй может не быть)
-    GRUB_TIMEOUT=2
-    GRUB_TIMEOUT_STYLE=hidden
-Потом применяем:
-    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
 [-repair] [fedora] [chroot]
 Залезаем в chroot с live usb
@@ -478,7 +469,7 @@ sudo apt purge nvidia-driver-XXX --autoremove
 Фикс разрешения и тиринга (tearing) на nvidia
 Тиринг = tearing = диагональный разрыв при скроллинге.
 Видимо это чинит разрешение на новых мониках. Для старых (VGA?) смотри ниже.
-Добавить в параметры ядра (`sudo nano /etc/default/grub` -> GRUB_CMDLINE_LINUX_DEFAULT, потом `sudo update-grub`):
+Добавить в параметры ядра (тут где-то есть инструкция как)
     nvidia-drm.modeset=1
 Потом ребут.
 Рабочий стол может странно выглядеть:
@@ -836,11 +827,98 @@ Escape - вернуться в дефолтный режим.
             printf "<span color='\''#666'\''>GPU </span><span color='\''#f66'\''>%.0f</span></txt><tool>Сенсоры</tool>",gpu
         }'
 
+[-initial-setup] [-useful-packages] [arch] [yay]
+Настраиваем AUR на арче
+В Manjaro это все встроено в pamac, там ничего делать не нужно.
+Нужно выбрать программу-менеджер, чтобы руками не билдить. `yay` хорош.
+    sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay
+.
+    Если он тут захочет ставить ??-debug пакеты (рядом с каждым установленным), то...
+        Есть фикс, но наверное лучше так не делать, чтобы потом конфликтов не было.
+            sudo nano /etc/makepkg.conf
+                и там поставить `!` перед `debug` в строке `OPTIONS=...`.
+.
+    # Initial setup from readme at: https://github.com/Jguer/yay
+    yay -Y --gendb
+    yay -Syu --devel
+    yay -Y --devel --save
+.
+Дальше обновляйся через `yay` (без аргументов - как `pacman -Syu`, но в остальном флаги как у pacman-а)
+Пакеты из AUR ищи и ставь через `yay` (флаги как у `pacman`), а обычные можно как раньше.
+
+[arch] [pacman] [yay]
+pacman для чайников
+Если тебе нужен AUR, используй `yay` вместо `sudo pacman`
+    * `yay` обычные пакеты тоже понимает
+    * `yay` запускай без sudo. Если его добавить, он печатает варнинг про это.
+ОСНОВЫ:
+    dry-run: `-p` или `--print` (для всех команд)
+    обновить:  yay
+        без AUR:  pacman -Syuu    # или -Syu, тут `uu` разрешает откат версий
+    удалить лишние пакеты:  sudo pacman -Qdtq | sudo pacman -Rns -
+        если скажет "empty stdin", значит нечего удалять
+        часть до палки - список пакетов, можешь отдельно ее позвать
+        это также удаляет зависимости, которые ставятся при сборке из AUR
+        усиленный вариант (ищет круговые зависимости, избыточные зависимости, ...):
+            список:        pacman -Qqd |      pacman -Rsu - -p
+            удалить:  sudo pacman -Qqd | sudo pacman -Rsu -
+    установить:  pacman -S ПАКЕТ
+        --needed - не переустанавливать уже установленное
+        возможно из AUR:  yay -S ПАКЕТ
+        из локального файла:  pacman -U   # прямые URL на архив тоже понимает
+    искать:  pacman -Ss REGEX
+        установленные пакеты:  pacman -Qs REGEX
+        Добавь ^ перед регуляркой чтобы искать тоьлко по именам
+    удалить:  pacman -Rs ПАКЕТ
+        s - удалить лишние зависимости (а-ля `apt autoremove`)
+        n - удалить конфиги (а-ля `apt purge`)
+СПИСКИ:
+    все установленные:     pacman -Q
+        явно:              pacman -Qe
+        неявно:            pacman -Qd
+        неявно и не нужны: pacman -Qdt
+        не из реп (AUR и ручные): pacman -Qm
+        из реп (не AUR и не ручные): pacman -Qn
+    содержимое группы:     pacman -Sg ГРУППА
+    измененные конфиги: pacman -Qii | awk '/\[modified\]/ {print $(NF - 1)}'
+        Если пакет их обновит, придется решать конфликты.
+ПОИСК:
+    информация о пакете:
+        из репозитория:  pacman -Si ПАКЕТ
+        локальный:       pacman -Qi ПАКЕТ
+    список файлов в пакете:
+        из репозитория:  pacman -Fl ПАКЕТ
+            обновить базу файлов:  pacman -Fy
+        локальный:       pacman -Ql ПАКЕТ
+    какой пакет предоставляет файл:
+        из репозитория:  pacman -F ФАЙЛ
+            обновить базу файлов:  pacman -Fy
+        локальный:       pacman -Qo ФАЙЛ
+    проверить, что файлы пакета на месте: pacman -Qk ПАКЕТ  # kk - проверять свойства файлов тоже
+ОТМЕТКИ явно/неявно установленных пакетов:
+    установить неявно:     pacman -S --asdeps ПАКЕТ
+    отметить как неявный:  pacman -D --asdeps ПАКЕТ
+    отметить как явный:    pacman -D --asexplicit ПАКЕТ
+
+[-initial-setup] [arch] [pacman] [paccache]
+Чистим кеш пакетов pacman
+Автоматом:
+    sudo systemctl enable paccache.timer && systemctl start paccache.timer
+Руками:
+    только неустановленные: pacman -Sc
+    все:                    pacman -Scc
+
 [-initial-setup] [-useful-packages]
 Полезные пакеты
     less
+    locate       (поиск файлов - если ругается, сделай `sudo updatedb`)
+    man
+        есть еще `man-pages-ru`, но я б не ставил
+    nano nano-syntax-highlighting
     firefox
         arch,manjaro -> + firefox-i18n-en-us firefox-i18n-ru
+    thunderbird
+        arch,manjaro -> + thunderbird-i18n-en-us thunderbird-i18n-ru
     noto-fonts   (минимальные нормальные шрифты)
         ^ arch, другие сами его ставят
     gcc gdb
@@ -861,6 +939,9 @@ Escape - вернуться в дефолтный режим.
     vlc          (проигрыватель видео)
         ubuntu -> + vlc-l10n
     net-tools    (ifconfig и другие команды работы с сетью)
+    zip unzip    (zip-архивы)
+    p7zip        (7z-архивы, )
+        федора: + p7zip-plugins
     unrar        (работа с rar-архивами)
         ubuntu -> + rar (на других дистрибутивах это какой-то странный несвободный пакет)
     zstd         (поддержка zstd-архивов для tar и др.)
@@ -898,7 +979,8 @@ Escape - вернуться в дефолтный режим.
     imagemagick
         fedora -> ImageMagick
     virtualbox
-        arch,manjaro -> когда спросит про host modules, выбирай dkms (потому что второй только для обычного kernel, а вдруг у тебя lts)
+        arch,manjaro -> + virtualbox-guest-iso
+                        когда спросит про host modules, выбирай dkms (потому что второй только для обычного kernel, а вдруг у тебя lts)
         fedora -> VirtualBox
         ubuntu -> + virtualbox-ext-pack
     tiled        (редактор карт)
@@ -909,7 +991,14 @@ Escape - вернуться в дефолтный режим.
     telegram-desktop
         fedora -> пакет кривой, качай оффициальный бинарник (https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
     discord
-        ^ manjaro only?
+        ^ arch,manjaro only?
+    steam
+        нужен multilib репозиторий, как для wine
+        если спросит, какой драйвер vulkan, то для AMD видюх выбирай vulkan-radeon, а не amdvlk (бенчмарк: https://www.phoronix.com/review/radv-amdvlk-july21/3)
+        тут ярлык называется `Steam (runtime)`; есть еще пакет `steam-native-runtime` (`Steam (native)`)
+            Runtime лучше, советую переименовать его просто в "Steam".
+            Смотри https://wiki.archlinux.org/title/Steam/Troubleshooting
+            Runtime использует родные стимовские либы. Native использует системные либы.
     renderdoc    (отладчик графики)
     fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
     radeontop    (состояние видюхи AMD)
@@ -917,21 +1006,23 @@ Escape - вернуться в дефолтный режим.
         ubuntu -> вроде не работают плагины VST? Ставь официальный AppImage вместо пакета, там работют.
     tree         (печатаем дерево папок)
     obs-studio   (записываем видео с экрана)
+    lightdm-gtk-greeter-settings (гуй настройки lightdm, не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
     perl-rename  (массовое переименование файлов)
         ubuntu -> rename  (проверь)
+    gst-libav gst-plugins-good gst-plugins-bad gst-plugins-ugly (кодеки)
+        ^ arch, manjaro
     visual-studio-code-bin
-        ^ manjaro, arch-aur
+        ^ arch-aur, manjaro
     elementary-xfce-icons
-        ^ manjaro, arch-aur
-    onlyoffice-desktopeditors
-        ^ manjaro, arch-aur -> onlyoffice-bin
-Только федора: (забытые пакеты, которые почему-то не стоят из коробки)
-    engrampa     (гуи архиватора вместо стремного xarchiver, также сделай `sudo dnf remove xarchiver` чтобы ассоциации переставились на этот)
-    lightdm-gtk-greeter-settings (гуй настройки lightdm, непонятно почему по дефолту не стоит; не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
-    p7zip p7zip-plugins (архиватор 7z - без него гуй engrampa не понимает .7z-архивы)
+        ^ arch-aur, manjaro
+    onlyoffice-bin
+        ^ arch-aur | manjaro -> onlyoffice-desktopeditors
+Гуи архиватора. Выбери между
+    `xarchiver`   или   `engrampa`
+        Обычно стоит один из них. Если ставишь другой,
+        удали предыдущий, чтобы ассоциации переставились.
     menulibre    (гуй управления .desktop-файлами)
-Федора с rpmfusion:
-    # discord (его обновляют с задержкой, можно остаться без мессенджера; ниже есть ручная инструкция)
+        ^ только федора, остальные его сами ставят
 Только убунта:
     duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
         fedora -> собирается из AUR, нафиг его
@@ -940,6 +1031,8 @@ Escape - вернуться в дефолтный режим.
     libavcodec-extra (дополнительные кодеки, которые могут быть защищены патентами - часть пакета ubuntu-restricted-extras)
 
 [-initial-setup] [flatpak] [flathub]
+Ставим flatpak
+    sudo apt install flatpak
 Добавляем flathub - дефолтный репозиторий flatpak
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
@@ -1594,8 +1687,8 @@ crontab -e
 Если его просто скрыть из гуя, то FF время от времени будет про него напоминать.
 Вместо этого, иди в `about:config` и там выключи `browser.tabs.firefox-view`.
 
-[-initial-setup] [-useful-packages] [lock-screen]
-Менее лагучая блокировка экрана
+[-initial-setup] [-useful-packages] [lock-screen] [manjaro
+Менее лагучая блокировка экрана на Manjaro
 На manjaro по дефолту экран медленно анлочится - нужно сначала потыкать мышкой, чтобы он проснулся, и только потом вводить пароль.
 Возможно есть простой фикс - в настройках электропитания поставить, чтобы лочилось при начале скринсейвере, а не при конце - проверь.
 А вот этот фикс точно рабочий:
@@ -1606,9 +1699,9 @@ crontab -e
 Просто удалять пакет `light-locker` похоже вредно, потому что эти настройки скрываются, но их эффект не пропадает до конца. Возможно можно удалить после
     изменения настроек.
 
-[-initial-setup] [mount] [root]
+[-initial-setup] [mount] [root] [arch] [manjaro]
 Mount разделов в xfce без рутовых прав
-Раньше работало из коробки, но в manjaro теперь не работает. Хмм.
+Раньше работало из коробки, но в arch и manjaro теперь не работает. Хмм.
 Чинится так:
     sudo nano /etc/polkit-1/rules.d/10-nopwd-mount.rules
 Туда пишем это: (из https://superuser.com/q/1192269)
@@ -1625,7 +1718,7 @@ Mount разделов в xfce без рутовых прав
 
 [bug-workaround] [crash]
 Возможные причины крашей и зависаний
-* NO_HZ - Если в логах вылезает NOHZ, можно попробовать его отключить, добавив `nohz=off` во флаги ядра: `sudo nano /etc/default/grub`, в `GRUB_CMDLINE_LINUX_DEFAULT`, потом `sudo upgrade-grub`.
+* NO_HZ - Если в логах вылезает NOHZ, можно попробовать его отключить, добавив `nohz=off` во флаги ядра (тут где-то инструкция)
 
 [rsync]
 Переносим файлы через rsync
@@ -1650,7 +1743,7 @@ Mount разделов в xfce без рутовых прав
 [-initial-setup] [-useful-packages]
 Как поставить докер
 Пакет:
-    Manjaro: pamac install docker
+    arch,manjaro: pacman -S docker
 Общая настройка:
     systemctl enable docker
     systemctl start docker
@@ -1695,7 +1788,8 @@ Mount разделов в xfce без рутовых прав
 
 [-useful-packages]
 Ставим Minecraft
-Manjaro -> pamac install minecraft-launcher
+Arch:    yay -S minecraft-launcher
+Manjaro: pamac install minecraft-launcher
     Это AUR, но оффициальный, сюда ведет ссылка с офсайта.
     Он ставит все в `~/.minecraft`, как и другие официальные способы.
     Когда попросит выбрать java runtime, `jre-openjdk` выглядит правильно.
@@ -1711,25 +1805,32 @@ Manjaro, похоже, требует задать этот пароль при 
 Заблокировать/отключить пароль:
     sudo passwd -l root
 
+[-initial-setup] [grub] [splash]
+Начальная декоративная настройка grub
+Редактируй тут:
+    sudo nano /etc/default/grub
+Как применить:
+    Проверь, по какому пути у тебя лежит конфиг, и выбери команду из двух.
+    Арч:    LANG= sudo grub-mkconfig -o /boot/grub/grub.cfg
+    Другие: LANG= sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+        Проставляем LANG, чтобы не было сообщений на русском при загрузке.
+Что можно поменять:
+Убрать `quiet splash`, чтобы было видно логи загрузки. (В арче splash и так не стоит.)
+Меньше задержка:
+    GRUB_TIMEOUT=2
+Не рисовать меню если ничего не кликнуто:
+    GRUB_TIMEOUT_STYLE=hidden
+
+
 [manjaro] [boot] [bug-workaround]
 Manjaro зависает при загрузке через раз
 Непонятно. Возможно кривая поддержка btrfs? Возможно помогает отдельный раздел boot с ext4?
-Вроде помогло так:
-    sudo nano /etc/default/grub
-    # Убрать оттуда `quiet splash`
-    sudo update-grub
-    # Может быть дело просто в update-grub, хз. Но так хотя бы увидишь лог, если зависнет.
+Вроде помогло убрать quiet splash (тут есть инструкция)
 
 [manjaro] [-initial-setup]
 Убираем брендинг manjaro
 1. Из кнопки whisker menu. Там ищем иконку xfce4-menu, или если такой нет, ищи по слову whisker.
 2. Из аватарки пользователя при логине - в lightdm gtk greeter settings выбираем "иконка" -> "avatar-default".
-
-[manjaro] [steam]
-Что за два ярлыка Steam (runtime vs native)
-Runtime лучше, советую переименовать его просто в "Steam".
-Смотри https://wiki.archlinux.org/title/Steam/Troubleshooting
-Runtime использует родные стимовские либы. Native использует системные либы.
 
 
 
@@ -1746,11 +1847,6 @@ Runtime использует родные стимовские либы. Native 
 Если там кнопка OK не нажимается, возможно ты забыл включить интернет.
 Потом полный ребут.
 Еще может понадобиться на экране логина справа-сверху один раз выбрать русский язык, не уверен.
-
-[fedora]
-Глушим поганую пищалку/динамик
-Федора как-то имитирует винтажную пищалку через динамики?!
-sudo sh -c 'rmmod pcspkr; echo "blacklist pcspkr" >>/etc/modprobe.d/_custom-blacklist.conf'
 
 [fedora]
 Настраиваем пакетный менеджер dnf
@@ -1851,7 +1947,7 @@ sudo nano /etc/dnf/dnf.conf
     https://man.archlinux.org/man/wacom.4
 1. Обычные настройки
     Ставим программу xsetwacom (и правильный драйвер) - это для xorg, вероятно на wayland будет другой пакет?
-        pamac install xf86-input-wacom
+        pacman -S xf86-input-wacom
     Ребут, чтобы драйвер врубился.
     - Экспериментируем с настройками:
         Ищем номер (id) девайса, и запоминаем его (их может быть несколько, я выбрал stylus вместо eraser)
@@ -1913,7 +2009,7 @@ sudo nano /etc/dnf/dnf.conf
     Эти настройки все перманентные, записываются на планшет.
     Источник: https://www.davidrevoy.com/article710/cintiqs-on-gnu-linux-how-to-setup-brightness-contrast-and-more
     Поставь утилиту: (она в целом для настройки любых экранов)
-        pamac install ddcutil
+        sudo pacman -S ddcutil
     Для работы нужно включить модуль (он выключается при ребуте, но пофиг, ведь настройки запоминаются)
         sudo modprobe i2c-dev
         # Отключить обратно, если хочешь: sudo rmmod i2c-dev

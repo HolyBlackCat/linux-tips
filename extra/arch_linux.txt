@@ -34,7 +34,7 @@ network configuration - NetworkManager
 
 timezone - выбрать
 
-optional repositories - add multilib (нужен для Wine - если забыл, его можно потом раскомментировать в sudo nano /etc/pacman.conf - заметь, там нужно раскомментить две строки: [multilib] и за ней Include=...)
+optional repositories - add multilib (нужен для Wine и Steam - если забыл, его можно потом раскомментировать в sudo nano /etc/pacman.conf - заметь, там нужно раскомментить две строки: [multilib] и за ней Include=...)
 
 install
 
@@ -42,19 +42,3 @@ install
     sudo nano /etc/pacman.conf #-> раскомментируем parallel downloads
 
 reboot
-
-Настройка AUR (через yay):
-
-    pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si
-    cd .. && rm -rf yay
-
-    Если он тут захочет ставить ??-debug пакеты (рядом с каждым установленным), но надо `sudo nano /etc/makepkg.conf`
-        и там поставить `!` перед `debug` в строке `OPTIONS=...`.
-
-    # Initial setup from readme at: https://github.com/Jguer/yay
-    yay -Y --gendb
-    yay -Syu --devel
-    yay -Y --devel --save
-
-Дальше обновляйся через `yay` (без аргументов - как `pacman -Syu`, но в остальном флаги как у pacman-а)
-Пакеты из AUR ищи и ставь через `yay` (флаги как у `pacman`), а обычные можно как раньше.
