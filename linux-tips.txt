@@ -2092,11 +2092,14 @@ sudo nano /etc/dnf/dnf.conf
 Настраиваем автоматическое подключение ssh-ключей по необходимости, с запросом пароля через GUI
 Сначала убедись, что оно само не включилось.
 Попробуй так:
+    systemctl enable --user gcr-ssh-agent.socket
     export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gcr/ssh
-Если не прокатило, попробуй `systemctl status --user gcr-ssh-agent.socket`, перезайди, и попробуй еще раз.
 Если тебе это помогло, добавь `export ...` в автозапуск:
     sudo nano /etc/profile.d/gcr-ssh-agent.sh
-И туда вписываешь эту команду.
+        И туда вписываешь эту команду.
+Еще нужно отключить дефолтный агент так: (а то он затирает нашу переменную)
+    xfconf-query -c xfce4-session -p /startup/ssh-agent/enabled -n -t bool -s false
+
 
 [ssh] [ssh-agent]
 Настраиваем ssh-agent из консоли
