@@ -1008,7 +1008,6 @@ pacman для чайников
     tree         (печатаем дерево папок)
     obs-studio   (записываем видео с экрана)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
-    gnome-keyring (гуй для ssh-ключей)
     perl-rename  (массовое переименование файлов)
         ubuntu -> rename  (проверь)
     gst-libav gst-plugins-good gst-plugins-bad gst-plugins-ugly (кодеки)
@@ -1049,8 +1048,6 @@ pacman для чайников
     Проверь `systemctl status systemd-timesyncd` и `systemctl status ntpd`, может быть оно уже включено.
     * Manjaro -> ТРЕБУЕТ ВКЛЮЧЕНИЯ в manjaro settings manager
     * В настройках xfce может быть ошибочно написано "вручную". Проверяй командами выше.
-* Сеансы и запуск -> Дополнительные -> Запускать службы GNOME при входе в систему = (правильно) ДА
-    Это дает как минимум гуй для разблокировки ssh-ключей - удобно. (Не забудь пакет `gnome-keyring`, чтобы работало.)
 * Manjaro settings manager -> языковые пакеты -> поставь то что он предлагает
 * xfce4-screenshooter не может скопировать картинку в буфер обмена
     Сначала попробуй просто ребут, тут нет уверенности.
@@ -2091,8 +2088,18 @@ sudo nano /etc/dnf/dnf.conf
     nano ~/.bashrc
     # Раскомментируем там `force_color_prompt=yes`.
 
+[ssh] [ssh-agent] [arch] [manjaro]
+Настраиваем автоматическое подключение ssh-ключей по необходимости, с запросом пароля через GUI
+Сначала убедись, что оно само не включилось.
+Попробуй так:
+    export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gcr/ssh
+Если не прокатило, попробуй `systemctl status --user gcr-ssh-agent.socket`, перезайди, и попробуй еще ра.
+Если тебе это помогло, добавь `export ...` в автозапуск:
+    sudo nano /etc/profile.d/gcr-ssh-agent.sh
+И туда вписываешь эту команду.
+
 [ssh] [ssh-agent]
-Настраиваем ssh-agent
+Настраиваем ssh-agent из консоли
 Это программа, которая запоминает ssh-ключи и пароли от них
 Проверить известные ключи:
     ssh-add -l
@@ -2121,13 +2128,6 @@ sudo nano /etc/dnf/dnf.conf
 Если есть сабмодули, то в папке с репозиторием делаем так:
     git config url.work_github:.insteadOf https://github.com/
     А потом обновляем сабмодули
-
-[ssh] [ssh-agent] [manjaro] [bug-workaround]
-Не стартует ssh-agent автоматически
-Это какая-то временная кривизна, лечится так: export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gcr/ssh
-Если тебе это помогло, добавь это в автозапуск:
-    sudo nano /etc/profile.d/gcr-ssh-agent.sh
-И туда вписываешь эту команду.
 
 [-initial-setup] [debian] [mirror]
 Выбираем быстрое зеркало
