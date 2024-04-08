@@ -918,6 +918,8 @@ pacman для чайников
     nano nano-syntax-highlighting
     firefox
         arch,manjaro -> + firefox-i18n-en-us firefox-i18n-ru
+    google-chrome
+        ^ arch-aur (опенсурсный хромиум не ставь, там кодеков недостает)
     thunderbird
         arch,manjaro -> + thunderbird-i18n-en-us thunderbird-i18n-ru
     noto-fonts   (минимальные нормальные шрифты)
