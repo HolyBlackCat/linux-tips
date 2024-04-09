@@ -2041,7 +2041,8 @@ sudo nano /etc/dnf/dnf.conf
             -env=DISPLAY --volume=/tmp/.X11-unix:/tmp/.X11-unix:ro
         Добавить для AMD (для NVidia надо исследовать)
             --device /dev/dri
-        По слухам, может понадобиться запустить эту команду на хосте. Но похоже при этом способе не нужно. `xhost +local:docker`
+        На хосте запустить:
+            xhost +local:docker
 Запустить контейнер:
     docker container start <CONTAINER>
 Остановить контейнер:
