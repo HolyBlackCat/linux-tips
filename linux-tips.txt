@@ -912,6 +912,8 @@ pacman для чайников
 
 [-initial-setup] [-useful-packages]
 Полезные пакеты
+    linux-headers linux-lts-headers (хедеры ядер - под каждое ядро которое ты поставил, эти были `linux` и `linux-lts`; без них могут не взлететь DKMS - автосборка некоторых установленных модулей под ядра)
+        ^ arch ONLY
     less
     bc           (простенький консольный калькулятор)
     moreutils    (команда sponge и прочее)
