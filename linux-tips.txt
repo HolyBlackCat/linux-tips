@@ -1020,6 +1020,7 @@ pacman для чайников
     tree         (печатаем дерево папок)
     obs-studio   (записываем видео с экрана)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
+    yad zenity   (рисование диалогов из консоли; первое - форк второго, больше фичей и не новомодный гуй, но пусть будут оба)
     perl-rename  (массовое переименование файлов)
         ubuntu -> rename  (проверь)
     gst-libav gst-plugins-good gst-plugins-bad gst-plugins-ugly (кодеки)
@@ -2028,14 +2029,22 @@ sudo nano /etc/dnf/dnf.conf
         sudo modprobe detect >1.txt
     У меня ID = WAC
     Посмотри список фичей:
-        sudo ddcutil --mfg=WAC capabilities
+        ddcutil --mfg=WAC capabilities
     У меня яркость (ака backlight) имеет id 6b, и дефолтное значение 75
     Читать яркость:
-        sudo ddcutil --mfg=WAC getvcp 6b
+        ddcutil --mfg=WAC getvcp 6b
     Менять яркость: (запоминается планшетом) (50 - норм значение)
-        sudo ddcutil --mfg=WAC setvcp 6b 50
+        ddcutil --mfg=WAC setvcp 6b 50
     Еще там можно язык гуя поменять, у меня на русский так: (обрати внимание, правое число всегда десятичное! даже если в выводе предлагают hex)
-        sudo ddcutil --mfg=WAC setvcp cc 9
+        ddcutil --mfg=WAC setvcp cc 9
+    Скрипт изменения яркости: (поставь yad для гуи)
+        #!/bin/bash
+        VAL="$(ddcutil --mfg=WAC getvcp 6b | grep -oP '(?<=current value = \s{0,5})\d+')"
+        while VAL="$(yad --scale --width=300 --height=120 --fixed --title='Яркость планшета' --button='Применить' --button='Выйти' --value="$VAL")"
+        do
+            ddcutil --mfg=WAC setvcp 6b "$VAL" --noverify
+        done
+
 
 [docker]
 Докер для чайников
