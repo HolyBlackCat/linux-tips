@@ -354,15 +354,14 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-initial-setup] [fonts]
 Какие шрифты выбрать
-Основной:  Sans Regular 10 (noto sans?)      или 9,  или Trebuchet MS 9, или Verdana 8
-Моно:      Monospace Regular 10 (noto mono?) или 9,  или Consolas 10 или Andale Mono 10
-Заголовки: Sans Bold 10 (Noto Sans Bold?),   или Verdana Bold 9, или Trebuchet MS Bold 9
-Терминал:  Noto Mono 11 или Noto Mono 9
-(везде light hinting)
-Что интересно, Manjaro не показывает Noto Mono в выборе шрифта в терминале - там это называется Monospace.
-Но это на деле тот же шрифт (конкретно на manjaro), можно проверить так:
-    fc-match Monospace
-    fc-match Sans
+Тут названия (sans и monospace) которые использует арч. Предполагаю, что они мапятся в "Noto ..." (проверь в `fc-match "Sans Regular"`),
+хотя когда я попробовал те же шрифты на других дистрибутивах, вроде была небольшая разница.
+                           комп   ноут
+Основной:  Sans Regular       9 или 10 (noto sans?)      ,    или Trebuchet MS 9, или Verdana 8
+Моно:      Monospace Regular  9 или 10 (noto mono?)      ,    или Consolas 10 или Andale Mono 10
+Заголовки: Sans Bold          9 или 10 (noto sans bold?) ,    или Verdana Bold 9, или Trebuchet MS Bold 9
+Терминал:  Monospace Regular 10 или 11 (noto mono?)
+Везде хинтинг: light на ноуте, а на компе medium?
 
 [-useful-packages] [laptop] [overheating] [battery]
 Настройка скорости процессора (в основном для ноутбуков?).
@@ -530,6 +529,15 @@ Eсли потерял папки, делай так:
         mv 'Music' .music
         mv 'Pictures' .images
         mv 'Videos' .videos
+    Или создать с нуля:
+        mkdir -p ~/.desktop
+        mkdir -p ~/.downloads
+        mkdir -p ~/.templates
+        mkdir -p ~/.shared
+        mkdir -p ~/.documents
+        mkdir -p ~/.music
+        mkdir -p ~/.images
+        mkdir -p ~/.videos
     Обнови названия папок в настройках: nano ~/.config/user-dirs.dirs
         XDG_DESKTOP_DIR="$HOME/.desktop"
         XDG_DOWNLOAD_DIR="$HOME/.downloads"
@@ -1295,11 +1303,14 @@ GUI для интерактивного rebase в VSCode
     Win+W              exo-open --launch WebBrowser
     Win+L              xflock4
     Ctrl+Shift+Escape  xfce4-taskmanager
-    Win+PgUp/PgDown - пред/след рабочее место
-    Shift+Win+PgUp/PgDown - окно на пред/след рабочее место
+    Ctrl+Escape        xfce4-popup-whiskermenu
     PrintScreen        xfce4-screenshooter -fc
     Shift+PrintScreen  xfce4-screenshooter -rc
     Alt+PrintScreen    xfce4-screenshooter -wc
+.
+    Win+D              Показать рабочий стол
+    Win+PgUp/PgDown    Пред/след рабочее место
+    Shift+Win+PgUp/PgDown  Окно на пред/след рабочее место
 
 [-initial-setup] [lightdm]
 Двигаем панель в lightdm gtk greeter
@@ -1347,6 +1358,7 @@ OpenGL на AMD на mesa-драйвере не умеет в compatibility-пр
 [-initial-setup] [csd]
 Убираем CSD в диалогах выбора файлов
 CSD = гуй в заголовке окна, в т.ч. выбор имени файла.
+На арче по дефолту выключено.
 xfconf-query -c xsettings -p /Gtk/DialogsUseHeader -s false
 
 [-initial-setup] [hotkeys]
@@ -1804,8 +1816,9 @@ Manjaro, похоже, требует задать этот пароль при 
     sudo nano /etc/default/grub
 Как применить:
     Проверь, по какому пути у тебя лежит конфиг, и выбери команду из двух.
-    Арч:    LANG= sudo grub-mkconfig -o /boot/grub/grub.cfg
-    Другие: LANG= sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+    Арч (/efi):   LANG= sudo grub-mkconfig -o /efi/grub/grub.cfg
+    Арч (/boot):  LANG= sudo grub-mkconfig -o /boot/grub/grub.cfg
+    Другие:       LANG= sudo grub2-mkconfig -o /boot/grub2/grub.cfg
         Проставляем LANG, чтобы не было сообщений на русском при загрузке.
 Что можно поменять:
 Убрать `quiet splash`, чтобы было видно логи загрузки. (В арче splash и так не стоит.)
