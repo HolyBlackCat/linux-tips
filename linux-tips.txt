@@ -295,8 +295,9 @@ REIB vs REISUB
 Как вернуть обратно - думаю, понятно.
 Странновато работает. Для надежности лучше еще руками отключить антиалиасинг в гуи настроек.
 
-[fonts] [fonts-antialiasing]
+[fonts] [fonts-antialiasing] [ubuntu]
 Отключение запрета на использование пиксельных шрифтов
+На арче этого нет. Видимо убунто-специфичное?
 Видимо запрет стоит, чтобы не возникали неожиданные проблемы со скейлингом. Может и не стоит отключать.
     cd /etc/fonts/conf.d
     sudo rm 70-no-bitmaps.conf
@@ -304,27 +305,26 @@ REIB vs REISUB
 
 [-initial-setup] [fonts]
 Шрифты с Windows
-Старый плохой вариант:
-    sudo apt install ttf-mscorefonts-installer
-Нормальный вариант:
-    Ищи на sourceforge проект `mscorefonts2` (там два экзешника от мелкомягких, скачай их и выпотроши шрифты архиватором).
-Самый модный, но слегка пиратский вариант:
-    Скачай офф. вируалку винды (якобы для тестов браузера Edge), образ для виртуалбокс.
-    Распотроши архиватором пока не дойдешь до файла с расширением `.vmdk`.
-    (Если застрянешь на .ova, делай `tar -xf ...ova`.)
-        убунта: sudo apt install libguestfs-tools
-	федора: sudo dnf install libguestfs-tools
-	manjaro: pamac install guestfs-tools
-        # На федоре после установки надо перезайти в систему.
-        mkdir ./mount
-        guestmount -a WinDev*Eval-disk001.vmdk -i --ro ./mount
-        cp -r ./mount/Windows/Fonts/ -T ./WindowsFonts
-        umount ./mount
-        rm -r ./mount
-    Копируем в систему: (тут owner исправляется автоматически)
-        sudo cp -r WindowsFonts -T /usr/local/share/fonts/WindowsFonts
-    Или, копируем только себе:
-        cp -r WindowsFonts -T ~/.local/share/fonts/WindowsFonts
+Скачай офф. вируалку винды (якобы для тестов браузера Edge), образ для виртуалбокс.
+Распотроши архиватором пока не дойдешь до файла с расширением `.vmdk`.
+(Если застрянешь на .ova, делай `tar -xf ...ova`.)
+    убунта: sudo apt install libguestfs-tools
+федора: sudo dnf install libguestfs-tools
+manjaro: pamac install guestfs-tools
+    # На федоре после установки надо перезайти в систему.
+    mkdir ./mount
+    guestmount -a WinDev*Eval-disk001.vmdk -i --ro ./mount
+    cp -r ./mount/Windows/Fonts/ -T ./WindowsFonts
+    umount ./mount
+    rm -r ./mount
+Копируем в систему: (тут owner исправляется автоматически)
+    sudo cp -r WindowsFonts -T /usr/local/share/fonts/WindowsFonts
+Или, копируем только себе:
+    cp -r WindowsFonts -T ~/.local/share/fonts/WindowsFonts
+Есть еще всякие пакеты:
+    Например на убунте:
+        sudo apt install ttf-mscorefonts-installer
+    Или поновее шрифты на sourceforge в проекте `mscorefonts2` (там два экзешника от мелкомягких, скачай их и выпотроши шрифты архиватором).
 
 [clock] [windows-dual-boot]
 Фикс кривых часов при дуал-буте с виндой
@@ -354,9 +354,9 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-initial-setup] [fonts]
 Какие шрифты выбрать
-Основной:  Noto Sans 10 или Noto Sans 9,  или Trebuchet MS 9, или Verdana 8
-Моно:      Noto Mono 10 или Noto Mono 9,  или Consolas 10 или Andale Mono 10
-Заголовки: Noto Sans Bold 10,             или Verdana Bold 9, или Trebuchet MS Bold 9
+Основной:  Sans Regular 10 (noto sans?)      или 9,  или Trebuchet MS 9, или Verdana 8
+Моно:      Monospace Regular 10 (noto mono?) или 9,  или Consolas 10 или Andale Mono 10
+Заголовки: Sans Bold 10 (Noto Sans Bold?),   или Verdana Bold 9, или Trebuchet MS Bold 9
 Терминал:  Noto Mono 11 или Noto Mono 9
 (везде light hinting)
 Что интересно, Manjaro не показывает Noto Mono в выборе шрифта в терминале - там это называется Monospace.
@@ -1222,7 +1222,7 @@ systemd-analyze blame
 [-initial-setup] [git]
 Начальная настройка git
     git config --global user.name "HolyBlackCat"
-    git config --global user.email "blckcat@inbox.ru"
+    git config --global user.email "holyblckcat@gmail.com"
     git config --global core.editor nano
     git config --global merge.tool kdiff3 # Запускать командой `git mergetool` когда есть конфликты.
     git config --global diff.guitool kdiff3
