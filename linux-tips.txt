@@ -2174,3 +2174,13 @@ sudo nano /etc/dnf/dnf.conf
 Есть еще ~/.bashrc - только для баша, и только для одного пользователя. (туда хорошо писать кастомный prompt)
     Есть еще ~/.bash_profile - он для login shells, а .bashrc - теоретически только для non-login shells,
     но на практике .bash_profile инклудит .bashrc (проверял в manjaro)
+
+[msvc] [msvc-wine]
+Ставим MSVC в Wine
+sudo pacman -S --needed msitools ca-certificates samba # Для других дистрибутивов смотри их ридми
+https://github.com/mstorsjo/msvc-wine
+cd msvc-wine
+DIR=$(pwd)/_install
+mkdir -p $DIR
+./vsdownload.py --dest $DIR
+./install.sh $DIR
