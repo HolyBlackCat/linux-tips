@@ -1011,7 +1011,7 @@ pacman для чайников
     yad zenity   (рисование диалогов из консоли; первое - форк второго, больше фичей и не новомодный гуй, но пусть будут оба)
     perl-rename  (массовое переименование файлов)
         ubuntu -> rename  (проверь)
-    gst-libav gst-plugins-good gst-plugins-bad gst-plugins-ugly (кодеки)
+    gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav (кодеки; libav - он для H.264, ugly - возможно запатентованные кодеки, bad - нестабильные кодеки (запатентованные и нет))
         ^ arch, manjaro
     visual-studio-code-bin
         ^ arch-aur, manjaro
