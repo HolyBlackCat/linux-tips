@@ -2014,7 +2014,7 @@ sudo nano /etc/dnf/dnf.conf
         Туда пиши: (idVendor вставь свой) (вообще, он умеет и скрипты напрямую запускать, но, говорят, долгие команды нехорошо сюда писать? поэтому systemd)
             ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="056a", TAG+="systemd", ENV{SYSTEMD_USER_WANTS}+="wacom-custom-settings.service"
         И дополнительно автозапуск при логине
-            Прогуляйся в меню автозапуска, и туда добавь команду: systemctl --user status wacom-custom-settings
+            Прогуляйся в меню автозапуска, и туда добавь команду: systemctl --user start wacom-custom-settings
             Наверное можно сделать автозапуск через systemd, но у меня быстро не взлетело, поэтому пофиг
         Ребут и проверяй. Потом кнопкой выключи и включи планшет, проверь что не слетело.
 2. Настройки экрана (например яркость)
