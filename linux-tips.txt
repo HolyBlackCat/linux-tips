@@ -2189,3 +2189,7 @@ DIR=$(pwd)/_install
 mkdir -p $DIR
 ./vsdownload.py --dest $DIR
 ./install.sh $DIR
+
+[summary] [hostname]
+Печатаем сводку информации о системе
+    hostnamectl
