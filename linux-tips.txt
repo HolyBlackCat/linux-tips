@@ -1013,6 +1013,8 @@ pacman для чайников
         ubuntu -> rename  (проверь)
     gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav (кодеки; libav - он для H.264, ugly - возможно запатентованные кодеки, bad - нестабильные кодеки (запатентованные и нет))
         ^ arch, manjaro
+    inetutils    (утилита hostname и прочие)
+        ^ arch, manjaro
     visual-studio-code-bin
         ^ arch-aur, manjaro
     elementary-xfce-icons
@@ -1502,6 +1504,9 @@ Zip-архив скопировать в:
 [-useful-packages] [ip]
 Узнать локальный IP-адрес
     hostname -I
+На арче такого флага нет, там:
+    hostname -i
+На арче нужно поставить hostname через `sudo pacman -S --needed inetutils`.
 Или:
     sudo apt install net-tools
     ifconfig
