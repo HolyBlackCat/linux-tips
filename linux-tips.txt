@@ -179,6 +179,43 @@ REIB vs REISUB
     sudo rmmod pcspkr snd_pcsp
     # Возможно только один из двух модулей сейчас загружен. Это не проблема, тогда убьется только второй.
 
+[-initial-setup] [oom] [oom-killer]
+Настраиваем автоматическое закрытие приложений когда кончается память
+В теории ядро автоматически убивает приложения когда нет памяти (oom-killer), но оно очень не торопится это делать,
+  поэтому в systemd есть сервис, который делает это сам и быстрее (systemd-oomd). Но его нужно настроить.
+Он включен по дефолту в fedora. В других дистрибутивах нужно руками заполнить конфиги. Можно вдохновиться вот этим:
+    https://packages.fedoraproject.org/pkgs/systemd/systemd-oomd-defaults/fedora-rawhide.html#files
+    https://src.fedoraproject.org/rpms/systemd/tree/rawhide (а вот это что такое, непонятно: https://pagure.io/systemd/tree/rawhide - тут какие-то другие файлы, но это не так важно)
+    А вот оно в AUR: https://aur.archlinux.org/packages/systemd-oomd-defaults - скачивает конфиги из федоры
+.
+Включаем вот так:
+    sudo mkdir -p /usr/local/lib/systemd/oomd.conf.d/
+    sudo nano /usr/local/lib/systemd/oomd.conf.d/10-oomd-defaults.conf
+Туда пишем:
+    [OOM]
+    DefaultMemoryPressureDurationSec=20s
+Дальше:
+    sudo mkdir -p /usr/local/lib/systemd/system/system.slice.d/
+    sudo nano /usr/local/lib/systemd/system/system.slice.d/10-oomd-per-slice-defaults.conf
+Туда пишем:
+    [Slice]
+    ManagedOOMMemoryPressure=kill
+    ManagedOOMMemoryPressureLimit=80%
+Дальше:
+    sudo mkdir -p /usr/local/lib/systemd/user/slice.d/
+    sudo nano /usr/local/lib/systemd/user/slice.d/10-oomd-per-slice-defaults.conf
+Туда пишем: (да, здесь тот же конфиг)
+    [Slice]
+    ManagedOOMMemoryPressure=kill
+    ManagedOOMMemoryPressureLimit=80%
+.
+Настраивать руками тут особо ничего не надо. "Memory pressure" - это не процент оперативки,
+  а "fraction of time in a 10 second window in which all tasks in the control group were delayed" - что бы это не значило.
+.
+Ребут.
+.
+Проверить можно так: `tail /dev/zero`.
+
 [-initial-setup] [-useful-packages] [firefox] [snap] [ubuntu]
 Ставим Firefox без snap
 Это только для убунты, очевидно. У всех остальных он и так нормальный.
