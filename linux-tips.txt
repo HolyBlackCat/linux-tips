@@ -213,8 +213,6 @@ REIB vs REISUB
   а "fraction of time in a 10 second window in which all tasks in the control group were delayed" - что бы это не значило.
 .
 Ребут.
-.
-Проверить можно так: `tail /dev/zero`.
 
 [-initial-setup] [-useful-packages] [firefox] [snap] [ubuntu]
 Ставим Firefox без snap
