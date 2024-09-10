@@ -59,8 +59,9 @@ Locales
 
 Disk configuration: best effort, brtfs, compress=yes...
     Что интересно, на отдельных subvolumes он с этим показывает compress=false
+    (Либо manual partitioning.)
 
-bootloader -> systemd-boot
+bootloader -> grub
     unified kernel images - false (это что-то для secure boot, чтобы закатывать в image всякие настройки и подписывать их разом)
 
 swap - yes (но в виртуалке выключи, что-то ее подкрашивает)
@@ -76,7 +77,7 @@ profile -> type -> desktop -> xfce (greeter оставляем lightdm-gtk-greet
 
 audio - pipewire (самый новый модный вариант)
 
-kernels - linux-lts (а обычное долой?)
+kernels - linux-lts + обычный linux (чтобы была избыточность?)
 
 network configuration - NetworkManager
 

@@ -1045,6 +1045,7 @@ pacman для чайников
     obs-studio   (записываем видео с экрана)
     lightdm-gtk-greeter-settings (гуй настройки lightdm, не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
     yad zenity   (рисование диалогов из консоли; первое - форк второго, больше фичей и не новомодный гуй, но пусть будут оба)
+    lshw         (выводит информацию о железе в консоль)
     perl-rename  (массовое переименование файлов)
         ubuntu -> rename  (проверь)
     gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav (кодеки; libav - он для H.264, ugly - возможно запатентованные кодеки, bad - нестабильные кодеки (запатентованные и нет))
@@ -2093,8 +2094,6 @@ sudo nano /etc/dnf/dnf.conf
 Создать интерактивный контейнер
     docker container create -it --name <NEW_CONTAINER> <IMAGE> /usr/bin/bash
   Дополнительные опции: (перед именем контейнера)
-    Дефолтный юзер (можно потом поменять)
-        -u <USERNAME>
     Проброс видюшки
         Общая часть
             -env=DISPLAY --volume=/tmp/.X11-unix:/tmp/.X11-unix:ro
@@ -2102,6 +2101,8 @@ sudo nano /etc/dnf/dnf.conf
             --device /dev/dri
         На хосте запустить:
             xhost +local:docker
+    Дефолтный юзер (можно потом поменять - сначала лучше не указывать, потому что в image нет твоего юзернейма)
+        -u <USERNAME>
 Запустить контейнер:
     docker container start <CONTAINER>
 Остановить контейнер:
@@ -2120,7 +2121,7 @@ sudo nano /etc/dnf/dnf.conf
     sudo locale-gen en_US.UTF-8
     sudo update-locale LANG=en_US.UTF-8
 Меняем дефолтного юзера (какой-то тупой способ, но работает)
-    * Останавливаем контейнер
+    * docker container stop CONTAINER
     * sudo nano $(docker inspect --format='/var/lib/docker/containers/{{.Id}}/config.v2.json' CONTAINER)
         * Там ищем `"User": ""`, и вместо пустой строки пишем юзернейм.
     * sudo systemctl restart docker
@@ -2129,11 +2130,6 @@ sudo nano /etc/dnf/dnf.conf
 Подключаем GPU к уже существующему контейнеру
     Надо было при создании указывать! Теперь делай `docker commit`, и пересоздавай контейнер из image.
 
-
-[sudo] [user]
-Даем sudo-права
-Это чинит `user is not in the sudoers file.  This incident will be reported.`
-    sudo adduser USERNAME sudo
 
 [user]
 Создаем пользователя
@@ -2146,6 +2142,8 @@ sudo nano /etc/dnf/dnf.conf
 Задаем нормальный шелл:
     sudo chsh USERNAME
     # Вводим /bin/bash
+Добавляем в группы:
+    sudo usermod -a -G MyGroup $USER
 Включаем цветной промпт в терминале:
     nano ~/.bashrc
     # Раскомментируем там `force_color_prompt=yes`.
