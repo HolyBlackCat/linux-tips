@@ -1697,27 +1697,27 @@ crontab -e
 Открой `about:config`, там поставь `toolkit.legacyUserProfileCustomizations.stylesheets` в `true`.
 .
 Пример нормального `userChrome.css`. Разжимать `base64 -d 1.txt | gzip -d >userChrome.css`, был сжат `gzip -c9 userChrome.css | base64`
-    H4sICHeBh2QCA3VzZXJDaHJvbWUuY3NzANVWzW7bRhA+R08xjQ+VVK1EyT9IGCRAETRpD0aCRj0Z
-    PizJkbQ1uUvsLiU5gYGkL9AX6EMYQXMpmjwD9UadXZKyRdtpgLaHAoZN7+z8frPfzKgPjDGYLoQB
-    g7EVSgJ9zrTKoDCo4wV94VDpub/XH3U6o36/D1MxX1iUUOSQaJWzRK3kKFbS4tqOcpXTeYayAJPz
-    WMg5dB/AK8xhEkzGPSADZMfJ/c1QKtsdCsncSSqM7cETry0sZoMvuAdvOgA5TxLyxKJUxWch7Odr
-    +EpkudKWS/sIRn3QmBQxglVOOICJ+zWma0pDQH+4AYmYYOKyBMjI0QJdmiEU0qBtm1s+nAwDYDAj
-    /do5RJiqFRyQNbJx0Qm1UtZHxxjXWq1yLjFlTW6sVgu9xoPdiEm9KvVLrSyhMuWRgekK+ZmpC0gx
-    fJv8XBgLlkcQKy1Rg1nwHAegcgclT9NzSjtTS/RIYB2gdbaciT36iiguQpr5Qxeri7aoT5hWhaxi
-    pBr5oIbuOOLx2dzLapVI6YRUNE9EYUJYct29xUrvboGDILgJ2lMlJfVlgwrhwvWcoKlhdvgFn9W5
-    6OyZWKs0jQpLdWRFPoDdE9e78MYpHo3Gwcj1aOOszspSh69EYheVw+soXbsVKTKXNReDm2DCeDQ+
-    cvYnMFUSwTu2C4Rn64dHHsTKEqyEXQD1BlNenqEBISFGMkZ/ZwSrqz8YYQvucPZgtnAJhemeGEx9
-    IU4HcJIVqRXbg17IMvWapStvf4s7/e8bgdU5xSpVOgQ9j3g3GED9Mzzs/U0Raj2ruaTG0yhtqxwn
-    kXZvy/HF4/tWF3j/FP7zDCaHh/Tut7/+jTw6Vb85YAg4fx0irmEpjIhEKux5g821d3biqbViS5Gc
-    Eo351I11qD5p16E5qRVYSq7qdKvH4N8mfa+7MU/j7p1PjDni6w3c7d4tafwgOQ0AogpXvtDxNdfc
-    Uj7eobHnKXrSaCXjaXmL02OHJWHjD3cA25FESLSJjYj5aqXYdEIPPk8yFSu7p2hUKpKaVBzyVyo+
-    d9PkUAE5aDXycBL02pWgQjyjnBOuz+DKmn9hd/Xs/7UYVze3vnc97VSt9Xh87drF+2fVgC8aLcFN
-    wH6sRtzVFLYrpOWkGXOtqGqzzcKQ4sy2rV6X1wW+jc/9OIYXecXBtEComeP4ief4R/AciRO4m0Ov
-    uIVjfg7jA/D0P94PJ4dhcADPj6ffBPtBAN3yt/LT5l35R/m+vBzA5t3ml/Ky/Fj+Xl5u3tL3x/JT
-    +QHK95u35Yfyz82vPf8UXRC37W8xbQW0wV2tbPC9SBB+kmImKJzv1rS7GR90NQPdrb2ikjLcSlkl
-    pYF5p8yTk1I0kHQ9TgXxFJX4XjMHWwPz3nbpCW5beKpAXyxRz9ymcuzWu9oTo4GJRn5tKVPM3B4X
-    YbOyVbWXajWAM8TcdYF1NVmgRvA7khug3HgGIy97L1Nah8zTBS61CxcSYfKUn4dkg8ju+kJxQSp/
-    AeIL3jonCwAA
+    H4sICB6M/WYCA3VzZXJDaHJvbWUuY3NzANVWzW7bRhA+R08xjQ+WVK1EyT9IGCRAETRpD0aCRj0Z
+    PizJkbQ1tUvsLiW5gYGkL9AX6EMYQXMpmjwD9UadXZKyRP80QNtDAcOmd3b+vm92ZgZdYIzBeCYM
+    GIytUBLoc6LVHHKDOp7RF/aVnvp73UGrNeh2uzAW05lFCXkGiVYZS9RSDmIlLa7sIFMZnc9R5mAy
+    Hgs5hfYjeIMZjILRsANkgOw4ub8ZSmXbfSGZO0mFsR145rWFxXnvC+7B2xZAxpOEPLEoVfF5CAfZ
+    Cr4S80xpy6V9AoMuaEzyGMEqJ+zByP0a0jWlIaA/3IBETDBxWQLMydEMXZoh5NKgbZpbPB71A2Aw
+    If3KOUSYqiUckjWycdkKtVLWR8cY11otMy4xZXVurFILvcaj3YhJvYT6tVaWWBnzyMB4ifzcVABS
+    DN8kP+XGguURxEpL1GBmPMMeqMxRydP0gtKeqwV6JrAK0DpbzsQefUUUFzHN/KGL1UWbVydMq1yW
+    MRJGPqi+O454fD71skolUjohFc0TkZsQFly3b7HSuVvgKAhukvZcSUl1WbNCvHA9JWoqmh1/wb06
+    l609E2uVplFuCUeWZz3YPXG1C2+d4vFgGAxcjdbOqqwsVfhSJHZWOtxmaetWpMjcvL4Y3CQThoPh
+    sbM/grGSCN6xnSG8WD0+9iSWlmAp7AyoNpjy8jkaEBJiJGP0d0K0OvzBCJtzx7Mns8FLKEz71GDq
+    gTjrwek8T63YHHRCNlc/s3Tp7W94p/99IbAqp1ilSoegpxFvBz2ofvpHnb8BodKzmksqPI3SNuA4
+    jbR7W65fPH1odY4Pz+A/z2B0dETvfvPr38ijVdabI4aI89ch4hoWwohIpMJe1NxsvbNT31rLbimS
+    M2pjPnVjHavPmjjUJ5UCS8lVlW75GPzbpO9VO+Zp3L7ziTHX+Do9d7tzSxrfS04DgFqFgy90/Zpr
+    bikf79DYixR902gk49vyhqenjkvixh/uELYjiZDaJtYi5tFKsa6EDtzfZMqu7J6iUalIqqbimL9W
+    8bmbOoeSyF6jkPujoNNEgoB4QTknXJ/DtTX/wu6q2f8rGNc3N753Pe2g1ng8HrsmeP8MDfii0RLc
+    JOyHcsRdT2G7RFpO6jHXiKoyWy8MKU5s0+q2vAL4tn7uxzG8ysoeTAuEmrgeP/I9/gm8ROoJ3M2h
+    N9zCCb+A4SH49j88CEdHYXAIL0/GXwcHQQDt4rfi8/p98Ufxobjqwfr9+pfiqvhU/F5crd/R96fi
+    c/ERig/rd8XH4s/1rx3/FF0Qt+1vMW0FtMFdr2zwnUgQfpRiIiicb1e0uxkfdDkD3a29vJQy3EhZ
+    KaWBeafMNyelaCDpapwK6lME8YN6DjYG5oPN0hPctvCUgb5aoJ64TeXErXeVJ0YDE43ct5Qpzt0e
+    F2G9spXYS7XswTli5qrAOkxmqBH8juQGKDe+g5GXvdcprUPm+QwX2oULiTBZyi9CskHNbnuhuNyB
+    0I3rfRrAvrj2t+Gjw3LulEf3mmz9BSOOggx4CwAA
 Он был сгенерирован 14 мая 2022 тут:
     1. https://www.userchrome.org/firefox-89-styling-proton-ui.html#tabstyler
         Tab corner rounding -> None
@@ -2140,8 +2140,7 @@ sudo nano /etc/dnf/dnf.conf
 Задаем пароль:
     sudo passwd USERNAME
 Задаем нормальный шелл:
-    sudo chsh USERNAME
-    # Вводим /bin/bash
+    sudo chsh USERNAME -s /bin/bash
 Добавляем в группы:
     sudo usermod -a -G MyGroup $USER
 Включаем цветной промпт в терминале:
