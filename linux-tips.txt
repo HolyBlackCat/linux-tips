@@ -2226,3 +2226,13 @@ mkdir -p $DIR
 [summary] [hostname]
 Печатаем сводку информации о системе
     hostnamectl
+
+[-initial-setup] [zapret] [russia]
+Обход блокировок через zapret
+Пакет в AUR странный, качай зипник отсюда: https://github.com/bol-van/zapret
+Ставь через `easy_install.sh`, везде дефолтный выбор, кроме:
+    согласись на авто-копирование в /opt/zapret
+    включи nfqws
+Потом в /opt/zapret/config в строке с NFQWS_OPT -> первый --filter-tcp=443 перед <HOSTLIST> добавь `--dpi-desync-fake-tls=/opt/zapret/files/fake/tls_clienthello_www_google_com.bin`,
+    это помогает против замедления ютуба.
+Все управление через `systemctl {enable,disable,start,stop} zapret`.
