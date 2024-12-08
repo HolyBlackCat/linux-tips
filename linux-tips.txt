@@ -1788,12 +1788,13 @@ Mount разделов в xfce без рутовых прав
 
 [time] [date] [timezone]
 Меняем временную зону (timezone)
-Федора: (возможно на убунте тоже работает, не проверял)
-    Делай так:
-        sudo timedatectl set-timezone Europe/Moscow
-    Посмотреть статус можно так:
-        timedatectl
-    Искать имя таймзоны интерактивно можно в `tzselect`, чтобы потом вставить в команду выше.
+Арч:
+    В консоли:
+        sudo timedatectl set-timezone $(tzselect)
+    Создаем ярлык:
+        Команда:
+            bash -c 'pkexec timedatectl set-timezone $(tzselect)'
+        Ставим галочку "запускать в терминале".
 Убунту: (открывает интерактивное меню в терминале)
     sudo dpkg-reconfigure tzdata
 
