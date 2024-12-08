@@ -345,7 +345,7 @@ REIB vs REISUB
 (Если застрянешь на .ova, делай `tar -xf ...ova`.)
     убунта: sudo apt install libguestfs-tools
 федора: sudo dnf install libguestfs-tools
-manjaro: pamac install guestfs-tools
+arch: sudo pacman -S guestfs-tools
     # На федоре после установки надо перезайти в систему.
     mkdir ./mount
     guestmount -a WinDev*Eval-disk001.vmdk -i --ro ./mount
@@ -455,9 +455,13 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-initial-setup] [videocard] [drivers] [nvidia] [white-screen]
 Ставим драйвер от NVidia
-В гуи настроек есть старые драйвера, а в apt - поновее, но не факт что они лучше.
-Из apt ставить так: `sudo apt install nvidia-driver-XXX` (XXX = версия). Потом можно попробовать `sudo nvidia-xconfig`, но наверное лучше без него.
-Дрова могут нормально не ставиться на uefi. Надо было ставить убунту в legacy-режиме (уже установленную можно переделать под legacy, но это не идеально).
+Arch:
+    pacman -S --needed nvidia nvidia-lts nvidia-prime nvidia-settings
+    Здесь `nvidia` - основной драйвер, а `nvidia-lts` - то же самое но для lts-ядра. И там и там есть варианты с припиской `-open`, но хз чем они лучше или хуже.
+Ubuntu:
+    В гуи настроек есть старые драйвера, а в apt - поновее, но не факт что они лучше.
+    Из apt ставить так: `sudo apt install nvidia-driver-XXX` (XXX = версия). Потом можно попробовать `sudo nvidia-xconfig`, но наверное лучше без него.
+    Дрова могут нормально не ставиться на uefi. Надо было ставить убунту в legacy-режиме (уже установленную можно переделать под legacy, но это не идеально).
 
 [videocard] [drivers] [nvidia] [black-screen] [boot]
 Отключаем нерабочие дрова NVidia
