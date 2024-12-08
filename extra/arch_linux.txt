@@ -5,6 +5,13 @@ LiveUSB арча - чисто консольный. Возможно стоит 
 
 Поэтому либо полная перезапись диска через инсталлер, либо ручная разметка и монтирование.
 
+Подключаем сеть:
+    iwctl
+        station wlan0 connect ИмяСети
+            Дальше вводим пароль
+            И wlan0 и ИмяСети подсказываются на таб.
+            Если вдруг не видим нужную сеть, то делаем:  station wlan0 scan
+
 Как размечать вручную:
     Информация:
         Посмотри `lsblk` названия устройств, и в `fdisk -l` размер сектора, чтобы не тупить. Дальше все написано в расчете на сектор 512 байт.
@@ -93,46 +100,124 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         # Проверяем:
         mount   (смотрим на последние строчки - ПРОВЕРЬ пути монтирования и имена subvolumes)
 
-Запускаем `archinstall`.
+Вариант через `archinstall`:
 
-Archinstall language - оставляем english, это же только инсталлер
-Mirrors - выбираем свою страну
-Locales
-    keyboard layout - НЕ ТРОГАЕМ, а то потом на входе в систему застрянем
-    locale language - ru_RU.UTF-8   (хз прокатит ли без `.UTF-8`, проще не проверять)
-    locale encoding - не трогаем, оставляем UTF-8
+    Archinstall language - оставляем english, это же только инсталлер
+    Mirrors - выбираем свою страну
+    Locales
+        keyboard layout - НЕ ТРОГАЕМ, а то потом на входе в систему застрянем
+        locale language - ru_RU.UTF-8   (не уверен что прокатит без `.UTF-8`)
+        locale encoding - не трогаем, оставляем UTF-8
 
-Disk configuration: best effort, brtfs, compress=yes...
-    Что интересно, на отдельных subvolumes он с этим показывает compress=false
-    (Либо manual partitioning.)
+    Disk configuration: best effort, brtfs, compress=yes...
+        Что интересно, на отдельных subvolumes он с этим показывает compress=false
+        (Либо manual partitioning.)
 
-bootloader -> grub
-    unified kernel images - false (это что-то для secure boot, чтобы закатывать в image всякие настройки и подписывать их разом)
+    bootloader -> grub
+        unified kernel images - false (это что-то для secure boot, чтобы закатывать в image всякие настройки и подписывать их разом)
 
-swap - в последних версиях инстуллера предлагают только "swap on zram" (свопать в RAM но сжато). Интересно, попробуем.
+    swap - в последних версиях инстуллера предлагают только "swap on zram" (свопать в RAM но сжато). Интересно, попробуем.
 
-hostname - выбери
+    hostname - выбери
 
-root password - не трогаем, не создаем
+    root password - не трогаем, не создаем
 
-user account - создаем
+    user account - создаем
 
-profile -> type -> desktop -> xfce (greeter оставляем lightdm-gtk-greeter)
-    тут же выбираем драйвер видеокарты
+    profile -> type -> desktop -> xfce (greeter оставляем lightdm-gtk-greeter)
+        тут же выбираем драйвер видеокарты
 
-audio - pipewire (самый новый модный вариант)
+    audio - pipewire (самый новый модный вариант)
 
-kernels - linux-lts + обычный linux (чтобы была избыточность?)
+    kernels - linux-lts + обычный linux (чтобы была избыточность?)
 
-network configuration - NetworkManager
+    network configuration - NetworkManager
 
-timezone - выбрать
+    timezone - выбрать
 
-optional repositories - add multilib (нужен для Wine и Steam - если забыл, его можно потом раскомментировать в sudo nano /etc/pacman.conf - заметь, там нужно раскомментить две строки: [multilib] и за ней Include=...)
+    optional repositories - add multilib (нужен для Wine и Steam - если забыл, его можно потом раскомментировать в sudo nano /etc/pacman.conf - заметь, там нужно раскомментить две строки: [multilib] и за ней Include=...)
 
-install
+    install
 
-В chroot (или потом) делаем:
-    sudo nano /etc/pacman.conf #-> раскомментируем parallel downloads
+    В chroot (или потом) делаем:
+        sudo nano /etc/pacman.conf #-> раскомментируем parallel downloads
 
-reboot
+    reboot
+
+
+Вариант ручной:
+    Базовая система:
+        pacstrap -K /mnt base linux linux-lts linux-firmware   # здесь `linux-lts` - опциональное дополнительное LTS ядро
+    FSTAB:
+        genfstab -U /mnt >>/mnt/etc/fstab
+
+    arch-chroot /mnt   # --- Переходим в chroot, дальше все в нем
+
+    Минимум пакетов:
+        pacman -Syu
+        pacman -S nano
+    Сеть:
+        pacman -S networkmanager network-manager-applet iwd wireless_tools wpa_supplicant
+        systemctl enable NetworkManager
+
+    Таймзона:
+        timedatectl set-timezone $(tzselect)
+        # Лучше выбирай родной город, чтобы не поставилась плохая локаль.
+    Синхронизация времени:
+        systemctl enable systemd-timesyncd
+
+    Локаль:
+        nano /etc/locale.gen
+            Раскомменть там `en_US.UTF-8` и `ru_RU.UTF-8`
+        locale-gen
+        nano /etc/locale.conf
+            LANG=ru_RU.UTF-8
+
+    Хостнейм
+        nano /etc/hostname
+            Туда имя машины
+
+    Бутлоадер:
+        pacman -S grub efibootmgr btrfs-progs amd-ucode   # или intel-ucode для intel
+            Я хз, но что-то у меня amd-ucode не ставился без btrfs-progs
+        grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ArchGrub
+            Здесь /efi - если ты туда монтировал свой раздел (см самое начало здесь)
+            ArchGrub - любое имя
+        grub-mkconfig -o /boot/grub/grub.cfg
+
+    Юзер:
+        Создаем:
+            sudo useradd -m -g wheel USERNAME
+        Пароль:
+            sudo passwd USERNAME
+        Задаем нормальный шелл:
+            sudo chsh USERNAME -s /bin/bash
+
+    Sudo:
+        nano /etc/sudoers
+        В самом конце раскомменть `%wheel ALL=(ALL:ALL) ALL`
+
+    Основные пакеты: (часть скопирована из archinstall)
+        # Графика: (это соответствует "all open-source" в инсталлере, пусть будет, лишним не будет)
+        pacman -S xorg-server xorg-xinit mesa xf86-video-amdgpu xf86-video-ati xf86-video-nouveau xf86-video-vmware libva-mesa-driver libva-intel-driver intel-media-driver vulkan-radeon vulkan-intel
+        # Xfce:
+        pacman -S xfce4 xfce4-goodies pavucontrol gvfs
+        # Прочее:
+        pacman -S openssh htop wget smartmontools xdg-utils
+
+    Звук:
+        pacman -S pipewire pipewire-alsa pipewire-jack pipewire-pulse gst-plugin-pipewire libpulse wireplumber sof-firmware
+        su USERNAME
+        systemctl --user enable pipewire-pulse    # БЕЗ SUDO!
+
+    Экран входа в систему:
+        pacman -S lightdm lightdm-gtk-greeter
+        systemctl enable lightdm
+
+    # --- ребутаемся в систему, дальше оттуда!
+    Ctrl+D - выходим из chroot
+    shutdown -h now
+    вынимаем live usb
+    включаем
+
+    Пока все.
