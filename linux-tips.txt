@@ -171,6 +171,8 @@ REIB vs REISUB
 [-initial-setup] [beep] [speaker]
 Глушим поганую пищалку
 Некоторые дистрибутивы (Fedora и Manjaro) любят громко пищать динамиками, имитируя старые пищалки.
+Проверь что на тебя влияет:
+    lsmod | grep pcspkr
 Делаем так:
     sudo nano /etc/modprobe.d/nobeep.conf
 Туда пишем:
@@ -805,6 +807,16 @@ Escape - вернуться в дефолтный режим.
     !q - принудительный выход без сохранения
     wq - выход с сохранением
 
+[-initial-setup] [autologin]
+Настраиваем автоматический логин
+sudo nano /etc/lightdm/lightdm.conf
+    Там раскомментируй `autologin-user=` и допиши туда свой юзернейм.
+    ВНИМАНИЕ: эта строка там встречается два раза. Раскомментируй ВТОРОЕ вхождение, которое после `[Seat:*]`.
+Еще нужно добавить себя в группу `autologin`:
+    sudo gpasswd -a $USER autologin
+Если такой группы нет, создай ее через:
+    sudo groupadd -r autologin
+
 [-initial-setup] [drivers] [sensors]
 Мониторим температуру
 Проц/видюха/...:
@@ -858,14 +870,13 @@ Escape - вернуться в дефолтный режим.
 [-initial-setup] [-useful-packages] [arch] [yay]
 Настраиваем AUR на арче
 В Manjaro это все встроено в pamac, там ничего делать не нужно.
+Сначала настраиваем сборку пакетов:
+    sudo nano /etc/makepkg.conf
+        поставь `!` перед `debug` в строке `OPTIONS=...`, чтобы не ставить дебажные пакеты
+        либо переключи на кланг, либо там же убери флажок lto чтобы не тормозило
+            чтобы переключить на кланг, в разделе `ARCHITECTURE, COMPILE FLAGS` добавь в начале строки `CC=clang`, `CXX=clang++`. Не забудь его поставить, лол.
 Нужно выбрать программу-менеджер, чтобы руками не билдить. `yay` хорош.
     sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay
-.
-    Если он тут захочет ставить ??-debug пакеты (рядом с каждым установленным), то...
-        Просто потом руками их удаляй.
-        Есть фикс, но наверное лучше так не делать, чтобы потом конфликтов не было.
-            sudo nano /etc/makepkg.conf
-                и там поставить `!` перед `debug` в строке `OPTIONS=...`.
 .
     # Initial setup from readme at: https://github.com/Jguer/yay
     yay -Y --gendb
@@ -1043,7 +1054,6 @@ pacman для чайников
             Runtime использует родные стимовские либы. Native использует системные либы.
     renderdoc    (отладчик графики)
     fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
-    radeontop    (состояние видюхи AMD)
     lmms         (музыкальный редактор)
         ubuntu -> вроде не работают плагины VST? Ставь официальный AppImage вместо пакета, там работют.
     tree         (печатаем дерево папок)
@@ -1702,28 +1712,25 @@ crontab -e
 Открой `about:config`, там поставь `toolkit.legacyUserProfileCustomizations.stylesheets` в `true`.
 .
 Пример нормального `userChrome.css`. Разжимать `base64 -d 1.txt | gzip -d >userChrome.css`, был сжат `gzip -c9 userChrome.css | base64`
-    H4sICB6M/WYCA3VzZXJDaHJvbWUuY3NzANVWzW7bRhA+R08xjQ+WVK1EyT9IGCRAETRpD0aCRj0Z
-    PizJkbQ1tUvsLiW5gYGkL9AX6EMYQXMpmjwD9UadXZKyRP80QNtDAcOmd3b+vm92ZgZdYIzBeCYM
-    GIytUBLoc6LVHHKDOp7RF/aVnvp73UGrNeh2uzAW05lFCXkGiVYZS9RSDmIlLa7sIFMZnc9R5mAy
-    Hgs5hfYjeIMZjILRsANkgOw4ub8ZSmXbfSGZO0mFsR145rWFxXnvC+7B2xZAxpOEPLEoVfF5CAfZ
-    Cr4S80xpy6V9AoMuaEzyGMEqJ+zByP0a0jWlIaA/3IBETDBxWQLMydEMXZoh5NKgbZpbPB71A2Aw
-    If3KOUSYqiUckjWycdkKtVLWR8cY11otMy4xZXVurFILvcaj3YhJvYT6tVaWWBnzyMB4ifzcVABS
-    DN8kP+XGguURxEpL1GBmPMMeqMxRydP0gtKeqwV6JrAK0DpbzsQefUUUFzHN/KGL1UWbVydMq1yW
-    MRJGPqi+O454fD71skolUjohFc0TkZsQFly3b7HSuVvgKAhukvZcSUl1WbNCvHA9JWoqmh1/wb06
-    l609E2uVplFuCUeWZz3YPXG1C2+d4vFgGAxcjdbOqqwsVfhSJHZWOtxmaetWpMjcvL4Y3CQThoPh
-    sbM/grGSCN6xnSG8WD0+9iSWlmAp7AyoNpjy8jkaEBJiJGP0d0K0OvzBCJtzx7Mns8FLKEz71GDq
-    gTjrwek8T63YHHRCNlc/s3Tp7W94p/99IbAqp1ilSoegpxFvBz2ofvpHnb8BodKzmksqPI3SNuA4
-    jbR7W65fPH1odY4Pz+A/z2B0dETvfvPr38ijVdabI4aI89ch4hoWwohIpMJe1NxsvbNT31rLbimS
-    M2pjPnVjHavPmjjUJ5UCS8lVlW75GPzbpO9VO+Zp3L7ziTHX+Do9d7tzSxrfS04DgFqFgy90/Zpr
-    bikf79DYixR902gk49vyhqenjkvixh/uELYjiZDaJtYi5tFKsa6EDtzfZMqu7J6iUalIqqbimL9W
-    8bmbOoeSyF6jkPujoNNEgoB4QTknXJ/DtTX/wu6q2f8rGNc3N753Pe2g1ng8HrsmeP8MDfii0RLc
-    JOyHcsRdT2G7RFpO6jHXiKoyWy8MKU5s0+q2vAL4tn7uxzG8ysoeTAuEmrgeP/I9/gm8ROoJ3M2h
-    N9zCCb+A4SH49j88CEdHYXAIL0/GXwcHQQDt4rfi8/p98Ufxobjqwfr9+pfiqvhU/F5crd/R96fi
-    c/ERig/rd8XH4s/1rx3/FF0Qt+1vMW0FtMFdr2zwnUgQfpRiIiicb1e0uxkfdDkD3a29vJQy3EhZ
-    KaWBeafMNyelaCDpapwK6lME8YN6DjYG5oPN0hPctvCUgb5aoJ64TeXErXeVJ0YDE43ct5Qpzt0e
-    F2G9spXYS7XswTli5qrAOkxmqBH8juQGKDe+g5GXvdcprUPm+QwX2oULiTBZyi9CskHNbnuhuNyB
-    0I3rfRrAvrj2t+Gjw3LulEf3mmz9BSOOggx4CwAA
-Он был сгенерирован 14 мая 2022 тут:
+    H4sICPjfVmcCA3VzZXJDaHJvbWUuY3NzALVVS2/bOBA+179i2hxie01LdpugUbAFirTbXoIGWPcU
+    5EBJY4uNRAokZTtb5L/vDEWnjpt097ALGDbNeXAe3zeTjEEIAYtKOXBYeGU00HFpTQOdQ1tUdMKp
+    saugN04Gg2Q8HsNCrSqPGroWSmtaUZqNTgqjPW590pqW7hvUHbhWFkqvYPgW/sQW5ul8NgJyQH5Y
+    HjQzbfxwqrTgm1o5P4J3wVp5bCb/Qg++DwBaWZb0kshrU9xm8LrdwkvVtMZ6qf05JGOwWHYFgjcs
+    nMCcv2akZiyk9CMdaMQSywlcvV9cfP74IYsmZbTh9AEaiqBCzj+DTjv0h++sz+bTFAQsyXGMCnKs
+    zQbe9D7uB5k1xoewhZDWmk0rNdZil7SIZlmwePs4FTLve3Bljad2LWTuYLFBeetgGCPf1ZiieV9+
+    65wHL3MojNVowVWyxQmYlrst6/qO0mzMGkOzMIbq2Su7OKJTThESGES45Kg57i7eCGs63UdLZTyP
+    Ulb1VrViv1ws5wrFKCewVFt0UHnfuixJVspXXT4tTJN8c0WFdp6mafIDhoQyLwiKiXKuQ5fMzvpq
+    DqYcRi6L21WIJYaYG1tSiFaWqnMZrKUdPhH16HkBoyL9GUcXRmuiCsEi4IEQIe2KsozIY0ilv7S5
+    Hxy5wpq6zjtPHRRdO4HHN0wn+M6Gp8ksTZg2u8diVp5It1Glr/oH9/Gxp5UbctfsFNOfYQSzZHbK
+    /uewMBohPOwrhD+2Z6cBNL0n2FBvgFApTJA31DaloUByRr9LghHXH5zynWRcBfAc9CVTbnjtsA6F
+    uJnAddPVXj1cjDLRmL9EvQn+H3BG/wOaRMypMLWxRM1VLofpBOJnejL6hyJEO2+lJqBb1P6gHNe5
+    ZZjyCPv9lbcdvrqB/z2D+ckJjaKHr/8ij0GPN24MNS6oQy4trJVTuaqVv9v1Zo/X14Fm/QBX5Q1N
+    1pC689zVd4d12N1EA1HTUzHdngyB63TeDgtZF8NnKSZ4ro4mrD06TIPzCHMNvrQ9pGhEmyXM5pET
+    83P4hJSjZF5dEjA/YAHpGW+ZNzA7yWavM/r36XLxW3qSpjDsT1majsJkY/9PLb+C5iWtvx/7Dj6r
+    EuGrVktFD33c0uJzIZ6erax11PVSgQ9S0UuJ2s/KQhmNIerYSHxFFaVCvtgx9oDaLx4WQ/rUUugD
+    /bJGu+QZfsm7Mb4kiNro9LGnTLHhhZZj3HexrNpsJnCL2PK+8lwTmsAIYXsw1aVDzpReObqqaVG4
+    iwrXlsOFUrm2lncZ+SAc7I+++0cl5MFyTKMibJfj/fLRZc+Q/uqXLgd/Ax3MIgS1CAAA
+Он был сгенерирован 9 дек 2024 тут:
     1. https://www.userchrome.org/firefox-89-styling-proton-ui.html#tabstyler
         Tab corner rounding -> None
         Show inactive tab boundaries -> Using a vertical bar
@@ -1869,11 +1876,12 @@ Manjaro, похоже, требует задать этот пароль при 
 Редактируй тут:
     sudo nano /etc/default/grub
 Как применить:
-    Проверь, по какому пути у тебя лежит конфиг, и выбери команду из двух.
-    Арч (/efi):   LANG= sudo grub-mkconfig -o /efi/grub/grub.cfg
-    Арч (/boot):  LANG= sudo grub-mkconfig -o /boot/grub/grub.cfg
-    Другие:       LANG= sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-        Проставляем LANG, чтобы не было сообщений на русском при загрузке.
+    Хорошо бы знать, где у тебя конфиг GRUB. Обычно так:
+        LANG= sudo grub-mkconfig -o /boot/grub/grub.cfg
+    Или иногда бывает так:
+        LANG= sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+    Проставляем LANG, чтобы не было сообщений на русском при загрузке.
+    Теоретически может быть конфиг в `/efi/grub/grub.cfg`, но даже когда я делал раздел `/efi`, его там не было, так что хз.
 Что можно поменять:
 Убрать `quiet splash`, чтобы было видно логи загрузки. (В арче splash и так не стоит.)
 Меньше задержка:
