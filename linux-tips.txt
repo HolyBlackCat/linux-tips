@@ -182,6 +182,15 @@ REIB vs REISUB
     sudo rmmod pcspkr snd_pcsp
     # Возможно только один из двух модулей сейчас загружен. Это не проблема, тогда убьется только второй.
 
+[-initial-setup] [bug-workaround] [brightness]
+Комп мгновенно вырубается если потрогать кнопку brightness
+Попробуй так:
+    sudo rmmod ideapad_laptop
+Если помогло, то сделай перманентным так:
+    sudo nano /etc/modprobe.d/fix_crash_on_brightness_hotkey.conf
+Туда пиши:
+    blacklist ideapad_laptop
+
 [-initial-setup] [oom] [oom-killer]
 Настраиваем автоматическое закрытие приложений когда кончается память
 В теории ядро автоматически убивает приложения когда нет памяти (oom-killer), но оно очень не торопится это делать,
