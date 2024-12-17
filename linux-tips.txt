@@ -412,18 +412,12 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-useful-packages] [laptop] [overheating] [battery]
 Настройка скорости процессора (в основном для ноутбуков?).
-(на manjaro не ставь, там конфликт какой-то)
-    sudo apt install cpufrequtils
-Теперь можно посмотреть информацию в `cpufreq-info`.
-Частота процессора определяется governor-ом.
-Меняется он так: (вместо 3 - число ядер минус 1)
-    for i in {0..3}; do sudo cpufreq-set -c $i -g schedutil; done
-Вместо `schedutil` - имя governor-а. Их список смотри в `cpufreq-info`, и там же проверяй результат.
-Чтобы узнать список режимов, делай `cpufreq-info` и ищи там governors.
-Нормальные:
-* schedutil, ondemand (оба общего назначения, не уверен какой лучше, вроде первый)
-* performance
-* powersave
+Установи так:
+    sudo pacman -S cpupower
+Режим энергосбережения:
+    sudo cpupower frequency-set -g powersave
+Дефолт:
+    sudo cpupower frequency-set -g schedutil
 
 [-initial-setup] [-useful-packages] [laptop] [overheating] [battery]
 Чтобы ноут не грелся и ел меньше батареи
