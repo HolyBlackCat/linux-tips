@@ -462,8 +462,16 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 [-initial-setup] [videocard] [drivers] [nvidia] [white-screen]
 Ставим драйвер от NVidia
 Arch:
-    pacman -S --needed nvidia nvidia-lts nvidia-prime nvidia-settings
-    Здесь `nvidia` - основной драйвер, а `nvidia-lts` - то же самое но для lts-ядра. И там и там есть варианты с припиской `-open`, но хз чем они лучше или хуже.
+    pacman -S --needed nvidia-open-dkms nvidia-prime nvidia-settings lib32-nvidia-utils
+    Есть два драйвера, опенсурсный и обычный. Опернсурсный вроде как лучше, но работает только для новых видюх. Читай тут: https://wiki.archlinux.org/title/NVIDIA
+    Оперсурсный:
+        nvidia-open-dkms - есть еще `nvidia-open` без DKMS, но он только для ванильного ядра. А если у тебя LTS, то придется брать DKMS.
+    Обычный:
+        nvidia nvidia-lts - для обычного ядра и для LTS.
+    Прочие пакеты, которе я тут добавил:
+        lib32-nvidia-utils - важен для стима, без него у меня не запускались игры на дискретной карте.
+        nvidia-settings - гуй настроек.
+        nvidia-prime - мелкий скрипт для запуска на дискретной карте. Не нужен, если карточка одна.
 Ubuntu:
     В гуи настроек есть старые драйвера, а в apt - поновее, но не факт что они лучше.
     Из apt ставить так: `sudo apt install nvidia-driver-XXX` (XXX = версия). Потом можно попробовать `sudo nvidia-xconfig`, но наверное лучше без него.
