@@ -2273,3 +2273,15 @@ mkdir -p $DIR
 Потом в /opt/zapret/config в строке с NFQWS_OPT -> первый --filter-tcp=443 перед <HOSTLIST> добавь `--dpi-desync-fake-tls=/opt/zapret/files/fake/tls_clienthello_www_google_com.bin`,
     это помогает против замедления ютуба.
 Все управление через `systemctl {enable,disable,start,stop} zapret`.
+
+[-initial-setup] [keyd] [copilot] [keyboard] [hotkeys]
+Мапим кнопку Copilot отбратно в правый Ctrl
+sudo apt keyd
+sudo nano /etc/keyd/default.conf
+Туда вставляем такой конфиг:
+    [ids]
+    *
+    [main]
+    f23+leftshift+leftmeta = layer(control)
+На всякий случай перезапускаем:
+    systemctl restart keyd
