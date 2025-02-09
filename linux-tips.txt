@@ -1084,6 +1084,9 @@ pacman для чайников
     lshw         (выводит информацию о железе в консоль)
     perl-rename  (массовое переименование файлов)
         ubuntu -> rename  (проверь)
+    gimagereader-gtk (распознавание текста с картинки)
+        также нужны пакеты под конкретные языки, например:
+            tesseract-data-{eng,rus,kor,jpn,jpn_vert} hunspell-{en_us,ru}
     gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav (кодеки; libav - он для H.264, ugly - возможно запатентованные кодеки, bad - нестабильные кодеки (запатентованные и нет))
         ^ arch, manjaro
     inetutils    (утилита hostname и прочие)
@@ -1095,7 +1098,7 @@ pacman для чайников
     onlyoffice-bin
         ^ arch-aur | manjaro -> onlyoffice-desktopeditors
 Гуи архиватора. Выбери между
-    `xarchiver`   или   `engrampa`
+    engrampa    или    xarchiver
         Обычно стоит один из них. Если ставишь другой,
         удали предыдущий, чтобы ассоциации переставились.
     menulibre    (гуй управления .desktop-файлами)
