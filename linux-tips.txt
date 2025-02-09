@@ -743,14 +743,24 @@ sudo apt install xdotool
     * В терминале, интерактивно: sudo duc ui /
     * ...
 
-[-initial-setup] [bash] [completion]
+[-initial-setup] [bash] [completion] [inputrc]
 Регистро-независимые подсказки в bash
 Для всех:
     Дописать в конец `/etc/inputrc` строку:
         set completion-ignore-case On
 Для себя:
     Дописать ту же строку в `~/.inputrc`.
-    Если нет такого файла, создать его и в начало поставить строку `$include /etc/inputrc`.
+    Если нет такого файла, создать его и в начало поставить строку:  $include /etc/inputrc
+
+[-initial-setup] [bash] [completion] [inputrc]
+Ctrl+Backspace в терминале
+sudo nano /etc/inputrc
+В конец дописать:
+    "\C-H":"\e\b"
+(либо в ~/.inputrc после `$include /etc/inputrc`, чтобы применить только к текущему пользователю - смотри выше)
+Это мапит Ctrl+Backspace в Alt+Backspace.
+Еще есть вариант `"\C-H":"\C-W"`, этот мапит в Ctrl+W, который стирает слово до пробела, а не до разделителя,
+    что выглядит хуже, потому что предыдущий вариант соответствует Ctrl+Влево/Вправо.
 
 [-initial-setup] [clock] [date] [time]
 Нормальные форматы даты/времени:
