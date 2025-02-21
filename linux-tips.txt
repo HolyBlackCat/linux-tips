@@ -2287,6 +2287,19 @@ mkdir -p $DIR
     это помогает против замедления ютуба.
 Все управление через `systemctl {enable,disable,start,stop} zapret`.
 
+[-initial-setup] [zapret] [russia]
+Простой гуй для zapret
+Установи Yad:
+    sudo pacman -S --needed yad
+Используй такой скрипт: (разжимать `base64 -d 1.txt | gzip -d >toggle_zapret.sh`, был сжат `gzip -c9 toggle_zapret.sh | base64`)
+    H4sICCXPuGcCA3RvZ2dsZV96YXByZXQuc2gAlVLLagIxFN3nK65WsC4G2207s7DtCIJ0obabwUWc
+    uWJwfDBJRftY1I2b0oVfIoWCtKXfkPmjJjXjsxa8BALnnptzzyFHqXyDdfMNyluEcBRg4d2QENYE
+    z4PMMR9xgR1fhMC4RX3BBgj3tB+hyIHjgEHq9XMQLewSUFW4rJVuXadWuXEJhhzXwWKhXHVJk+0R
+    wC5thBisKyTQhoR7Xbgou1dbGgm6EikVq072MQsR0gCsCCwKFbcGtm0r5ZHGrGYv6uiLYRg4aTmV
+    H/Izfo0nch6P45f0md9qQ2ax/Z+0maaBnMm3eCy/5ZcG1OxEvsfPijQ3L5jdcolxa/C7yYYrE8mD
+    angn9SdIOUvlDd4a17RVTjqKXZqufhuH6MMqaC56fRPxkrgM8Z8pGontMRWyuXYcnBoHxvleC0n/
+    MA8B4/pfHG5j8Z/2+1DnB6MvHT8TAwAA
+
 [-initial-setup] [keyd] [copilot] [keyboard] [hotkeys]
 Мапим кнопку Copilot отбратно в правый Ctrl
 sudo apt keyd
