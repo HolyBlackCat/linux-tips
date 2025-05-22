@@ -2311,3 +2311,16 @@ sudo nano /etc/keyd/default.conf
     f23+leftshift+leftmeta = layer(control)
 На всякий случай перезапускаем:
     systemctl restart keyd
+
+[-initial-setup] [firefox] [google]
+Убираем ai summary из результатов поиска google
+Разрешаем добавление кастомных поисковых систем:
+    Идем в about:config
+    Создаем бул с именем `browser.urlbar.update2.engineAliasRefresh` (да, его нет по умолчанию) и ставим в true.
+Добавляем новую поисковую систему:
+    Идем в about:preferences#search
+    В списке жмем добавить
+    Называем например `Googlе` (последняя - кириллическая `е`), чтобы не конфликтовала с основным гуглом
+    Адрес ставим такой: https://www.google.com/search?udm=14&q=%s
+    Все остальное не трогаем
+Теперь галочкой выключаем гугл, включаем нашу. И плюс наверху страницы ставим нашу как дефолтную
