@@ -2183,7 +2183,7 @@ sudo nano /etc/dnf/dnf.conf
     sudo useradd -m -g wheel USERNAME
     # -m - создать домашнюю директорию
     # -g wheel - добавить в админскую группу, которая умеет делать sudo - опционально, конечно
-    #            в некоторых системах группа называется sudo
+    #            в некоторых системах группа называется sudo (убунта)
     #            в некоторых - надо вместо этого дописывать себя в /etc/sudoers.d
 Задаем пароль:
     sudo passwd USERNAME
@@ -2324,3 +2324,20 @@ sudo nano /etc/keyd/default.conf
     Адрес ставим такой: https://www.google.com/search?udm=14&q=%s
     Все остальное не трогаем
 Теперь галочкой выключаем гугл, включаем нашу. И плюс наверху страницы ставим нашу как дефолтную
+
+[msys2] [windows] [symlinks]
+Симлинки
+Подробнее читай тут: https://www.msys2.org/docs/symlinks/
+Чтобы мочь создавать симлинки, включи девеолпер мод:
+    Settings -> System -> For developers -> Developer Mode -> ON
+Создать:
+    в CMD:
+        На файл:
+            mklink LINK TARGET
+        На папку:
+            mklink /d LINK TARGET
+    в PowerShell:
+        Не работает в дефолтном (на Win 11) PS 5. Обновляй или делай в CMD.
+        Он сам определяет, папка это или файл.
+        Делай так:
+            New-Item -ItemType SymbolicLink -Path LINK -Target TARGET
