@@ -1,4 +1,4 @@
-Способ настроить удобное сборочное окружение ubuntu в chroot на любом другом дистрибутиве. 
+Способ настроить удобное сборочное окружение ubuntu в chroot на любом другом дистрибутиве.
 
 
 pamac install debootstrap schroot
@@ -27,18 +27,18 @@ sudo nano /etc/schroot/default/fstab
     /run/media      /run/media      none    rw,bind         0       0
 
 
-Как чинить ошибки:    
+Как чинить ошибки:
 *   E: 20nssdatabases: /usr/bin/stat: cannot statx '/etc/networks': No such file or directory
     E: builder_ubuntu_stable-a483703b-716c-4ac2-b084-755772b069d8: Chroot setup failed: stage=setup-start
         Делай (снаружи)
             sudo nano /etc/schroot/default/nssdatabases
         И закомментируй там networks
 *   "not in sudoers file"
-    Тут дело в том, что убунта использует группу `admin`, а арч и прочие - `wheel` для тех же целей.
+    Тут дело в том, что убунта использует группу `sudo` (либо `admin`), а арч и прочие - вроде как `wheel` для тех же целей.
     Помогает это: (снаружи)
-        sudo groupadd admin
-        sudo usermod -a -G admin $USER
-    Дальше релогин (либо `newgrp admin` чтобы временно получить шелл с этой группой без релогина)
+        sudo groupadd sudo
+        sudo usermod -a -G sudo $USER
+    Дальше релогин (либо `newgrp sudo` чтобы временно получить шелл с этой группой без релогина)
 *   chown: invalid group: 'root:staff'
     dpkg: error processing package fontconfig-config (--configure):
         Снаружи chroot:  sudo groupadd staff
@@ -100,7 +100,7 @@ sudo nano /etc/schroot/default/fstab
         schroot -e -c builder_ubuntu_stable_session
     Список: (и сессии, и chroot-ы)
         schroot -la
-    
+
     Запустить команду в сессии:
         schroot -r -c builder_ubuntu_stable_session ...
 

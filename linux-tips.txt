@@ -1060,6 +1060,7 @@ pacman для чайников
     tiled        (редактор карт)
     gucharmap    (таблица символов, видимо та же, что по дефолту стоит на убунте)
     freecad      (инженерное проектирование)
+        + opencamlib (для дополнительных фичей)
     audacity     (звуковой редактор; бинарники с сайта у них кривые)
         fedora -> audacity-freeworld (из rpmfusion, без суффикса есть в стандартной репе, но он хуже?)
     telegram-desktop
@@ -2330,6 +2331,7 @@ sudo nano /etc/keyd/default.conf
 Подробнее читай тут: https://www.msys2.org/docs/symlinks/
 Чтобы мочь создавать симлинки, включи девеолпер мод:
     Settings -> System -> For developers -> Developer Mode -> ON
+    Теперь ребут!
 Создать:
     в CMD:
         На файл:
@@ -2341,3 +2343,8 @@ sudo nano /etc/keyd/default.conf
         Он сам определяет, папка это или файл.
         Делай так:
             New-Item -ItemType SymbolicLink -Path LINK -Target TARGET
+    в MSYS2:
+        Не работает если целевой файл не существует, потому что не может опеределить, папка это или файл.
+        Делай так:
+            export MSYS=winsymlinks:nativestrict
+            ln -s TARGET LINK
