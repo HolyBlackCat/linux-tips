@@ -2276,17 +2276,23 @@ mkdir -p $DIR
 Печатаем сводку информации о системе
     hostnamectl
 
-[-initial-setup] [zapret] [russia]
+[-initial-setup] [zapret] [russia] [youtube] [discord]
 Обход блокировок через zapret
 Пакет в AUR странный, качай зипник отсюда: https://github.com/bol-van/zapret
 Ставь через `easy_install.sh`, везде дефолтный выбор, кроме:
     согласись на авто-копирование в /opt/zapret
-    когда просит iptables или nftables, хз:
-        проверь через `pacman -Q пакет`, какие из них уже стоят. Вроде nftables лучше, но проще не трогать и оставить дефолтный.
+    если спросит, затирать ли существующие файлы (при обновлении), отвечай да
+    когда просит iptables или nftables, я обычно выбираю дефолт (iptables)
+        есть вариант в `pacman -Q пакет` посмотреть, какие из них уже стоят, и выбрать соответствующий, но мне никогда не было нужно
     включи nfqws
-Потом в /opt/zapret/config в строке с NFQWS_OPT -> первый --filter-tcp=443 перед <HOSTLIST> добавь `--dpi-desync-fake-tls=/opt/zapret/files/fake/tls_clienthello_www_google_com.bin`,
-    это помогает против замедления ютуба.
+Потом примени фиксы для конкретных сайтов в `/opt/zapret/config`:
+    YouTube:
+        в строке `NFQWS_OPT` -> `--filter-tcp=443` перед <HOSTLIST> добавь `--dpi-desync-fake-tls=/opt/zapret/files/fake/tls_clienthello_www_google_com.bin`,
+    Discord voice chat:
+        в строке `NFQWS_OPT` добавь строку (передпоследнюю например), вот такую: `--filter-udp=50000-50099 --filter-l7=discord,stun --dpi-desync=fake --dpi-desync-repeats=6 --new`
+        и плюс выше в `NFQWS_PORTS_UDP` добавь этот диапазон портов, так: `NFQWS_PORTS_UDP=443,50000-50099`.
 Все управление через `systemctl {enable,disable,start,stop} zapret`.
+После изменения конфига не забывай `systemctl restart zapret`.
 
 [-initial-setup] [zapret] [russia]
 Простой гуй для zapret
