@@ -2333,7 +2333,7 @@ sudo nano /etc/keyd/default.conf
 Теперь галочкой выключаем гугл, включаем нашу. И плюс наверху страницы ставим нашу как дефолтную
 
 [msys2] [windows] [symlinks]
-Симлинки
+Симлинки на винде
 Подробнее читай тут: https://www.msys2.org/docs/symlinks/
 Чтобы мочь создавать симлинки, включи девеолпер мод:
     Settings -> System -> For developers -> Developer Mode -> ON
@@ -2354,3 +2354,14 @@ sudo nano /etc/keyd/default.conf
         Делай так:
             export MSYS=winsymlinks:nativestrict
             ln -s TARGET LINK
+
+[-initial-setup] [usb] [hidraw] [zmk] [permissions] [keyboard]
+Даем пермишены на прямое общение с usb-устройствами через hidraw, чтобы настраивать всякие хитрые клавиатуры и т.п.
+Сильно зависит от дистрибутива. На арче так:
+    Вот тут описал, почему именно такой подход: https://unix.stackexchange.com/a/797099/395855
+    sudo nano /etc/udev/rules.d/72-hidraw-access.rules
+        Пишут, что число должно быть меньше 73, чтобы загрузиться до `/usr/lib/udev/rules.d/73-seat-late.rules`, см. https://github.com/systemd/systemd/issues/4288#issuecomment-348166161
+    Туда пишем:
+        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", TAG+="uaccess"
+    Ребут.
+    Пермишены на /dev/hidraw* становятся 660. Группа остается root, но через волшебную ACL-магию доступ как-то работает.
