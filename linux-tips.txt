@@ -8,6 +8,10 @@
 ?   -useful-packages - полезные пакеты
 ?   -repair          - разруливание проблем
 
+[-initial-setup] [grub] [multiboot] [live-usb]
+Скрипт, чтобы можно было запускаться с одного из нескольких образов на флешке:
+https://github.com/mpolitzer/grub-iso-multiboot
+
 [-install] [legacy] [uefi] [bios] [windows-dual-boot]
 Выбираем между legacy и uefi
 До установки выбери в биосе режим загрузки: legacy или uefi.
