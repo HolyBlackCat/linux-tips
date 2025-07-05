@@ -2319,6 +2319,13 @@ sudo nano /etc/keyd/default.conf
 На всякий случай перезапускаем:
     systemctl restart keyd
 
+[ssd] [smart]
+Смотрим статистику S.M.A.R.T. у диска/ssd
+Вот так:
+    sudo pacman -S smartmontools
+    sudo smartctl -a /dev/nvme0
+Почему-то в gnome disks есть кнопка для этого, но она засерена для SSD. Хмм.
+
 [-initial-setup] [firefox] [google]
 Убираем ai summary из результатов поиска google
 Разрешаем добавление кастомных поисковых систем:
