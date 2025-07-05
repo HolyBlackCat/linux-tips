@@ -2326,6 +2326,16 @@ sudo nano /etc/keyd/default.conf
     sudo smartctl -a /dev/nvme0
 Почему-то в gnome disks есть кнопка для этого, но она засерена для SSD. Хмм.
 
+[-initial-setup] [nvidia] [144hz] [refresh-rate]
+Колдуем над refresh rate
+Улучшаем отзывчивость
+    Непонятно, что конкретно это меняет, но задержка на глаз явно меньше.
+    В xfconf -> xfwm4 -> general -> vblank_mode, меняем auto на off. Нужен релогин чтобы применилось.
+    Теперь чтобы не было tearing-а, идем в настройки NVIDIA X Server, там в X Server Display Configuration -> Advanced -> Force composition pipeline = ON -> Apply.
+    Чтобы настройки не сбросились при ребуте, нажми `Save to X Configuration File` (но для этого нужно перезапустить окно настроек через `sudo nvidia-settings`, чтобы хватило пермишенов).
+Это вроде бы не чинит низкий FPS в некоторых приложениях, когда на втором мониторе он низкий, хотя вроде должно. Нужно изучать.
+Но вот стим, например, кажется отзывчивее. Хз.
+
 [-initial-setup] [firefox] [google]
 Убираем ai summary из результатов поиска google
 Разрешаем добавление кастомных поисковых систем:
