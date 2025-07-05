@@ -16,6 +16,8 @@ VER=18.1.5
 git checkout llvmorg-$VER
 cd ..
 
+rm -rf build-clang
+
 Make sure you remove any existing custom Clangs from PATH to make sure the new ones don't depend on existing ones' libs.
 
 # This works for: v18 (larger not tested yet)
