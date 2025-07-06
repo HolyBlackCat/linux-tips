@@ -2386,3 +2386,7 @@ sudo nano /etc/keyd/default.conf
         KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", TAG+="uaccess"
     Ребут.
     Пермишены на /dev/hidraw* становятся 660. Группа остается root, но через волшебную ACL-магию доступ как-то работает.
+
+[-initial-setup] [firefox]
+Возвращаем старый стиль кнопок выбора поисковой системы
+about:config -> browser.urlbar.scotchBonnet.enableOverride -> false
