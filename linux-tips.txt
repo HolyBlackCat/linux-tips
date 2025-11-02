@@ -1034,7 +1034,6 @@ pacman для чайников
     htop         (модный консольный диспечер задач)
     gparted      (редактор разделов)
     btrfs-assistant (управление файловой системой btrfs)
-        arch -> нет такого, только в aur
     gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
     gnome-font-viewer (просмотрщик шрифтов, не особо удобный)
     ncdu         (то же самое, но минималистичный консольный вариант)
@@ -1096,6 +1095,8 @@ pacman для чайников
         ^ arch, manjaro
     inetutils    (утилита hostname и прочие)
         ^ arch, manjaro
+    remmina      (утилита для подключения к рабочим столам по разным протоколам)
+        + freerdp (добавляет поддержку стандартного виндового RDP)
     visual-studio-code-bin
         ^ arch-aur, manjaro
     elementary-xfce-icons
