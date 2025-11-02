@@ -12,7 +12,7 @@ git clone https://github.com/llvm/llvm-project clang
 cd clang
 git fetch
 git tag | grep -P '^llvmorg-.*(?<!init)$' | sort -t- -n -k2
-VER=18.1.5
+VER=21.1.4
 git checkout llvmorg-$VER
 cd ..
 
@@ -50,6 +50,7 @@ cmake -S clang/llvm -B build-clang -GNinja -Wno-dev \
     -DCLANG_LINK_CLANG_DYLIB=ON \
     -DLLVM_LINK_LLVM_DYLIB=ON \
     \
+    -DLLVM_HOST_TRIPLE=x86_64-pc-linux-gnu \
     -DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-pc-linux-gnu \
     -DCLANG_DEFAULT_CXX_STDLIB=libstdc++ \
     -DCLANG_DEFAULT_LINKER=lld \
