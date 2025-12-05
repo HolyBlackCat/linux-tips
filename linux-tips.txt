@@ -425,8 +425,9 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 
 [-initial-setup] [-useful-packages] [laptop] [overheating] [battery]
 Чтобы ноут не грелся и ел меньше батареи
-На manjaro TLP стоит из коробки.
+Сомнительно, лучше не ставь ничего отсюда.
 Вариант 1:
+    !!! tlp 1.9 автоматически запускается в performance mode когда работает от розетки, что аж вентиляторы гудят. Правь конфиг или совсем не ставь.
     sudo apt install tlp
     sudo tlp start
     sudo systemctl enable tlp.service
@@ -437,7 +438,15 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 [-initial-setup] [-useful-packages] [laptop] [battery]
 Бережем время жизни батареи
 Это достигается запретом на полную зарядку.
-    На manjaro возможно оно как-то само включается? Проверить.
+Варианты:
+1. Вручную
+    На lenovo есть персистентная настройка:
+        читать: cat /sys/bus/platform/drivers/ideapad_acpi/VPC2004\:00/conservation_mode
+        писать: echo 1 | sudo tee /sys/bus/platform/drivers/ideapad_acpi/VPC2004\:00/conservation_mode
+            1 = запрет полной зарядки, 0 = полная зарядка
+            учитывай, что запись срабатывает с задержкой в ~минуту, не удивляйся
+        Эта настройка должна сохраняться даже после ребута.
+2. Через TLP
     Поставить tlp, как написано выше.
     sudo tlp-stat -b
     Он напишет что-то про допустимые диапазоны значений. У меня предлагал `STOP_CHARGE_THRESH_BAT0` переключать между 0 и 1.
@@ -1097,12 +1106,15 @@ pacman для чайников
         ^ arch, manjaro
     remmina      (утилита для подключения к рабочим столам по разным протоколам)
         + freerdp (добавляет поддержку стандартного виндового RDP)
+    jdupes       (дедупликатор файлов)
+        ^ arch-aur
     visual-studio-code-bin
         ^ arch-aur, manjaro
     elementary-xfce-icons
         ^ arch-aur, manjaro
     onlyoffice-bin
         ^ arch-aur | manjaro -> onlyoffice-desktopeditors
+    zram-generator (ОПЦИОНАЛЬНО, реализация свопа через зипование в оперативку)
 Гуи архиватора. Выбери между
     engrampa    или    xarchiver
         Обычно стоит один из них. Если ставишь другой,
@@ -1926,6 +1938,7 @@ Manjaro, похоже, требует задать этот пароль при 
     GRUB_TIMEOUT=2
 Не рисовать меню если ничего не кликнуто:
     GRUB_TIMEOUT_STYLE=hidden
+        Или поставь `menu` чтобы было видно меню.
 
 
 [manjaro] [boot] [bug-workaround]
@@ -2391,3 +2404,12 @@ sudo nano /etc/keyd/default.conf
 [-initial-setup] [firefox]
 Возвращаем старый стиль кнопок выбора поисковой системы
 about:config -> browser.urlbar.scotchBonnet.enableOverride -> false
+
+[jdupes] [duplicates]
+Убираем дубликаты файлов
+Поставь:
+    yay -s jdupes
+Проверить на дубликаты: (`-r` - рекурсивно)
+    jdupes -r папки...
+Дефолтное поведение - ничего не делать, только вывести найденные дубликаты.
+Запусти с `-B` на btrfs чтобы использовать их copy-on-write дедупликацию.
