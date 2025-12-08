@@ -1038,6 +1038,7 @@ pacman для чайников
         ubuntu -> deluge
     xdotool      (управление окнами из консоли; альтернатива: wmctrl)
     yt-dlp       (скачивание видосов с ютуба, и многих вещей со многих сайтов; это форк, оригинал был youtube-dl)
+        + yt-dlp-ejs (требуется для нормальной работы с ютубом, иначе сыплет ворнингами)
         manjaro -> не устанавливай опциональную зависимость phantomjs, выдает "пакет не найден"
     dconf-editor (редактор настроек)
     htop         (модный консольный диспечер задач)
@@ -2221,6 +2222,7 @@ sudo nano /etc/dnf/dnf.conf
     sudo pacman -S gnome-keyring
     systemctl enable --user gcr-ssh-agent.socket
     systemctl start --user gcr-ssh-agent.socket
+    # Проверь, может `SSH_AUTH_SOCK` стоит по дефолту? Было бы здорово.
     export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gcr/ssh
 Если тебе это помогло, добавь `export ...` в автозапуск:
     sudo nano /etc/profile.d/gcr-ssh-agent.sh
