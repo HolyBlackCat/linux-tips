@@ -60,6 +60,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
 
         parted /dev/nvme0n1 print  (проверяем)
             Должен быть флаг `esp` на разделе EFI. Если что можно поставить его в `parted /dev/nvme0n1` (узнаем номер раздела в print, потом `set 1 esp on`).
+            Обрати внимание! В команду передаем имя диска, а не раздела. Если передать раздел, то флаг там не будет видно.
 
 Монтируем созданные вручную разделы:
     Информация:
@@ -146,19 +147,43 @@ LiveUSB арча - чисто консольный. Возможно стоит 
 
 
 Вариант ручной:
+    Сначала настраиваем зеркала, чтобы установка не занимала сто лет.
+        Устанавливаем:
+            pacman -Sy   # Скачиваем базу, без этого нельзя ставить пакеты в live usb. В целом такая команда может быть опасна без `u`, но в этом случае работает норм.
+            pacman -S reflector
+        Нужно выбрать страну или страны:
+            reflector --list-countries | less
+                Запоминаем названия стран (длинные или короткие на выбор, т.е. первый или второй столбец).
+        Вписываем страны в конфиг:
+            nano /etc/xdg/reflector/reflector.conf
+                Там раскомментируем `--country` и пишем туда свои страны.
+                Похоже, что порядок не важен. Автоматическая сортировка его перебивает.
+        Обновляем список зеркал:
+            systemctl start reflector
+                Эта команда запускает программу `relfector` с флажками из конфига, и пишет результат в `/etc/pacman.d/mirrorlist` - там можешь проверить результат.
+        Автозапуск обновления зеркал настроим потом, когда поставим систему.
+
     Базовая система:
-        pacstrap -K /mnt base linux linux-lts linux-firmware   # здесь `linux-lts` - опциональное дополнительное LTS ядро
+        pacstrap -K /mnt base linux linux-firmware   # Тут еще можно использвать `linux-lts` вместо или вместе с `linux` - это альтернативное LTS ядро. На очень новом железе не рекомендую, может каких-то дровов не хватать.
     FSTAB:
         genfstab -U /mnt >>/mnt/etc/fstab
+
+    Если настраивал зеркала через reflector как описано выше, скопируй его конфиг тоже:
+        mkdir /mnt/etc/xdg/reflector
+        cp {,/mnt}/etc/xdg/reflector/reflector.conf
 
     arch-chroot /mnt   # --- Переходим в chroot, дальше все в нем
 
     Минимум пакетов:
         pacman -Syu
-        pacman -S nano
+        pacman -S nano less
     Сеть:
         pacman -S networkmanager network-manager-applet iwd wireless_tools wpa_supplicant
         systemctl enable NetworkManager
+
+    Зеркала: (если настраивал их как написано выше, и скопировал конфиг)
+        pacman -S reflector
+        systemctl enable reflector.timer  # Включаем еженедельное авто-обновление.
 
     Таймзона:
         timedatectl set-timezone $(tzselect)
@@ -166,7 +191,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
     Синхронизация времени:
         systemctl enable systemd-timesyncd
 
-    Локаль:
+    Локаль: (я бы пропустил этот шаг, локализация в консоли не особо полезна)
         nano /etc/locale.gen
             Раскомменть там `en_US.UTF-8` и `ru_RU.UTF-8`
         locale-gen
@@ -178,29 +203,38 @@ LiveUSB арча - чисто консольный. Возможно стоит 
             Туда имя машины
 
     Бутлоадер:
+        touch /etc/vconsole.conf
+            Это какая-то новая особенность, раньше он не был нужен.
+            Вроде в этом файле ничего полезного, но если интересно, его создание с содержимым описано здесь: https://wiki.archlinux.org/title/Installation_guide#Set_the_console_keyboard_layout_and_font
+            Если этого файла нет, то сборка initramfs в команде ниже может сфейлиться. Тогда ее можно перезапустить, удалив или установив `amd-ucode` (или какой-то другой подобный пакет). Более разумного способа перезапустить пока не нашел.
         pacman -S grub efibootmgr btrfs-progs amd-ucode   # или intel-ucode для intel
-            Я хз, но что-то у меня amd-ucode не ставился без btrfs-progs
+            Я хз, но что-то у меня amd-ucode не ставился без btrfs-progs. Он в любом случае лишним не будет.
+            От установки `btrfs-progs` пересобирается initramfs, так что видимо он там полезен.
         grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ArchGrub
-            Здесь /efi - если ты туда монтировал свой раздел (см самое начало здесь)
+            Здесь /efi - если ты туда монтировал свой раздел (см. самое начало здесь)
             ArchGrub - любое имя
+            Может быть такая ошибка:  grub-install: error: efibootmgr failed to register the boot entry: No such file or directory.
+                Это значит, что у тебя машина в режиме BIOS, а не UEFI.
+                Если это виртуалка в virt-manager - увы, менять поздно, пересоздавай машину.
         grub-mkconfig -o /boot/grub/grub.cfg
 
     Юзер:
         Создаем:
-            sudo useradd -m -g wheel USERNAME
+            useradd -m -g wheel USERNAME
         Пароль:
-            sudo passwd USERNAME
+            passwd USERNAME
         Задаем нормальный шелл:
-            sudo chsh USERNAME -s /bin/bash
+            chsh USERNAME -s /bin/bash
 
     Sudo:
+        pacman -S sudo
         nano /etc/sudoers
         В самом конце раскомменть `%wheel ALL=(ALL:ALL) ALL`
 
     Основные пакеты: (часть скопирована из archinstall)
         # Графика: (это соответствует "all open-source" в инсталлере, пусть будет, лишним не будет)
         pacman -S xorg-server xorg-xinit mesa xf86-video-amdgpu xf86-video-ati xf86-video-nouveau xf86-video-vmware libva-mesa-driver libva-intel-driver intel-media-driver vulkan-radeon vulkan-intel
-        # Xfce:
+        # Xfce: (выбирай all в этих группах)
         pacman -S xfce4 xfce4-goodies pavucontrol gvfs
         # Прочее:
         pacman -S openssh htop wget smartmontools xdg-utils
@@ -216,8 +250,36 @@ LiveUSB арча - чисто консольный. Возможно стоит 
 
     # --- ребутаемся в систему, дальше оттуда!
     Ctrl+D - выходим из chroot
-    shutdown -h now
+    shutdown now
     вынимаем live usb
     включаем
 
     Пока все.
+
+
+
+XFCE с Wayland:
+    Основано на: https://github.com/crispinprojects/xfce4-wayland
+
+    Ставим композитор:
+        pacman -S labwc
+            Если спросит, какой взять ttf-font, наверное лучше noto-fonts
+
+    Тестовый запуск wayland-сессии:
+        systemctl disable lightdm
+        Ребутаемся в консоль.
+        startxfce4 --wayland
+
+    Постоянный запуск wayland-сессии:
+        sudo mkdir /usr/local/share/xsessions/
+        sudo nano /usr/local/share/xsessions/xfce4_wayland.desktop
+            Туда пишешь:
+                [Desktop Entry]
+                Name=Xfce4 with Wayland
+                Exec=startxfce4 --wayland
+        Дальше запускаешься в lightdm, и в правом-верхнем углу выбираешь `Xfce Session (Wayland)`.
+        Заметь, что похоже `Name` игнорируется (и наверное имя файла тоже).
+        Проверь, что используешь wayland:
+            echo $XDG_SESSION_TYPE
+
+    Ставим обои:
