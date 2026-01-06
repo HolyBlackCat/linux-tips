@@ -414,8 +414,28 @@ sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
 Терминал:  Monospace Regular 10 или 11 (noto mono?)
 Везде хинтинг: light на ноуте, а на компе medium?
 
-[-initial-setup] [panel]
-Размеры панели
+[-initial-setup] [panel] [dpi]
+Чеклист размеров под разные DPI
+Обычный DPI:
+    DPI: 96
+    Размер курсора мыши: 16 (в обычных настройках и в `/etc/lightdm/lightdm-gtk-greeter.conf`)
+    Высота панели: 26
+    Размер иконок панели: 16
+    Размер иконок трея: 20
+    Размер иконок приложений в whisker: маленький
+    Размер иконок категорий в whisker: очень маленький
+    Размер иконок в боковой панели thunar: 16
+    Зум в thunar: минимальный
+High DPI:
+    DPI: 144
+    Размер курсора мыши: 32 (в обычных настройках и в `/etc/lightdm/lightdm-gtk-greeter.conf`) - 24 округляется до 16, увы.
+    Высота панели: 36
+    Размер иконок панели: 24
+    Размер иконок трея: 28
+    Размер иконок приложений в whisker: нормальный
+    Размер иконок категорий в whisker: маленький
+    Размер иконок в боковой панели thunar: 24
+    Зум в thunar: минимальный + 1 один шаг колесика
 
 
 [-useful-packages] [laptop] [overheating] [battery]
@@ -955,7 +975,7 @@ sudo nano /etc/lightdm/lightdm.conf
         либо переключи на кланг, либо там же убери флажок lto чтобы не тормозило
             чтобы переключить на кланг, в разделе `ARCHITECTURE, COMPILE FLAGS` добавь в начале строки `CC=clang`, `CXX=clang++`. Не забудь его поставить, лол.
 Нужно выбрать программу-менеджер, чтобы руками не билдить. `yay` хорош.
-    sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay
+    sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay && cd yay && makepkg -si && cd .. && rm -rf yay
 .
     # Initial setup from readme at: https://github.com/Jguer/yay
     yay -Y --gendb

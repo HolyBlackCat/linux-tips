@@ -36,7 +36,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
             Для ext4, если он где-то нужен:
                 mkfs.ext4 /dev/nvme0n1p44
     Готовые команды:
-        fdisk /dev/nvme0n1
+        fdisk /dev/nvme0n1    (на виртуалке диск может называться `/dev/vda`)
             g  (только если еще нет таблицы разделов)
             n
                 <enter>  (number = 1)
@@ -149,7 +149,10 @@ LiveUSB арча - чисто консольный. Возможно стоит 
 Вариант ручной:
     Сначала настраиваем зеркала, чтобы установка не занимала сто лет.
         Устанавливаем:
-            pacman -Sy   # Скачиваем базу, без этого нельзя ставить пакеты в live usb. В целом такая команда может быть опасна без `u`, но в этом случае работает норм.
+            pacman -Sy
+                # Скачиваем базу, без этого нельзя ставить пакеты в live usb.
+                # Не `-Syu` для скорости.
+                # В целом такая команда может быть опасна без `u`, но в этом случае работает норм.
             pacman -S reflector
         Нужно выбрать страну или страны:
             reflector --list-countries | less
@@ -164,9 +167,12 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         Автозапуск обновления зеркал настроим потом, когда поставим систему.
 
     Базовая система:
-        pacstrap -K /mnt base linux linux-firmware   # Тут еще можно использвать `linux-lts` вместо или вместе с `linux` - это альтернативное LTS ядро. На очень новом железе не рекомендую, может каких-то дровов не хватать.
+        pacstrap -K /mnt base linux linux-firmware
+            # На виртуалках linux-firmware не нужон, я думаю.
+            # Тут еще можно использвать `linux-lts` вместо или вместе с `linux` - это альтернативное LTS ядро. На очень новом железе не рекомендую, может каких-то дровов не хватать.
     FSTAB:
         genfstab -U /mnt >>/mnt/etc/fstab
+            # `>>` потому что там в начале три строчки комментариев, пусть будут.
 
     Если настраивал зеркала через reflector как описано выше, скопируй его конфиг тоже:
         mkdir /mnt/etc/xdg/reflector
@@ -183,6 +189,8 @@ LiveUSB арча - чисто консольный. Возможно стоит 
 
     Зеркала: (если настраивал их как написано выше, и скопировал конфиг)
         pacman -S reflector
+        Убираем новый конфиг:
+            rm /etc/xdg/reflector/reflector.conf.pacnew
         systemctl enable reflector.timer  # Включаем еженедельное авто-обновление.
 
     Таймзона:
@@ -207,7 +215,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
             Это какая-то новая особенность, раньше он не был нужен.
             Вроде в этом файле ничего полезного, но если интересно, его создание с содержимым описано здесь: https://wiki.archlinux.org/title/Installation_guide#Set_the_console_keyboard_layout_and_font
             Если этого файла нет, то сборка initramfs в команде ниже может сфейлиться. Тогда ее можно перезапустить, удалив или установив `amd-ucode` (или какой-то другой подобный пакет). Более разумного способа перезапустить пока не нашел.
-        pacman -S grub efibootmgr btrfs-progs amd-ucode   # или intel-ucode для intel
+        pacman -S grub efibootmgr btrfs-progs amd-ucode   # или intel-ucode для intel, или ничего для виртуалки
             Я хз, но что-то у меня amd-ucode не ставился без btrfs-progs. Он в любом случае лишним не будет.
             От установки `btrfs-progs` пересобирается initramfs, так что видимо он там полезен.
         grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ArchGrub
@@ -236,6 +244,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         pacman -S xorg-server xorg-xinit mesa xf86-video-amdgpu xf86-video-ati xf86-video-nouveau xf86-video-vmware libva-mesa-driver libva-intel-driver intel-media-driver vulkan-radeon vulkan-intel
         # Xfce: (выбирай all в этих группах)
         pacman -S xfce4 xfce4-goodies pavucontrol gvfs
+            Для wayland можно пропустить xfwm4 и xfwm4-themes, но проще просто поставить все, потому что иксы нужны как зависимости. Также, exo и garcon можно не указывать, они все равно поставятся как зависимости.
         # Прочее:
         pacman -S openssh htop wget smartmontools xdg-utils
 
@@ -264,6 +273,11 @@ XFCE с Wayland:
     Ставим композитор:
         pacman -S labwc
             Если спросит, какой взять ttf-font, наверное лучше noto-fonts
+        yay -S labwc-tweaks-git
+            Гуй настроек для labwc, можно отдельно поставить потом.
+        Обрати внимание, что `startxfce4 --wayland` заставляет labwc грузить конфиги из кастомной папки: `~/.config/xfce4/labwc`, вместо обычного `~/.config/labwc`.
+        Для запуска `labwc-tweaks` важно поставить переменную `LABWC_CONFIG_DIR=.config/xfce4/labwc`, иначе он будет работать не с той папкой, и изменения не будут применяться.
+            Предлагаю в ярлыке использовать `env LABWC_CONFIG_DIR=.config/xfce4/labwc labwc-tweaks`.
 
     Тестовый запуск wayland-сессии:
         systemctl disable lightdm
@@ -282,4 +296,10 @@ XFCE с Wayland:
         Проверь, что используешь wayland:
             echo $XDG_SESSION_TYPE
 
-    Ставим обои:
+    Разрешение:
+        pacman -S wlr-randr
+            Дальше используй его как xrandr.
+        pacman -S kanshi
+            Это автоматически применяет профили мониторов, когда они подключаются.
+            Нужно руками писать конфиг:
+                https://wiki.archlinux.org/title/Kanshi
