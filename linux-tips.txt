@@ -2199,7 +2199,7 @@ sudo nano /etc/dnf/dnf.conf
     Для работы нужно включить модуль (после ребута пакет вроде сам его включает)
         sudo modprobe i2c-dev
     Узнай ID (у автора эта команда плюсом выключала дисплей, поэтому редирект в файл на всякий)
-        sudo modprobe detect >1.txt
+        sudo ddcutil detect >1.txt
     У меня ID = WAC
     Посмотри список фичей:
         ddcutil --mfg=WAC capabilities
