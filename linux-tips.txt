@@ -37,6 +37,9 @@ https://github.com/mpolitzer/grub-iso-multiboot
 
 [-install] [partitions]
 Какие разделы создавать при установке, и как форматировать диск
+Программы для этого:
+    cfdisk - TUI
+    fdisk - текстовый интерактивный
 Свежую инстукцию смотри в arch_linux.txt
 
 [-install] [-repair] [boot] [grub]
