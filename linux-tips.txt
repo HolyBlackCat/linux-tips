@@ -2236,7 +2236,9 @@ sudo nano /etc/dnf/dnf.conf
     Проброс видюшки
         Общая часть
             -env=DISPLAY --volume=/tmp/.X11-unix:/tmp/.X11-unix:ro
-        Добавить для AMD (для NVidia надо исследовать)
+        Добавить для AMD:
+            --device /dev/dri
+        Добавить для Nvidia: (вроде в `docker run` это потом тоже можно; хз, нужно в оба места или в одно)
             --device /dev/dri
         На хосте запустить:
             xhost +local:docker
