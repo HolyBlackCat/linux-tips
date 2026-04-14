@@ -161,9 +161,16 @@ https://github.com/mpolitzer/grub-iso-multiboot
 
 [-initial-setup] [reboot] [hang] [reisub] [reib] [oom-killer]
 Ядерные хоткеи REIB, и как их включить
-Включаем так: (на убунте)
-    sudo nano /etc/sysctl.d/10-magic-sysrq.conf
-    kernel.sysrq = 196
+Включаем так:
+    арч
+        sudo mkdir -p /usr/local/lib/sysctl.d
+        sudo nano /usr/local/lib/sysctl.d/99-sysrq.conf
+        Туда пишем единственную строку:
+            kernel.sysrq = 196
+        Дефолтная настройка лежит в `/usr/lib/sysctl.d/50-default.conf`, а мы за счет большей цифры перетираем ее.
+    убунта:
+        sudo nano /etc/sysctl.d/10-magic-sysrq.conf
+        kernel.sysrq = 196
 Все операции начинаются так:
     Зажать Alt
     Если ты в гуи, зажать Ctrl
@@ -174,6 +181,16 @@ https://github.com/mpolitzer/grub-iso-multiboot
     * Убить процесс, который ест больше всего памяти: F
 REIB vs REISUB
     SU - это для аккуратного размонтирования файловых систем. Якобы для современных журналируемых систем не нужно.
+Битовая маска разрешений: просто `1` включает все. Значения >1 побитово значат вот что:
+    Источник: https://docs.kernel.org/admin-guide/sysrq.html
+      2 =   0x2 - enable control of console logging level
+      4 =   0x4 - enable control of keyboard (SAK, unraw)
+      8 =   0x8 - enable debugging dumps of processes etc.
+     16 =  0x10 - enable sync command
+     32 =  0x20 - enable remount read-only
+     64 =  0x40 - enable signalling of processes (term, kill, oom-kill)
+    128 =  0x80 - allow reboot/poweroff
+    256 = 0x100 - allow nicing of all RT tasks
 
 [-initial-setup] [beep] [speaker]
 Глушим поганую пищалку
