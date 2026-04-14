@@ -31,13 +31,16 @@ Make sure you remove any existing custom Clangs from PATH to make sure the new o
 #   Seems to be optional, but I want to be on the safe side.
 # About: CLANG_DEFAULT_LINKER
 #   Also optional, but having LLD by default is always nice
+# About: LLVM_INCLUDE_TESTS=OFF
+#   Clang 22.1.0 is bugged and fails at CMake configuration if those are not disabled.
+#   17..21 didn't fail there. Other versions weren't tested.
 # NOTE: I can't find a (simple) option to add a version suffix (hence DEFAULT_LINKER `lld` is unsuffixed, for example).
 #   The build system duplicates `clang` to `clang-$VER`, but not the other tools.
 # NOTE: This is a single-stage build, not a multi-stage bootstrap. Should be good enough?
 # Extra settings that we didn't enable yet:
 #   -DLLVM_ENABLE_LTO=Thin  - when somebody else enables this, we can too? But nobody seems to yet?
 mkdir -p ~/.clang/$VER
-cmake -S clang/llvm -B build-clang -GNinja -Wno-dev \
+time cmake -S clang/llvm -B build-clang -GNinja -Wno-dev \
     -DCMAKE_INSTALL_PREFIX="$(realpath ~/.clang/$VER)" \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
@@ -54,6 +57,7 @@ cmake -S clang/llvm -B build-clang -GNinja -Wno-dev \
     -DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-pc-linux-gnu \
     -DCLANG_DEFAULT_CXX_STDLIB=libstdc++ \
     -DCLANG_DEFAULT_LINKER=lld \
+    -DLLVM_INCLUDE_TESTS=OFF \
 
 # v17 needs
     -DLLVM_ENABLE_PROJECTS='bolt;clang;clang-tools-extra;compiler-rt;cross-project-tests;libclc;lld;lldb;mlir;openmp;polly;pstl'
@@ -63,5 +67,5 @@ cmake -S clang/llvm -B build-clang -GNinja -Wno-dev \
 
 
 
-cmake --build build-clang -j12
+time cmake --build build-clang -j16
 cmake --install build-clang
