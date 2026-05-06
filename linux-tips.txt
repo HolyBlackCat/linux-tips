@@ -415,13 +415,15 @@ arch: sudo pacman -S guestfs-tools
     sudo apt remove light-locker
     sudo apt install xfce4-screensaver
 
-[+outdated] [crash] [bug-workaround]
-Фикс краша "Редактора меню" в Xubuntu, когда в системе используется русский язык (пофикшено в Xubuntu 19.10)
-sudo nano /usr/lib/python3/dist-packages/menulibre/util.py
-Найти строку
-    return GLib.markup_escape_text(text, len(text))
-Заменить на
-    return GLib.markup_escape_text(text)
+[menulibre] [crash]
+Menulibre не запускается
+Он время от времени портится, когда системная версия питона обновляется. Его нужно переустановить через `yay`, чтобы он использовал новую версию питона.
+
+[bug-workaround] [menulibre] [menu]
+Фикс проблем с меню: иконки категорий повторяются дважды в whisker menu, крашится на ассерте menulibre, и т.п.
+Делай так:
+    mv ~/.config/menus ~/.config/menus_old
+И перелогинься. Если помогло, удали старую папку.
 
 [-initial-setup] [fonts]
 Какие шрифты выбрать
