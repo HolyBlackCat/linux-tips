@@ -2477,9 +2477,13 @@ sudo nano /etc/keyd/default.conf
             mklink /d LINK TARGET
     в PowerShell:
         Не работает в дефолтном (на Win 11) PS 5. Обновляй или делай в CMD.
-        Он сам определяет, папка это или файл.
-        Делай так:
-            New-Item -ItemType SymbolicLink -Path LINK -Target TARGET
+        Через CMD так: (с или без `/d`)
+            cmd /c mklink LINK TARGET
+            cmd /c mklink /d LINK TARGET
+        Родной способ PowerShell:
+            Он сам определяет, папка это или файл.
+            Делай так:
+                New-Item -ItemType SymbolicLink -Path LINK -Target TARGET
     в MSYS2:
         Не работает если целевой файл не существует, потому что не может опеределить, папка это или файл.
         Делай так:
