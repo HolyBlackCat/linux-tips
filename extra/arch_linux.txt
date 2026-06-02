@@ -22,14 +22,18 @@ LiveUSB арча - чисто консольный. Возможно стоит 
             Таблицу разделов предпочитай GPT.
         Тебе нужны:
             * раздел для /efi размером в гиг (может и полгига прокатит, вроде инсталлер так предлагает) (в fdisk указывай размер например как +1G, чтобы не считать сектора)
+                Для легаси биос вместо этого неформатированый раздел размером 1 мб.
+            * В редких случаях - раздел `/boot`. Обычно он не нужон. Для LUKS он позволяет запускаться с незашифрованного загрузчика, что в целом малополезно, но мало ли.
             * промежуток размером в гиг, на всякий.
             * остальное под btrfs (для сектора в 512 байт и /efi в гиг, с отступом в гиг, итоговый начальный сектор тут 4196352)
         Файловые системы создавай руками:
-            Для /efi (либо /boot):
+            Для /efi (и/или `/boot` если есть):
                 mkfs.fat -F 32 /dev/nvme0n1p42
                 Не забудь в fdisk указать тип "1 EFI System".
                 Для /efi в parted (!! не в fdisk) нужно сделать `set НОМЕР efi on` (номер смотри в `print`).
                 Для /boot то же самое, но `... boot on`. Без этих штук инсталлер откажется устаналивать.
+            Для легаси BIOS:
+                Мелкий 1 мб раздел не форматируй раздел вообще.
             Для btrfs: (метка по желанию?)
                 В fdisk тип можно не трогать, он уже должен стоять "20 Linux Filesystem", что звучит правильно.
                 mkfs.btrfs -L SomeLabel /dev/nvme0n1p43
@@ -49,7 +53,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
                 <enter>  (размер - до конца диска)
             t
                 1  (первый наш раздел)
-                1  ("EFI System")
+                1  ("EFI System")  - для мелкого bios-grub без файловой системы видимо 4 ("BIOS boot"), а для `/boot` хз что. Может 20 ("Linux filesystem")?
             t
                 2  (второй наш раздел)
                 20  ("Linux Filesystem" - должен быть дефолтом, но почему нет)
@@ -58,8 +62,14 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         mkfs.fat -F 32 -n EFI /dev/nvme0n1p1    (создаем EFI в первом разделе, `-n EFI` - опциональное имя)
         mkfs.btrfs -L Arch /dev/nvme0n1p2       (btrfs в основном разделе, `-L Arch` - опциональное имя)
 
+        Либо для LUKS шифрования:
+            Основной раздел форматируй не через `mkfs.btrfs`, а через `cryptsetup -v luksFormat /dev/nvme0n1p2` (это затрет существующую систему, так что можно поверх, если уже успел сделать btrfs).
+            Потом монтируй его командой `cryptsetup open /dev/nvme0n1p2 root` (где `root` - произвольное имя для монтирования).
+            Это монтирует `/dev/mapper/root` (где `root` - указанное имя), и вот его теперь форматируй через `mkfs.btrfs`.
+
         parted /dev/nvme0n1 print  (проверяем)
             Должен быть флаг `esp` на разделе EFI. Если что можно поставить его в `parted /dev/nvme0n1` (узнаем номер раздела в print, потом `set 1 esp on`).
+                Или если это легаси-режим BIOS вместо UEFI, то флаг `bios_grub`.
             Обрати внимание! В команду передаем имя диска, а не раздела. Если передать раздел, то флаг там не будет видно.
 
 Монтируем созданные вручную разделы:
@@ -97,9 +107,12 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         mount /dev/nvme0n1p2 /mnt/.snapshots           -o compress=zstd,subvol=@arch_snapshots     --mkdir
         mount /dev/nvme0n1p2 /mnt/var/log              -o compress=zstd,subvol=@arch_logs          --mkdir
         mount /dev/nvme0n1p2 /mnt/var/cache/pacman/pkg -o compress=zstd,subvol=@arch_package_cache --mkdir
-        mount /dev/nvme0n1p1 /mnt/efi --mkdir   # !!! не забываем бут-раздел
+        mount /dev/nvme0n1p1 /mnt/efi --mkdir   # !!! не забываем бут-раздел. Либо для легаси BIOS режима вообще ничего не монтируй (см ниже).
         # Проверяем:
         mount   (смотрим на последние строчки - ПРОВЕРЬ пути монтирования и имена subvolumes)
+
+        # Для легаси BIOS не монтируй раздел bios-grub совсем! Он не для этого
+        # Вроде как этот раздел нужен только на GPT-дисках, а не MBR-дисках не нужон. Но не проверял. GPT же все равно лучше?
 
 Вариант через `archinstall`:
 
@@ -173,6 +186,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
     FSTAB:
         genfstab -U /mnt >>/mnt/etc/fstab
             # `>>` потому что там в начале три строчки комментариев, пусть будут.
+            # Даже если используешь LUKS, никаких дополнительных действий не требуется, если он на единственном разделе. Есть файл `crypttab`, но он для случаев, когда зашифровано что-то кроме `/`.
 
     Если настраивал зеркала через reflector как описано выше, скопируй его конфиг тоже:
         mkdir /mnt/etc/xdg/reflector
@@ -187,6 +201,25 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         pacman -S networkmanager network-manager-applet iwd wireless_tools wpa_supplicant
         systemctl enable NetworkManager
 
+    LUKS: (если включил как указано выше)
+        nano /etc/mkinitcpio.conf
+            Ищи строчку `HOOKS=(...)`.
+            Если там указан `systemd`, то добавь туда `sd-encrypt` (в примере с арчвики он идет сразу после `block`).
+            Если же там НЕ указан `systemd`, а вместо него `udev` (это другой вариант, более старый?), то вместо этого добавь `encrypt` в то же место.
+            В любом случае там должен присутствовать `keyboard`, но он похоже есть по дефолту.
+            Для не-английских паролей добавь `sd-vconsole` в первом случае либо `keymap consolefont` во втором (в примере с арчвики они сразу после `keyboard`).
+        Вообще изменения в этом файле применяются командой `mkinitcpio -P`, но она автоматом позовется ниже при установке grub.
+            Да и плюс, сейчас она у меня сыпала ворнингами, потому что не все нужные пакеты еще поставлены.
+        Если у тебя /boot НЕ в отдельном незашифрованном разделе (т.е. зашифрован со всем остальным), то нужны специальные действия чтобы при загрузке не спрашивало пароль два раза:
+            # Создаем файл-ключ: (имя произвольное)
+            dd bs=512 count=4 if=/dev/random iflag=fullblock | install -m 0600 /dev/stdin /etc/cryptsetup-keys.d/root.key
+            # Даем его LUKS:
+            cryptsetup -v luksAddKey /dev/sda2 /etc/cryptsetup-keys.d/root.key
+            # Запекаем в initramfs:
+            nano /etc/mkinitcpio.conf
+                FILES=(/etc/cryptsetup-keys.d/tooy.key)
+            # Также читай ниже про grub.
+
     Зеркала: (если настраивал их как написано выше, и скопировал конфиг)
         pacman -S reflector
         Убираем новый конфиг:
@@ -199,7 +232,8 @@ LiveUSB арча - чисто консольный. Возможно стоит 
     Синхронизация времени:
         systemctl enable systemd-timesyncd
 
-    Локаль: (я бы пропустил этот шаг, локализация в консоли не особо полезна)
+    Локаль:
+        # К сожалению, она общая на гуй и на консоль. Возможно можно как-то отдельно, я хз.
         nano /etc/locale.gen
             Раскомменть там `en_US.UTF-8` и `ru_RU.UTF-8`
         locale-gen
@@ -214,16 +248,35 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         touch /etc/vconsole.conf
             Это какая-то новая особенность, раньше он не был нужен.
             Вроде в этом файле ничего полезного, но если интересно, его создание с содержимым описано здесь: https://wiki.archlinux.org/title/Installation_guide#Set_the_console_keyboard_layout_and_font
-            Если этого файла нет, то сборка initramfs в команде ниже может сфейлиться. Тогда ее можно перезапустить, удалив или установив `amd-ucode` (или какой-то другой подобный пакет). Более разумного способа перезапустить пока не нашел.
+            Если этого файла нет, то сборка initramfs в команде ниже может сфейлиться. Тогда ее можно перезапустить командой `mkinitcpio -P`.
         pacman -S grub efibootmgr btrfs-progs amd-ucode   # или intel-ucode для intel, или ничего для виртуалки
-            Я хз, но что-то у меня amd-ucode не ставился без btrfs-progs. Он в любом случае лишним не будет.
+            Я хз, но что-то у меня `amd-ucode` не ставился без `btrfs-progs`. Он в любом случае лишним не будет.
             От установки `btrfs-progs` пересобирается initramfs, так что видимо он там полезен.
-        grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ArchGrub
-            Здесь /efi - если ты туда монтировал свой раздел (см. самое начало здесь)
-            ArchGrub - любое имя
-            Может быть такая ошибка:  grub-install: error: efibootmgr failed to register the boot entry: No such file or directory.
-                Это значит, что у тебя машина в режиме BIOS, а не UEFI.
-                Если это виртуалка в virt-manager - увы, менять поздно, пересоздавай машину.
+            Если у тебя легаси BIOS, то наверное `efibootmgr` лишний.
+        Если используешь LUKS:
+            nano /etc/default/grub
+                Туда в `GRUB_CMDLINE_LINUX` нужно вписать: (как выбирать - смотри выше в части про LUKS)
+                    Для systemd:  rd.luks.name=___=root root=/dev/mapper/root
+                    Для udev:     cryptdevice=UUID=___:root root=/dev/mapper/root
+                Внимание! Тут `___` вроде как имеет разный смысл. Запусти `lsblk -f`. В первом случае это UUID всего LUKS-раздела (первый). Во втором случае - вроде бы UUID его содержимого (второй).
+                Используй tmux для перепечатывания ID (в основном файле есть мини-инструкция).
+            Если у тебя /boot не в отдельном незашифрованном разделе: (т.е. зашифрован вместе со всем остальным)
+                Это продолжение инструкции выше.
+                В `/etc/default/grub` раскоменть `GRUB_ENABLE_CRYPTODISK=y`.
+                Если у тебя используется `udev` вместо `systemd` (см выше), то в `/etc/default/grub` в `GRUB_CMDLINE_LINUX` допиши `cryptkey=rootfs:/etc/cryptsetup-keys.d/root.key`.
+            Проверь результат в `less /etc/default/grub`.
+        Дальше зависит от того, у тебя новый UEFI или легаси BIOS:
+        Для UEFI:
+            grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=ArchGrub
+                Здесь /efi - если ты туда монтировал свой раздел (см. самое начало здесь)
+                ArchGrub - любое имя
+                Может быть такая ошибка:  grub-install: error: efibootmgr failed to register the boot entry: No such file or directory.
+                    Это значит, что у тебя машина в режиме BIOS, а не UEFI.
+                    Если это виртуалка в virt-manager - увы, менять поздно, пересоздавай машину.
+        Для BIOS:
+            grub-install --target=i386-pc /dev/sda
+                Обрати внимание, таргет 32-битный. Арчвики говорит, что это правильно даже на 64-битной машине.
+                `/dev/sda` - имя всего диска, а не раздела!
         grub-mkconfig -o /boot/grub/grub.cfg
 
     Юзер:
@@ -241,7 +294,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
 
     Основные пакеты: (часть скопирована из archinstall)
         # Графика: (это соответствует "all open-source" в инсталлере, пусть будет, лишним не будет)
-        pacman -S xorg-server xorg-xinit mesa xf86-video-amdgpu xf86-video-ati xf86-video-nouveau xf86-video-vmware libva-mesa-driver libva-intel-driver intel-media-driver vulkan-radeon vulkan-intel
+        pacman -S xorg-server xorg-xinit mesa xf86-video-amdgpu xf86-video-ati xf86-video-nouveau libva-mesa-driver libva-intel-driver intel-media-driver vulkan-radeon vulkan-intel
         # Xfce: (выбирай all в этих группах)
         pacman -S xfce4 xfce4-goodies pavucontrol gvfs
             Для wayland можно пропустить xfwm4 и xfwm4-themes, но проще просто поставить все, потому что иксы нужны как зависимости. Также, exo и garcon можно не указывать, они все равно поставятся как зависимости.
@@ -252,6 +305,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         pacman -S pipewire pipewire-alsa pipewire-jack pipewire-pulse gst-plugin-pipewire libpulse wireplumber sof-firmware
         su USERNAME
         systemctl --user enable pipewire-pulse    # БЕЗ SUDO!
+        Ctrl+D  # Выходим из su USERNAME
 
     Экран входа в систему:
         pacman -S lightdm lightdm-gtk-greeter
