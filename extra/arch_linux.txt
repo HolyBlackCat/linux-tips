@@ -311,6 +311,12 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         pacman -S lightdm lightdm-gtk-greeter
         systemctl enable lightdm
 
+    Меняем пароль LUKS: (если изначально был короткий пробный)
+        # Добавляем новый пароль
+        sudo cryptsetup luksAddKey /dev/sda2
+        # Убираем старый пароль
+        sudo cryptsetup luksRemoveKey /dev/sda2
+
     # --- ребутаемся в систему, дальше оттуда!
     Ctrl+D - выходим из chroot
     shutdown now
