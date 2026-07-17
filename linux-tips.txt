@@ -390,23 +390,24 @@ REIB vs REISUB
 
 [-initial-setup] [fonts]
 Шрифты с Windows
-Скачай офф. вируалку винды (якобы для тестов браузера Edge), образ для виртуалбокс.
-Распотроши архиватором пока не дойдешь до файла с расширением `.vmdk`.
-(Если застрянешь на .ova, делай `tar -xf ...ova`.)
+1. Поставь винду в виртуалку, и достань шрифты из `C:\Windows\Fonts`.
+    Копируем в систему: (тут owner исправляется автоматически)
+        sudo cp -r WindowsFonts -T /usr/local/share/fonts/WindowsFonts
+    Или, копируем только себе:
+        cp -r WindowsFonts -T ~/.local/share/fonts/WindowsFonts
+2. Из образа винды для виртуалок для virtualbox (вроде MS их больше не распространяет - раньше это были тестовые виртуалки для Edge).
+    Распотроши архиватором до `.vmdk`.
+    (Если застрянешь на .ova, делай `tar -xf ...ova`.)
+    arch: sudo pacman -S guestfs-tools
     убунта: sudo apt install libguestfs-tools
-федора: sudo dnf install libguestfs-tools
-arch: sudo pacman -S guestfs-tools
-    # На федоре после установки надо перезайти в систему.
-    mkdir ./mount
-    guestmount -a WinDev*Eval-disk001.vmdk -i --ro ./mount
-    cp -r ./mount/Windows/Fonts/ -T ./WindowsFonts
-    umount ./mount
-    rm -r ./mount
-Копируем в систему: (тут owner исправляется автоматически)
-    sudo cp -r WindowsFonts -T /usr/local/share/fonts/WindowsFonts
-Или, копируем только себе:
-    cp -r WindowsFonts -T ~/.local/share/fonts/WindowsFonts
-Есть еще всякие пакеты:
+    федора: sudo dnf install libguestfs-tools
+        # На федоре после установки надо перезайти в систему.
+        mkdir ./mount
+        guestmount -a WinDev*Eval-disk001.vmdk -i --ro ./mount
+        cp -r ./mount/Windows/Fonts/ -T ./WindowsFonts
+        umount ./mount
+        rm -r ./mount
+3. Из кривых пакетов - это лучше не использовать, там шрифты старые.
     Например на убунте:
         sudo apt install ttf-mscorefonts-installer
     Или поновее шрифты на sourceforge в проекте `mscorefonts2` (там два экзешника от мелкомягких, скачай их и выпотроши шрифты архиватором).
@@ -1052,13 +1053,15 @@ pacman для чайников
         s - удалить лишние зависимости (а-ля `apt autoremove`)
         c - также удалить то, что зависит от этого пакета (без этого флага будет ошибка, если от него что-то зависит)
         n - удалить конфиги (а-ля `apt purge`)
-СПИСКИ:
-    все установленные:     pacman -Q
-        явно:              pacman -Qe
-        неявно:            pacman -Qd
-        неявно и не нужны: pacman -Qdt
-        не из реп (AUR и ручные): pacman -Qm
-        из реп (не AUR и не ручные): pacman -Qn
+СПИСКИ ПАКЕТОВ:
+    pacman -Q      все установленные
+    pacman -Qe     явно
+    pacman -Qd     неявно
+    pacman -Qdt    неявно и не нужны
+    pacman -Qem    не из реп, явно (ручные и AUR)
+    pacman -Qm     не из реп, неявно (ручные и AUR, и зависимости AUR)
+    pacman -Qn     из реп (не AUR и не ручные):
+ПРОЧИЕ СПИСКИ:
     содержимое группы:     pacman -Sg ГРУППА
     измененные конфиги: pacman -Qii | awk '/\[modified\]/ {print $(NF - 1)}'
         Если пакет их обновит, придется решать конфликты.
@@ -1473,6 +1476,14 @@ systemd-analyze blame
     И для пушей, и для пуллов: (удобно для приватных реп) (можно вписать это локально только для одной приватной репы, если там сабмодули)
         git config --global url.git@github.com:.insteadOf https://github.com/
         # Отменить можно так: git config --global --unset url.git@github.com:.insteadOf
+SSH виснет на корпоративных машинах.
+    Есть любители блочить порт 22 (дефолтный порт SSH).
+    Гитхаб в качестве альтернативы разрешает SSH на порту 443.
+    Разовое клонирование:
+        git clone ssh://git@ssh.github.com:443/user/repo
+    Автоматическая замена URL в конфиге:
+        git config --global url.ssh://git@ssh.github.com:443/.insteadOf https://github.com/
+        # Отменить можно так: git config --global --unset url.ssh://git@ssh.github.com:443/.insteadOf
 Дефолтное имя ветки, если тебе это важно:
     git config --global init.defaultBranch master
 Проверить текущий конфиг:
@@ -2335,11 +2346,14 @@ sudo nano /etc/dnf/dnf.conf
 [user]
 Создаем пользователя
 Создаем:
-    sudo useradd -m -g wheel USERNAME
-    # -m - создать домашнюю директорию
-    # -g wheel - добавить в админскую группу, которая умеет делать sudo - опционально, конечно
-    #            в некоторых системах группа называется sudo (убунта)
-    #            в некоторых - надо вместо этого дописывать себя в /etc/sudoers.d
+    sudo useradd -m -G wheel USERNAME
+        -m - создать домашнюю директорию
+        -G wheel - добавить в админскую группу, которая умеет делать sudo - опционально, конечно
+                   в некоторых системах группа называется sudo (убунта)
+                   в некоторых - надо вместо этого дописывать себя в /etc/sudoers.d
+        Обрати внимание, что есть основная группа, которая обычно совпадает с именем пользователя - это `-g` в нижнем регистре.
+        А есть дополнительные группы `-G` - тут больше подходят они. Можно несколько через запятую.
+
 Задаем пароль:
     sudo passwd USERNAME
 Задаем нормальный шелл:
