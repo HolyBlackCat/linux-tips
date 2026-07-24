@@ -161,7 +161,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
 
 Вариант ручной:
     Сначала настраиваем зеркала, чтобы установка не занимала сто лет.
-        Устанавливаем:
+        Устанавливаем `reflector`, если его нет. Должен быть по дефолту.
             pacman -Sy
                 # Скачиваем базу, без этого нельзя ставить пакеты в live usb.
                 # Не `-Syu` для скорости.
@@ -217,7 +217,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
             cryptsetup -v luksAddKey /dev/sda2 /etc/cryptsetup-keys.d/root.key
             # Запекаем в initramfs:
             nano /etc/mkinitcpio.conf
-                FILES=(/etc/cryptsetup-keys.d/tooy.key)
+                FILES=(/etc/cryptsetup-keys.d/root.key)
             # Также читай ниже про grub.
 
     Зеркала: (если настраивал их как написано выше, и скопировал конфиг)
@@ -245,14 +245,12 @@ LiveUSB арча - чисто консольный. Возможно стоит 
             Туда имя машины
 
     Бутлоадер:
-        touch /etc/vconsole.conf
-            Это какая-то новая особенность, раньше он не был нужен.
-            Вроде в этом файле ничего полезного, но если интересно, его создание с содержимым описано здесь: https://wiki.archlinux.org/title/Installation_guide#Set_the_console_keyboard_layout_and_font
-            Если этого файла нет, то сборка initramfs в команде ниже может сфейлиться. Тогда ее можно перезапустить командой `mkinitcpio -P`.
         pacman -S grub efibootmgr btrfs-progs amd-ucode   # или intel-ucode для intel, или ничего для виртуалки
             Я хз, но что-то у меня `amd-ucode` не ставился без `btrfs-progs`. Он в любом случае лишним не будет.
             От установки `btrfs-progs` пересобирается initramfs, так что видимо он там полезен.
             Если у тебя легаси BIOS, то наверное `efibootmgr` лишний.
+            Если что, сборка initramfs, которая запускается этой командой, может быть перезапущена вручную через `mkinitcpio -P`.
+            Тут какой-то ворнинг про отсутствующий `/etc/vconsole.conf` (https://wiki.archlinux.org/title/Installation_guide#Set_the_console_keyboard_layout_and_font), но добавление его пустого ворнинг не чинит, так что пофиг.
         Если используешь LUKS:
             nano /etc/default/grub
                 Туда в `GRUB_CMDLINE_LINUX` нужно вписать: (как выбирать - смотри выше в части про LUKS)
@@ -277,11 +275,12 @@ LiveUSB арча - чисто консольный. Возможно стоит 
             grub-install --target=i386-pc /dev/sda
                 Обрати внимание, таргет 32-битный. Арчвики говорит, что это правильно даже на 64-битной машине.
                 `/dev/sda` - имя всего диска, а не раздела!
-        grub-mkconfig -o /boot/grub/grub.cfg
+        Теперь создай конфиг!
+            grub-mkconfig -o /boot/grub/grub.cfg
 
     Юзер:
         Создаем:
-            useradd -m -g wheel USERNAME
+            useradd -m -G wheel USERNAME
         Пароль:
             passwd USERNAME
         Задаем нормальный шелл:
@@ -290,7 +289,7 @@ LiveUSB арча - чисто консольный. Возможно стоит 
     Sudo:
         pacman -S sudo
         nano /etc/sudoers
-        В самом конце раскомменть `%wheel ALL=(ALL:ALL) ALL`
+        Ближе к концу раскомменть `%wheel ALL=(ALL:ALL) ALL`
 
     Основные пакеты: (часть скопирована из archinstall)
         # Графика: (это соответствует "all open-source" в инсталлере, пусть будет, лишним не будет)

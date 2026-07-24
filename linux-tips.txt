@@ -67,12 +67,12 @@ https://github.com/mpolitzer/grub-iso-multiboot
 Он даст список разделов. Теперь найди нужный раздел, смотря на:
     ls (hd0,1)/
 Дальше:
-    Ищем раздел. Если у тебя /efi, то ищи просто /. Если у тебя /boot, то ищи /boot (там будут `vmlinuz-*`, `efi`, `grub2`)
+    Ищем раздел. Если у тебя /efi, то ищи просто / (или список сабмодулей для btrfs). Если у тебя /boot, то ищи /boot (там будут `vmlinuz-*`, `efi`, `grub2`).
     Допустим, наш - `(hd0,1)`.
         set root=(hd0,1)
-        linux /@arch_root/boot/vmlinuz<тут ТАБ> root=/dev/nvme0n1p2 ro rootflags=subvol=root
-                                                ^~~~~~~~~~~~~~    ^~~~~~~~~~~~~~~~~~~~~
-                                                |                 приблуда для brtfs, имя подраздела - тут "root"
+        linux /@arch_root/boot/vmlinuz<тут ТАБ> root=/dev/nvme0n1p2 ro rootflags=subvol=@arch_root
+                                                ^~~~~~~~~~~~~~         ^~~~~~~~~~~~~~~~~~~~~
+                                                |                      приблуда для brtfs, имя подраздела - тут "@arch_root"
                                                 |
                                                 `- тут раздел с /; хз как определить из grub-а, удобнее с live-usb
         initrd /@arch_root/boot/init<тут ТАБ>
@@ -85,18 +85,21 @@ https://github.com/mpolitzer/grub-iso-multiboot
         initrd /boot/initrd.img
         boot
 Когда линукс запустится, надо закрепить успех.
-На федоре:
-    # Удаляем конфиги. Это важно, потому что существующие битые конфиги иначе не обновляются.
-    sudo rm /boot/efi/EFI/fedora/grub.cfg
-    sudo rm /boot/grub2/grub.cfg
-    # Переустанавливаем GRUB.
-    sudo dnf reinstall shim-* grub2-efi-* grub2-common
-На старой убунте без UEFI:
-    sudo apt upgrade
-    sudo apt update
-    sudo updage-grub
-    Если при `update-grub` он спросит, обновить ли конфиг, нажми "оставить текущий конфиг" (дефолт).
-    Потом он спросит, куда его поставить: /dev/sda или /dev/sdaX. Выбери первое. Это эквивалентно автоматическому определению X, по идее.
+Пересоздай конфиг GRUB:
+    Арч:
+        grub-mkconfig -o /boot/grub/grub.cfg
+    Федора:
+        # Удаляем конфиги. Это важно, потому что существующие битые конфиги иначе не обновляются.
+        sudo rm /boot/efi/EFI/fedora/grub.cfg
+        sudo rm /boot/grub2/grub.cfg
+        # Переустанавливаем GRUB.
+        sudo dnf reinstall shim-* grub2-efi-* grub2-common
+    Старая убунта без UEFI:
+        sudo apt upgrade
+        sudo apt update
+        sudo updage-grub
+        Если при `update-grub` он спросит, обновить ли конфиг, нажми "оставить текущий конфиг" (дефолт).
+        Потом он спросит, куда его поставить: /dev/sda или /dev/sdaX. Выбери первое. Это эквивалентно автоматическому определению X, по идее.
 
 [-install] [-repair] [boot] [grub]
 Переустанавливаем Linux без Live-USB, загружаясь целиком в оперативную память ("toram")
@@ -1128,6 +1131,7 @@ pacman для чайников
     gnuplot      (построитель графиков, его может использовать qalculate)
     audacious    (музкальный проигрыватель; на федоре на забудь поставить плагины на форматы файлов, ниже есть инструкция)
     vlc          (проигрыватель видео)
+        arch -> + vlc-plugins-all  (больше форматов файлов, и прочее)
         ubuntu -> + vlc-l10n
     net-tools    (ifconfig и другие команды работы с сетью)
     zip unzip    (zip-архивы)
@@ -2363,6 +2367,12 @@ sudo nano /etc/dnf/dnf.conf
 Включаем цветной промпт в терминале:
     nano ~/.bashrc
     # Раскомментируем там `force_color_prompt=yes`.
+
+[ssh]
+Создаем ssh-ключ для гитхаба
+ssh-keygen -t ed25519 -C egor.mikhailov@Orthotech1.com
+Строка после `-C` - это произвольный комментарий.
+Потом делаем cat `~/.ssh/__.pub`, и эту строку отдаем в гитхаб.
 
 [ssh] [ssh-agent] [arch] [manjaro]
 Настраиваем автоматическое подключение ssh-ключей по необходимости, с запросом пароля через GUI
