@@ -2589,3 +2589,17 @@ about:config -> browser.urlbar.scotchBonnet.enableOverride -> false
         Получишь строку в духе `usb:006,011`.
 Потом подключаешься к нему через файловый менеджер, по такому адресу: (подставь полученный ID)
     gphoto2://[usb:006,011]
+
+[apple] [macos]
+MacOS: Убираем требования к паролю
+pwpolicy -clearaccountpolicies
+Это для всех пользователей. Вроде как это можно сделать только для одно через `-u username`, но у меня это не помогало.
+
+[apple] [macos]
+MacOS: Ставим компилятор
+xcode-select --install
+
+[apple] [macos]
+Запускаем неподписанные приложения
+Убираем требование подписи так:
+    xattr -d com.apple.quarantine /Applications/Blah.app
