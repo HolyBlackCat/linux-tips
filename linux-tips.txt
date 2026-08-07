@@ -2603,3 +2603,7 @@ xcode-select --install
 Запускаем неподписанные приложения
 Убираем требование подписи так:
     xattr -d com.apple.quarantine /Applications/Blah.app
+
+[apple] [macos] [vscode]
+Добавляем команду `code` в PATH
+Ctrl+Shift+P -> `Shell Command: Install 'code' command in PATH`
