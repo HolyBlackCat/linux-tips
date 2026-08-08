@@ -538,7 +538,7 @@ High DPI:
 
 [-initial-setup] [videocard] [drivers] [nvidia] [white-screen]
 Ставим драйвер от NVidia
-Arch:
+Arch, новые карточки:
     pacman -S --needed nvidia-open-dkms nvidia-prime nvidia-settings lib32-nvidia-utils
     Есть два драйвера, опенсурсный и обычный. Опернсурсный вроде как лучше, но работает только для новых видюх. Читай тут: https://wiki.archlinux.org/title/NVIDIA
     Оперсурсный:
@@ -549,6 +549,16 @@ Arch:
         lib32-nvidia-utils - важен для стима, без него у меня не запускались игры на дискретной карте.
         nvidia-settings - гуй настроек.
         nvidia-prime - мелкий скрипт для запуска на дискретной карте. Не нужен, если карточка одна.
+Arch, старые карточки:
+    Тут выясни, какая версия дров нужна: https://wiki.archlinux.org/title/NVIDIA
+    Конкретно `nvidia-340xx` в AUR сломанные (проверил 08.08.2026), вместо этого используй эту репу: https://github.com/MichelBoucey/nvidia-340xx
+        Делай так:
+            yay -S nvidia-340xx-utils  # Это зависимость следующего пакета
+            git clone https://github.com/MichelBoucey/nvidia-340xx
+            cd nvidia-340xx
+            NVIDIA_340XX_DKMS_ONLY=1 makepkg -si  # Тут не совсем уверен, но кажется, что нет смысла пытаться использовать не DKMS.
+            sudo cp /usr/share/nvidia-340xx/20-nvidia.conf /etc/X11/xorg.conf.d/  # Во время установки он печатает, что нужно вот так скопировать конфиг.
+
 Ubuntu:
     В гуи настроек есть старые драйвера, а в apt - поновее, но не факт что они лучше.
     Из apt ставить так: `sudo apt install nvidia-driver-XXX` (XXX = версия). Потом можно попробовать `sudo nvidia-xconfig`, но наверное лучше без него.
@@ -1229,6 +1239,7 @@ pacman для чайников
     zram-generator (ОПЦИОНАЛЬНО, реализация свопа через зипование в оперативку) - читай где-то здесь инструкцию как его настроить
     wipe         (консольный шредер файлов)
     raider       (гуевый шредер файлов)
+    archlinux-wallpaper (некоторые дефолтные обои)
 Гуи архиватора. Выбери между
     engrampa    или    xarchiver
         Обычно стоит один из них. Если ставишь другой,
