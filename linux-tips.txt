@@ -2582,6 +2582,14 @@ sudo nano /etc/keyd/default.conf
 Возвращаем старый стиль кнопок выбора поисковой системы
 about:config -> browser.urlbar.scotchBonnet.enableOverride -> false
 
+[-initial-setup] [printers] [cups]
+Настраиваем принтеры
+sudo pacman -S --needed cups hplip
+Cups - принтеры в целом, hplip - добавляем для конкретно HP (и в целом иметь полезно).
+sudo systemctl enable cups
+sudo systemctl start cups
+Настройки принтеров висят по адресу `http://localhost:631/`. Не торопись добавлять ярлык для этого, он похоже сам устанавливается под именем `Настройка печати`.
+
 [jdupes] [duplicates]
 Убираем дубликаты файлов
 Поставь:
