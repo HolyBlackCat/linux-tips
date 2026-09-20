@@ -20,7 +20,7 @@ rm -rf build-clang
 
 Make sure you remove any existing custom Clangs from PATH to make sure the new ones don't depend on existing ones' libs.
 
-# This works for: v18 (larger not tested yet)
+# This works for: versions 17..23 (larger not tested yet)
 # The dylib flags were taken from Arch, they should reduce the binary size greatly by using shared libraries instead of static linking.
 #   The dylib flags seem to be incompatible with `-DCMAKE_SKIP_RPATH=ON`, which then causes build errors.
 #   But `CMAKE_SKIP_RPATH` appears to be useless anyway, since the RPATH it sets is relative to $ORIGIN.
@@ -60,10 +60,14 @@ time cmake -S clang/llvm -B build-clang -GNinja -Wno-dev \
     -DLLVM_INCLUDE_TESTS=OFF \
 
 # v17 needs
-    -DLLVM_ENABLE_PROJECTS='bolt;clang;clang-tools-extra;compiler-rt;cross-project-tests;libclc;lld;lldb;mlir;openmp;polly;pstl'
+#   -DLLVM_ENABLE_PROJECTS='bolt;clang;clang-tools-extra;compiler-rt;cross-project-tests;libclc;lld;lldb;mlir;openmp;polly;pstl'
 # instead of `...=all`.
 # This is the list taken from ./llvm/CMakeLists.txt, from `set(LLVM_ALL_PROJECTS`, minus `libc`, which doesn't build.
 # Bug: https://github.com/llvm/llvm-project/issues/67398
+
+# v23 needs
+#   -DLLVM_ENABLE_RUNTIMES='libcxx;libcxxabi;libunwind;compiler-rt;openmp'
+# This is the list taken from ./llvm/CMakeLists.txt, from `set(LLVM_DEFAULT_RUNTIMES)`, minus `libclc, which doesn't build.
 
 
 
