@@ -328,23 +328,29 @@ REIB vs REISUB
 [-initial-setup] [bash] [prompt]
 Настраиваем prompt в bash
 Раззипуй этот шелскрипт (`base64 -d 1.txt | gzip -d >_hbc_bash_prompt.sh`, был сжат `gzip -c9 _hbc_bash_prompt.sh | base64 >1.txt`):
-    H4sICM1E2GUCA19oYmNfYmFzaF9wcm9tcHQuc2gAdVRtT+NGEP7uXzElkQICTKC9qhWKWshxhQ9A
-    xEulKo6cjT22t2x2Le86ITrdf+/M2nHvgFiKlN2ZnWeeZ156cG3U5lKJ5GUs3MBCUltnlrAQtoCy
-    MsvSHcHqNAh6cKOtE0rBWroC5rZODSQlxMUiidk7brxDeneCLjmhYyYVhunJPOTn4wKTF5AZrHFQ
-    IUgNl/QqJMtTIQm3MVs9cOSh1LFD6zA9AumzMqXEFDKCgC+YmkrQ5fwNjs8ioSQUOmk0ZULIBDiF
-    vdf+18uLx+v476uHx5v7u+Nve/DTCF5hFrgCdZOe0DkCHVva4AwISOvlcgPa6OMUM1ErByuhamSj
-    lbkWCgw9qcAmlSyd5Xtt+G2dFJR6GEweT0ee/7UxLz58VuuE84McNVbCSZ1/B9sJIsoSdeojslVU
-    ldiEcM9oa2nxHfuVQ2YMZkUOlST5CB+EciZHfnREgRe1g1yuUIPQTUTWF/6lmnd4klhYV2cZI3sG
-    D/e3k6d4fH97e3H3+XC0H/uaN+my3kuh0wOmeAFFQ1I4yGRFGWSmAhQkResG+IpJzeyPQDhHFqpq
-    bVmCuatEOYcFKrMOgx8wUlzUecz2/QP4GgB9cXx9OY7b1O6eHi4mo/7+/vvbw9ODg+BbEHyUcxes
-    B3+h8yorQUrgK2mSmBRDuMm14WZ13LiaaovrLRVLbUqmhhCmoY+kTEItcTUe7fX/2Ava4P+YGpYy
-    Lxw9J7rcV6mXnBG5X0UlLfWDp+4l25i6glRaV8mFVytsQz1rRkdN+hpF3iQcCUm6lqS2hSvtqBd5
-    QA1VGvnE0opOfv4prpFo0H0zb4NPar6k1mtaXGQcbH6ssKuK98OkMNB/L3VDl+dt+pEZKBCcwWzm
-    3fzYQfuRXkN/yORWs8e2IJTCUvKYOelUmymP1CCaRjgbnkdruphG9Z9RMYtENBtsA0yIuXtbz+8z
-    vBrzChh+mBAhHDYQ0+H576fLaNbrNSf6G+mBd0Rl8e2L1vQ/j2dLk0djYWmNpjQSiTPVpqOxBfn5
-    t/NP52e/fOLoTAW20Gd8s450B97xeyp4h6YyERRxuyQUZg5Mtm0sLvmPnJ9vPsNoF2tags3yT4yi
-    mNyIHKgyxoU7pPmV8+t32cFuZfow+KDEddm1Jq+OBoYHHQY7NsAA/P9dS2DIw04Y/wH/ptts2AYA
-    AA==
+    H4sICJx4B2kCA2Jhc2hfcHJvbXB0LnNoAHVWf28iNxD9fz/FNCBBFEJI2qtapVyby3GXSM0PkeSk
+    CiIwu7Osy2KvbG8WdLp+9s7YC+VKshKCtccz4zdv3tCAx0xasOgsCIhL6/QSZsJmUBi9LBxYt86x
+    GzXgWlkn8hwc28/WMLW6NDFOpZqHtVTmCMLRCwKqBHQK039OuuzMxFN28Ug7sU6QTMiuMFJxVAVS
+    JTIWTmoFInVoIBXkKyHb5VKoxMJSrEEb/6W0gxlCIq0z+jjBgkKhctCOdZknEBZAKwoHUHEcTQkZ
+    ukeZpvUxCpok4LRP1WZIt6K7GVcWYGMjC3fYhesUJEUyKBZ0NQq+1mWHDxi6JH0kwWHKmJO2kOmK
+    3aVyxYdyXVFAqQIswWM3ooQuM4wXIFOosOVdwAcCJyBDlnHYtqrlyCLPjx1ah0mHfLZoVxeSMEmp
+    LPAJE20ELU5P0MUnVCoGv5ucMNgTgq3IkTPr2oyAp4AjOFg1v364eLiafBkMH67vbo+/HcAPfVjB
+    c0SXUlE0mWSzeEIOcBJK32+N1Xg0xufe+bgiMEfj8o9x9jwWYxz9+Mv5u/Ozn94tx89+Fdhw1Dv/
+    9YxXqnBw1KOXli/EK89vx/9/3u8vvfW8f8vrAxIB0SylEkRV6QiVnd0ni6ZD1bKuQ1QwGDtt1r40
+    TM2ahlTrmho5po5p7DxvPRcDmiNoDp6uP0K/Dz14fj4HDyFHoCKHHop1To6YOHzaaE0UYIM9mI8I
+    5xq8nxm85hY6aEWYW3z7WJMsUhltUnocDG8m98O7z8OLG07txfpm2+bXgE+UzpeHS1rtwDVk4gWZ
+    a6kuqWUEVNRedPOlWCBQbwMao81uc1baLKBdZdzo3IfUTWKWBwFAaepWoq7GufEnOqHTpT1kkv9Z
+    xguZr9l4zfLyIr0U8Eld7apAB6ymDoBEc3rUgjmdUkjsp7TsZvdvApqFy+daGEwpXzIJ8HQjXBXa
+    OLh/OO0fNPfgOwjQ+qYUau7z2EgeYSAgKZdLVhtFGpOKMnfwIvISedPKObOr1hXf3pbXGRKnyzij
+    hu1GHNhT60rrhXeflsrrBcxRIQMUgNtmXMuAKFjC7IaEwhix7sIdR6ukxb2ef3HIfQ76hQyMJNFg
+    ERK503PkQx1yPCsdzCWVm+XWe2RVCRBu4km6RVBJiuxvMLy7uX+cXN7d3FzcfjzqtwOKId1J3RCH
+    fMUL6il/SSp2Sn0VFBMFQVGbAa4wLkNxhXO0Q6UqLUMwdUYUUxJ10s1u9F2MBGflfML77UP4WjfC
+    1YfLSZ3a7ePw4r7fbLf3V49ODw+jb1H0Ws5bZw34jGFg5YKQwBVhwj1D8j9XmiXasVwrqi1W/42j
+    iodAuBAmoa1zHRMlBpfEtd8Potr5X7qEpZxnLpCXeZV4yGtBKYSRlvjgr74ZMiYMKTnzaHVrV0+K
+    o/OgS3VO1gQcAamY7mgtDBSPzUq6TFOlkd8YWrGFnz8516ge0J7MG+f3pQuzKlA8zODpcY7bqng7
+    jDMNzX2ow3VrEdrfBnIEZ9/LJD8EVs+/sITxN3fMBrrrIAb4WnF2ww0ueYr19r2Tsx1lPSU5bTR2
+    htJu3IafGkFFQiduHbyqHDuH6B/DBmHugHCS+QqtN4jcAv/7LS73mLOpZARSLyj0JyEo9lZXmUn1
+    hOtuTcMfiX8BSu3Lk84JAAA=
 Допиши в `nano ~/.bashrc` в конец `source path/to/_hbc_bash_prompt.sh`.
 Может требоваться ручная подстройка в зависимости от дистрибутива. Проверь, что после зафейлившихся команд рисуется красный символ, но только один раз.
 Если это криво работает, читай комменты в скрипте.
