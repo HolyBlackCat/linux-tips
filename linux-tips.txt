@@ -458,22 +458,11 @@ Menulibre не запускается
     mv ~/.config/menus ~/.config/menus_old
 И перелогинься. Если помогло, удали старую папку.
 
-[-initial-setup] [fonts]
-Какие шрифты выбрать
-Тут названия (sans и monospace) которые использует арч. Предполагаю, что они мапятся в "Noto ..." (проверь в `fc-match "Sans Regular"`),
-хотя когда я попробовал те же шрифты на других дистрибутивах, вроде была небольшая разница.
-                           комп   ноут
-Основной:  Sans Regular       9 или 10 (noto sans?)      ,    или Trebuchet MS 9, или Verdana 8
-Моно:      Monospace Regular  9 или 10 (noto mono?)      ,    или Consolas 10 или Andale Mono 10
-Заголовки: Sans Bold          9 или 10 (noto sans bold?) ,    или Verdana Bold 9, или Trebuchet MS Bold 9
-Терминал:  Monospace Regular 10 или 11 (noto mono?)
-Везде хинтинг: light на ноуте, а на компе medium?
-
 [-initial-setup] [panel] [dpi]
 Чеклист размеров под разные DPI
 Обычный DPI:
-    DPI: 96
-    Размер курсора мыши: 16 (в обычных настройках и в `/etc/lightdm/lightdm-gtk-greeter.conf`)
+    DPI: 96 (или 104 для ноута)
+    Размер курсора мыши: 16 (в обычных настройках и в `/etc/lightdm/lightdm-gtk-greeter.conf` - здесь где-то есть инструкция, Ctrl+F `cursor-theme-size`)
     Высота панели: 26
     Размер иконок панели: 16
     Размер иконок трея: 20
@@ -484,7 +473,7 @@ Menulibre не запускается
     Тема диспечера окон с припиской `-hdpi`
 High DPI:
     DPI: 144
-    Размер курсора мыши: 32 (в обычных настройках и в `/etc/lightdm/lightdm-gtk-greeter.conf`) - 24 округляется до 16, увы.
+    Размер курсора мыши: 32 (24 округляется до 16, увы. Но это все равно было бы маловато.)
     Высота панели: 36
     Размер иконок панели: 24
     Размер иконок трея: 28
@@ -494,6 +483,25 @@ High DPI:
     Зум в thunar: минимальный + 1 один шаг колесика
     Тема диспечера окон без приписки `-hdpi`
 
+[-initial-setup] [fonts]
+Какие шрифты выбрать
+Тут названия (sans и monospace) которые использует арч. Предполагаю, что они мапятся в "Noto ..." (проверь в `fc-match "Sans Regular"`),
+хотя когда я попробовал те же шрифты на других дистрибутивах, вроде была небольшая разница.
+                           норм     hidpi
+Основной:  Sans Regular       9 или 10 (noto sans?)      ,    или Trebuchet MS 9, или Verdana 8
+Моно:      Monospace Regular  9 или 10 (noto mono?)      ,    или Consolas 10 или Andale Mono 10
+Заголовки: Sans Bold          9 или 10 (noto sans bold?) ,    или Verdana Bold 9, или Trebuchet MS Bold 9
+Терминал:  Monospace Regular 10 или 11 (noto mono?)
+Хинтинг: light на hidpi, medium на обычном?
+Субпиксельное сглаживание - везде RGB?
+
+[-initial-setup] [terminal]
+Привычный терминала в символах
+На high dpi: 144x40
+
+[-initial-setup] [terminal]
+Привычная чувствительность мышки:
+На high dpi: 9 (остальное дефолтное: адаптивное ускорение = да, прокрутка с высоким разрешением = да)
 
 [-useful-packages] [laptop] [overheating] [battery]
 Настройка скорости процессора (в основном для ноутбуков?).
@@ -606,30 +614,48 @@ sudo apt purge nvidia-driver-XXX --autoremove
     Есть два способа это настроить:
         xorg.conf
         xrandr
-    Первый лучше. Во-первых, у меня такое ощущение, что второй визуально применяется с задержкой, а первый быстрее. И, что важнее, если второй вариант не срабатывает, то невозможно зайти в систему, и приходится править конфиг через live usb.
+    Первый вроде бы лучше.
+        У меня такое ощущение, что второй визуально применяется с задержкой, а первый быстрее.
+        С другой стороны, если с первым вариантом подключишь потом другой монитор, то он принудительно поставит эти настройки. А во втором варианте это не смертельно если добавить `|| true`.
     Вариант 1, xorg.conf:
-        Если ты делал `sudo nvidia-xconfig`, то он тебе создал `/etc/X11/xorg.conf`, и там есть список мониторов и их настроек. Там может не хватать монитора.
-        Я не уверен, нужен ли вообще этот файл. Если сам его создал, есть вариант просто удалить. Но можно оставить.
-        У меня `sudo nvidia-xconfig` не добавлял один из экранов. Но сработал вариант ниже.
-        Если открыть гуи настроек nvidia (nvidia-xsettings), там есть вкладка "X Server Display Configuration". Там можно из текущих настроек создать `xorg.conf`. Это помогает.
-        Можешь в нем глазами проверить, что все мониторы упоминаются.
+        NVidia:
+            Если ты делал `sudo nvidia-xconfig`, то он тебе создал `/etc/X11/xorg.conf`, и там есть список мониторов и их настроек. Там может не хватать монитора.
+            Я не уверен, нужен ли вообще этот файл. Если сам его создал, есть вариант просто удалить. Но можно оставить.
+            У меня `sudo nvidia-xconfig` не добавлял один из экранов. Но сработал вариант ниже.
+            Если открыть гуи настроек nvidia (nvidia-xsettings), там есть вкладка "X Server Display Configuration". Там можно из текущих настроек создать `xorg.conf`. Это помогает.
+            Можешь в нем глазами проверить, что все мониторы упоминаются.
+        AMD:
+            Можно написать конфиг руками:
+            sudo nano /etc/X11/xorg.conf.d/10-greeter-display-settings.conf
+                Section "Monitor"
+                    Identifier "DisplayPort-0"
+                    Modeline   "3840x2160_120"  1066.59  3840 3888 3952 4000  2160 2163 2168 2222  +hsync -vsync
+                    Option     "PreferredMode" "3840x2160_120"
+                EndSection
+            Но тут минус, что это прибивает гвоздями дефолтные настройки, даже если ты поменяешь монитор на тот, который их не поддерживает (и наверное с вариантом для nvidia так же). Но и фиг с ним.
+            Вообще, строчка `Modeline ...` - необязательная, но без нее у меня, как я понял, было несколько режимов с одинаковым именем, поэтому обратиться к 120hz было невозможно.
+            Где взять числа:
+                Имя `3840x2160_120` произвольное. конкретно AMD похоже печатает числа в `less /var/log/X11/Xorg.0.log`. Только имя вида `"1x2"x3` не используй, оно вроде как не парсится в конфиге иксов. Напиши имя сам, вида `"1x2_3".
+                Второй вариант - выковырять числа из `xrandr --verbose`. Там все просто - сначала одно число частота, потом `h:` 4 числа и `v:` 4 числа, потом +-hsync/vsync (у этих здесь какой-то особый смысл, копируй как есть).
     Вариант 2, xrandr:
     Делай так:
         sudo mkdir /etc/lightdm/lightdm.conf.d/
         sudo nano /etc/lightdm/lightdm.conf.d/10-set-monitors.conf        (или можно раскомментить нужную строчку в основном конфиге `/etc/lightdm/lightdm.conf`)
             Туда пиши:
                 [Seat:*]
-                display-setup-script=xrandr --output DP-2 --pos 3840x0 --output HDMI-0 --pos 3840x1080 --output DP-0 --mode 3840x2160 --rate 120 --primary
+                display-setup-script=sh -c "xrandr --output DP-2 --pos 3840x0 --output HDMI-0 --pos 3840x1080 --output DP-0 --mode 3840x2160 --rate 120 --primary || true"
             Здесь для каждого экрана сначала пишешь `--output имя` (возьми его из xrandr), потом опционально эти штуки:
                 --mode 10x20  - разрешение
                 --pos 10x20   - позиция (см. в xrandr)
                 --rate 42     - кадров в секунду (если монитор не включается по умолчанию, и у него >60hz, то это нужно указать руками, иначе не будет работать).
                 --primary     - сделать главным монитором (непонятно, влияет ли на что-то)
         Внимание!
-            Похоже, что если эта команда фейлится, ты не сможешь войти в систему и придется доставать live usb.
-            Похоже это может произойти, если твой монитор не подключен.
-            Возможно `|| true` в конце поможет, я не проверял.
-            Если ты хотел дописать в конец `&& xdotool mousemove 10 20`, чтобы подвинуть мышку, то не делай так. От этого сломается вход в систему, и придется доставать live usb.
+            `--mode` указывай обязательно, без него `--rate` ничего не делает.
+            А вот `--pos` и `--primary` - не обязательно.
+        Внимание!
+            Похоже, что если эта команда фейлится, ты не сможешь войти в систему и придется доставать live usb. Похоже это может произойти, если твой монитор не подключен.
+            `|| true` в конце должно помочь, но обязательно завернуть в `sh -c "..."`.
+            Можно попробовать двигать мышку через `&& xdotool mousemove 10 20`. Для этого тоже нужно `sh -c "..."`.
 Мышка
     Почему-то при наличии 4к монитора, курсор мышки показывается в двойном размере.
     Чинить так:
@@ -639,6 +665,7 @@ sudo apt purge nvidia-driver-XXX --autoremove
                 cursor-theme-size = 16
             Эти значения возьми из настроек мышки.
             Только размер задать нельзя, не работает. Нужно указывать одновременно еще и тему.
+            Lightdm-gtk-greeter-settings не удаляет кастомные настройки. Зато сносит комментарии, хмм.
 
 [-initial-setup] [videocard] [drivers] [nvidia] [tearing]
 Фикс разрешения и тиринга (tearing) на nvidia
@@ -736,6 +763,7 @@ Eсли потерял папки, делай так:
         mkdir -p ~/.music
         mkdir -p ~/.images
         mkdir -p ~/.videos
+        mkdir -p ~/.projects
     Обнови названия папок в настройках: nano ~/.config/user-dirs.dirs
         XDG_DESKTOP_DIR="$HOME/.desktop"
         XDG_DOWNLOAD_DIR="$HOME/.downloads"
@@ -745,6 +773,7 @@ Eсли потерял папки, делай так:
         XDG_MUSIC_DIR="$HOME/.music"
         XDG_PICTURES_DIR="$HOME/.images"
         XDG_VIDEOS_DIR="$HOME/.videos"
+        XDG_PROJECTS_DIR="$HOME/.projects"
     Обнови закладки проводника: nano ~/.config/gtk-3.0/bookmarks
         file:///home/holyblackcat/.documents Документы
         file:///home/holyblackcat/.images Изображения
@@ -949,8 +978,10 @@ sudo nano /etc/inputrc
 
 [-initial-setup] [-useful-packages] [ssh]
 Настройка ssh-сервера
-sudo apt install ssh
-На федоре выключи авторизацию по паролю!! `sudo mousepad /etc/ssh/sshd_config`, там найди PasswordAuthentication, раскомментируй и исправь на no.
+pacman -S openssh
+Выключи авторизацию по паролю!!
+    sudo mousepad /etc/ssh/sshd_config`
+    Раскомментирй `PasswordAuthentication` и исправь на no.
 На федоре не забудь `sudo systemctl enable sshd`.
 Создай файл `~/.ssh/authorized_keys`, туда впиши строку с публичным ключом.
 Убедись, что ты владелец и файла и папки, и что стоят правильные права:
@@ -1123,7 +1154,7 @@ pacman для чайников
 
 [-initial-setup] [-useful-packages]
 Полезные пакеты
-    linux-headers linux-lts-headers (хедеры ядер - под каждое ядро которое ты поставил, эти были `linux` и `linux-lts`; без них могут не взлететь DKMS - автосборка некоторых установленных модулей под ядра)
+    linux-headers (хедеры ядер - под каждое ядро которое ты поставил, этот для `linux`, а для `linux-lts` был бы `linux-lts-headers`; без них может не взлететь DKMS - автосборка некоторых установленных модулей под ядра)
         ^ arch ONLY
     bash-completion (автоподстановки для баша)
     less
@@ -1133,12 +1164,11 @@ pacman для чайников
     man
         есть еще `man-pages-ru`, но я б не ставил
     nano nano-syntax-highlighting
-    firefox
-        arch,manjaro -> + firefox-i18n-en-us firefox-i18n-ru
+    {firefox,thunderbird}{,-i18n-{en-us,ru}}
+        Пакеты локализации нужны только на арче. На остальных - просто `firefox thunderbird`.
     google-chrome
-        ^ arch-aur (опенсурсный хромиум не ставь, там кодеков недостает)
-    thunderbird
-        arch,manjaro -> + thunderbird-i18n-en-us thunderbird-i18n-ru
+        ^ AUR
+        (А на Федоре опенсурсный хромиум не ставь, там кодеков недостает. Качай из их отдельного репозитория.)
     noto-fonts   (минимальные нормальные шрифты)
         ^ arch, другие сами его ставят
     gcc gdb
@@ -1177,8 +1207,7 @@ pacman для чайников
         ubuntu -> deluge
     xdotool      (управление окнами из консоли; альтернатива: wmctrl)
     yt-dlp       (скачивание видосов с ютуба, и многих вещей со многих сайтов; это форк, оригинал был youtube-dl)
-        + yt-dlp-ejs (требуется для нормальной работы с ютубом, иначе сыплет ворнингами)
-        manjaro -> не устанавливай опциональную зависимость phantomjs, выдает "пакет не найден"
+        yt-dlp-ejs (требуется для нормальной работы с ютубом, иначе сыплет ворнингами)
     dconf-editor (редактор настроек)
     htop         (модный консольный диспечер задач)
     gparted      (редактор разделов)
@@ -1188,8 +1217,6 @@ pacman для чайников
     ncdu         (то же самое, но минималистичный консольный вариант)
     xfce4-genmon-plugin (показ на панели вывода произвольных команд)
     ffmpeg       (конвертер форматов видео) ######### На федоре есть -freeworld? И для хрома еще посмотри
-    gnome-games  (набор казуальных игр)
-        ^ ubuntu | manjaro,arch - тут это какой-то левый лаунчер, не ставь
     aisleriot    (разные пасьянсы в одном приложении)
     radeontop    (мониторим видюшку AMD)
     cloc         (счетчик строк кода)
@@ -1203,24 +1230,24 @@ pacman для чайников
     peek         (запись гифок с экрана)
     gifski       (конвертер видео в качественные гифки)
     imagemagick
-        fedora -> ImageMagick
+        fedora: ImageMagick
     virtualbox
-        arch,manjaro -> + virtualbox-guest-iso
+        arch: + virtualbox-guest-iso
                         когда спросит про host modules, выбирай dkms (потому что второй только для обычного kernel, а вдруг у тебя lts)
-        fedora -> VirtualBox
-        ubuntu -> + virtualbox-ext-pack
+        fedora: VirtualBox
+        ubuntu: + virtualbox-ext-pack
     tiled        (редактор карт)
     gucharmap    (таблица символов, видимо та же, что по дефолту стоит на убунте)
     freecad      (инженерное проектирование)
         + opencamlib (для дополнительных фичей)
     audacity     (звуковой редактор; бинарники с сайта у них кривые)
-        fedora -> audacity-freeworld (из rpmfusion, без суффикса есть в стандартной репе, но он хуже?)
+        fedora: audacity-freeworld (из rpmfusion, без суффикса есть в стандартной репе, но он хуже?)
     telegram-desktop
-        fedora -> пакет кривой, качай оффициальный бинарник (https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
+        fedora: пакет кривой, качай оффициальный бинарник (https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
     discord
-        ^ arch,manjaro only?
+        ^ arch only?
     steam
-        нужен multilib репозиторий, как для wine
+        нужен multilib репозиторий, как для wine (`sudo nano /etc/pacman.conf`, там раскомменть две строки: `[multilib]` и за ней `Include=...`)
         если спросит, какой драйвер vulkan, то для AMD видюх выбирай vulkan-radeon, а не amdvlk (бенчмарк: https://www.phoronix.com/review/radv-amdvlk-july21/3)
         тут ярлык называется `Steam (runtime)`; есть еще пакет `steam-native-runtime` (`Steam (native)`)
             Runtime лучше, советую переименовать его просто в "Steam".
@@ -1241,20 +1268,12 @@ pacman для чайников
         также нужны пакеты под конкретные языки, например:
             tesseract-data-{eng,rus,kor,jpn,jpn_vert} hunspell-{en_us,ru}
     gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav (кодеки; libav - он для H.264, ugly - возможно запатентованные кодеки, bad - нестабильные кодеки (запатентованные и нет))
-        ^ arch, manjaro
+        ^ arch
     inetutils    (утилита hostname и прочие)
-        ^ arch, manjaro
+        ^ arch
     remmina      (утилита для подключения к рабочим столам по разным протоколам)
         + freerdp (добавляет поддержку стандартного виндового RDP)
     gphoto2 gvfs-gphoto2 (доступ к файлам на фотоаппаратах через usb, читай инструкцию в отдельном пункте)
-    jdupes       (дедупликатор файлов)
-        ^ arch-aur
-    visual-studio-code-bin
-        ^ arch-aur, manjaro
-    elementary-xfce-icons
-        ^ arch-aur, manjaro
-    onlyoffice-bin
-        ^ arch-aur | manjaro -> onlyoffice-desktopeditors
     zram-generator (ОПЦИОНАЛЬНО, реализация свопа через зипование в оперативку) - читай где-то здесь инструкцию как его настроить
     wipe         (консольный шредер файлов)
     raider       (гуевый шредер файлов)
@@ -1264,14 +1283,20 @@ pacman для чайников
     engrampa    или    xarchiver
         Обычно стоит один из них. Если ставишь другой,
         удали предыдущий, чтобы ассоциации переставились.
+AUR:
+    jdupes       (дедупликатор файлов)
+    visual-studio-code-bin
+    elementary-xfce-icons
+    onlyoffice-bin   (на manjaro: onlyoffice-desktopeditors)
     menulibre    (гуй управления .desktop-файлами)
-        ^ только arch-aur и федора, остальные его сами ставят
 Только убунта:
     duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
         fedora -> собирается из AUR, нафиг его
     hardinfo     (информация о системе)
         fedora -> собирается из AUR, нафиг его
     libavcodec-extra (дополнительные кодеки, которые могут быть защищены патентами - часть пакета ubuntu-restricted-extras)
+    gnome-games  (набор казуальных игр)
+        На других дистрах это какой-то стремный лаунчер. Надеюсь на убунте не переделали тоже под лаунчер.
 
 [-initial-setup] [flatpak] [flathub]
 Ставим flatpak
@@ -1331,15 +1356,27 @@ sudo nano /etc/systemd/zram-generator.conf
 
 [-initial-setup] [visual-customization] [panel]
 Настройки панели
-Для управления питанием ставь отдельный модуль в панель, а не включай иконку в трее в менеджере питания.
-    Это дает показывание процента заряда, как минимум.
 Наш любимый порядок иконок: (разделитель между каждыми)
     раскладка
+        Режим оставил дефолтный - отдельный язык в каждом приложении.
     трей
     сенсоры
     заряд
+        Используй отдельный модуль, а не включай иконку трея в настройках менеджера питания - это как минимум дает показ процента заряда.
+        Если это не ноут (не нужен процент заряда), и скролл не меняет яркость (у меня на десктопе не меняет), то можно убрать его совсем.
     звук
     часы
+Наш любимый порядок иконок слева: (разделитель-ручка после каждого)
+    whisker
+    проводник, терминал, firefox
+    переключатель рабочих мест (`1 2`)
+Избранные приложения:
+    проводник
+    терминал
+    firefox
+    thunderbird
+    geeqie
+    vscode
 
 [visual-customization] [icons] [bug-workaround]
 Иконка значка на рабочем столе сбрасывается!
@@ -1503,6 +1540,8 @@ systemd-analyze blame
     git config --global core.editor nano
     git config --global merge.tool kdiff3 # Запускать командой `git mergetool` когда есть конфликты.
     git config --global diff.guitool kdiff3
+Дефолтное имя ветки, если тебе это важно:
+    git config --global init.defaultBranch master
 Принудительно SSH вместо HTTPS для гитхаба при пуше.
     Это лучше, чем руками указывать SSH-ный URL, потому что на сабмодули будет действовать само.
     Только для пушей: (удобно для публичных реп)
@@ -1519,8 +1558,6 @@ SSH виснет на корпоративных машинах.
     Автоматическая замена URL в конфиге:
         git config --global url.ssh://git@ssh.github.com:443/.insteadOf https://github.com/
         # Отменить можно так: git config --global --unset url.ssh://git@ssh.github.com:443/.insteadOf
-Дефолтное имя ветки, если тебе это важно:
-    git config --global init.defaultBranch master
 Проверить текущий конфиг:
     git config --list --show-origin
 
@@ -1574,11 +1611,12 @@ GUI для интерактивного rebase в VSCode
 Нормальные шорткаты/хоткеи:
     Win+C              qalculate-gtk
     Win+E              mousepad
-    Win+F              exo-open --launch FileManager
+    Win+F              thunar
     Win+R              xfce4-appfinder
     Win+T              xfce4-terminal
-    Win+W              exo-open --launch WebBrowser
+    Win+W              firefox
     Win+L              xflock4
+    Win+P              xfce4-display-settings
     Ctrl+Shift+Escape  xfce4-taskmanager
     Ctrl+Escape        xfce4-popup-whiskermenu
     PrintScreen        xfce4-screenshooter -fc
@@ -2401,25 +2439,28 @@ sudo nano /etc/dnf/dnf.conf
 
 [ssh]
 Создаем ssh-ключ для гитхаба
-ssh-keygen -t ed25519 -C egor.mikhailov@Orthotech1.com
-Строка после `-C` - это произвольный комментарий.
+ssh-keygen -t ed25519 -C ...
+`-C ...` - это произвольный комментарий, его можно не указывать.
 Потом делаем cat `~/.ssh/__.pub`, и эту строку отдаем в гитхаб.
 
 [ssh] [ssh-agent] [arch] [manjaro]
-Настраиваем автоматическое подключение ssh-ключей по необходимости, с запросом пароля через GUI
-Сначала убедись, что оно само не включилось.
-Попробуй так: (тут все кроме первого шага в какой-то момент должно само настраиваться? когда арч починит свою фигню)
+Настраиваем ssh-agent: Автоматическое подключение ssh-ключей по необходимости, с запросом пароля через GUI.
+В современном XFCE агент и так запускается из коробки.
+    Но! Он не прокидывается в gvfs (его например использует thunar когда вводишь `ssh://...`).
+    Вроде как это можно починить пробросом переменных окружения (клод предлагает добавить в автозапуск: `dbus-update-activation-environment --systemd SSH_AUTH_SOCK SSH_AGENT_PID`)
+    Но вариант ниже тоже рабочий, и мне как-то привычнее.
+Делай так:
     sudo pacman -S gnome-keyring
-    systemctl enable --user gcr-ssh-agent.socket
-    systemctl start --user gcr-ssh-agent.socket
-    # Проверь, может `SSH_AUTH_SOCK` стоит по дефолту? Было бы здорово.
+    # Интересно почему надо включать руками. Вроде как в systemd-файле написано, что systemd должен сам мониторить этот сокет. Хмм.
+    systemctl enable --user gcr-ssh-agent
+    systemctl start --user gcr-ssh-agent
     export SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/gcr/ssh
 Если тебе это помогло, добавь `export ...` в автозапуск:
     sudo nano /etc/profile.d/gcr-ssh-agent.sh
         И туда вписываешь эту команду.
 Еще нужно отключить дефолтный агент так: (а то он затирает нашу переменную)
     xfconf-query -c xfce4-session -p /startup/ssh-agent/enabled -n -t bool -s false
-
+Теперь ребут! В thunar это почему-то не прокидывается если просто перезайти в систему.
 
 [ssh] [ssh-agent]
 Настраиваем ssh-agent из консоли
