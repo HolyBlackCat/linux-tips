@@ -298,6 +298,8 @@ LiveUSB арча - чисто консольный. Возможно стоит 
     Основные пакеты: (часть скопирована из archinstall)
         # Графика: (это соответствует "all open-source" в инсталлере, пусть будет, лишним не будет)
         pacman -S xorg-server xorg-xinit mesa xf86-video-amdgpu xf86-video-ati xf86-video-nouveau libva-mesa-driver libva-intel-driver intel-media-driver vulkan-radeon vulkan-intel
+        # 32-битная графика, наверное для стима пригодится (включи репозиторий multilib) (это я сам добавил, инсталлер вроде не делает так)
+        pacman -S lib32-vulkan-radeon
         # Xfce: (выбирай all в этих группах)
         pacman -S xfce4 xfce4-goodies pavucontrol gvfs
             Для wayland можно пропустить xfwm4 и xfwm4-themes, но проще просто поставить все, потому что иксы нужны как зависимости. Также, exo и garcon можно не указывать, они все равно поставятся как зависимости.

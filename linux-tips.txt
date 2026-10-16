@@ -550,6 +550,13 @@ High DPI:
     "Настраивать дисплеи при подключении" -> да
     "Автоматически включать профили" -> да
 
+[-initial-setup] [screen] [videocard]
+Включаем на AMD версию HDMI 2.1, для повышенного разрешения/частоты
+Это для ядра 7.2. Должно работать из коробки на ядре 7.3+.
+sudo nano /etc/default/grub
+Добавь `amdgpu.dcfeaturemask=0x402` в GRUB_CMDLINE_LINUX_DEFAULT
+LANG= sudo grub-mkconfig -o /boot/grub/grub.cfg
+
 [-initial-setup] [videocard] [drivers] [amd] [white-screen]
 Ставим драйвер от AMD
 Сначала проверь, что он не встал по дефолту! Инсталлер запросто мог сам его поставить.
@@ -1218,7 +1225,9 @@ pacman для чайников
     xfce4-genmon-plugin (показ на панели вывода произвольных команд)
     ffmpeg       (конвертер форматов видео) ######### На федоре есть -freeworld? И для хрома еще посмотри
     aisleriot    (разные пасьянсы в одном приложении)
-    radeontop    (мониторим видюшку AMD)
+    amdgpu_top   (мониторим видюшку AMD - тут есть и консольный режим, и гуй)
+        radeontop    Более старая альтернатива, на новых видюхах похоже может врать.
+        amdsmi       В первую очередь для ROCm (AMD-специфичного аналога Cuda). Кроме него мало что показывает.
     cloc         (счетчик строк кода)
     piper        (настраиваем подсветку мышек и т.п.)
     fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
@@ -1805,7 +1814,7 @@ Virtualbox тормозит на BTRFS, из-за его copy-on-write. Как �
 В audacious классический скин от winamp-а
 Скачать отсюда: https://www.opendesktop.org/p/1008329/
 Zip-архив скопировать в:
-    (для всех) /usr/share/audacious/Skins/
+    (для всех) /usr/local/share/audacious/Skins/
     (для себя) ~/.local/share/audacious/Skins/
 
 [-useful-packages] [man] [gui]
@@ -2026,6 +2035,24 @@ crontab -e
 Потом в настройках питания -> безопасность ставим "блокировать экран" = "никогда", и снимаем галочку "блокировать при переходе в ждущий режим".
 Просто удалять пакет `light-locker` похоже вредно, потому что эти настройки скрываются, но их эффект не пропадает до конца. Возможно можно удалить после
     изменения настроек.
+
+[-initial-setup] [-useful-packages] [lock-screen]
+Переключаемся между блокировкой через xfce4-screensaver и light-locker
+light-locker при блокирвке уходит на отдельный виртуальный терминал, что вроде как надежднее, но медленнее.
+Еще он не дает переключать раскладку - это удобно.
+По дефолту обычно используется xfce4-screensaver. Как переключиться на light-locker:
+    sudo pacman -S light-locker
+    xfce4-screensaver не удалять! Он все еще отвечает за включение заставки (черного экрана).
+    В настройках xfce4-screensaver выключить блокировку экрана.
+    В автозапуске:
+        Оставить xfce4-screensaver включенным.
+        Дефолтный light-locker выключить.
+        Добавить `light-locker --no-late-locking`.
+            С таким флажком он блокирует экран при включении заставки, а не при выключении.
+            Если делать это при выключении (дефолт), то на полсекунды видно незаблокированный экран. Ну и это мешает сразу вводить пароль.
+    Укажи команду блокировки:
+        xfconf-query -c xfce4-session -p /general/LockCommand -s 'light-locker-command -l'
+        Чтобы вернуть дефолт, передай пустую строку.
 
 [-initial-setup] [mount] [root] [arch] [manjaro]
 Mount разделов в xfce без рутовых прав
@@ -2370,34 +2397,37 @@ sudo nano /etc/dnf/dnf.conf
         done
 
 
-[docker]
-Докер для чайников
+[docker] [podman]
+Докер и podman для чайников
+Команды у них одинаковые, только в первом слове разница.
+У podman нет демона, вроде как. И ни в какую группу не надо добавляться.
+При установке podman выбирай рантайм crun. runc - более старый вариант. krun - вариант на основе KVM с дополнительной изоляцией.
 Скачать образ
-    docker image pull IMAGE
+    podman image pull IMAGE
 Создать интерактивный контейнер
-    docker container create -it --name <NEW_CONTAINER> <IMAGE> /usr/bin/bash
+    podman container create -it --name <NEW_CONTAINER> <IMAGE> /usr/bin/bash
   Дополнительные опции: (перед именем контейнера)
     Проброс видюшки
         Общая часть
             -env=DISPLAY --volume=/tmp/.X11-unix:/tmp/.X11-unix:ro
         Добавить для AMD:
             --device /dev/dri
-        Добавить для Nvidia: (вроде в `docker run` это потом тоже можно; хз, нужно в оба места или в одно)
+        Добавить для Nvidia: (вроде в `podman run` это потом тоже можно; хз, нужно в оба места или в одно)
             --device /dev/dri
         На хосте запустить:
             xhost +local:docker
     Дефолтный юзер (можно потом поменять - сначала лучше не указывать, потому что в image нет твоего юзернейма)
         -u <USERNAME>
 Запустить контейнер:
-    docker container start <CONTAINER>
+    podman container start <CONTAINER>
 Остановить контейнер:
-    docker container stop <CONTAINER>
+    podman container stop <CONTAINER>
 Подключиться к работающему контейнеру:
-    docker attach <CONTAINER>
+    podman attach <CONTAINER>
 Запустить разовую команду (неважно, в работающем контейнере или нет?)
-    docker container exec -it <CONTAINER> /usr/bin/bash
+    podman container exec -it <CONTAINER> /usr/bin/bash
   Из под рута:
-    docker container exec -it -u root <CONTAINER> /usr/bin/bash
+    podman container exec -it -u root <CONTAINER> /usr/bin/bash
   Здесь `-it` значит "интерактивно". Если не нужно, можно не писать.
 Полезная команда для убунты в докере - подготовить ее к интерактивной работе и доставить всякие полезные пакеты.
     unminimize
@@ -2406,14 +2436,14 @@ sudo nano /etc/dnf/dnf.conf
     sudo locale-gen en_US.UTF-8
     sudo update-locale LANG=en_US.UTF-8
 Меняем дефолтного юзера (какой-то тупой способ, но работает)
-    * docker container stop CONTAINER
-    * sudo nano $(docker inspect --format='/var/lib/docker/containers/{{.Id}}/config.v2.json' CONTAINER)
+    * podman container stop CONTAINER
+    * sudo nano $(podman inspect --format='/var/lib/docker/containers/{{.Id}}/config.v2.json' CONTAINER)
         * Там ищем `"User": ""`, и вместо пустой строки пишем юзернейм.
-    * sudo systemctl restart docker
+    * для докера: sudo systemctl restart docker
 Создаем image из контейнера:
-    docker commit <CONTAINER> <NEW_IMAGE>
+    podman commit <CONTAINER> <NEW_IMAGE>
 Подключаем GPU к уже существующему контейнеру
-    Надо было при создании указывать! Теперь делай `docker commit`, и пересоздавай контейнер из image.
+    Надо было при создании указывать! Теперь делай `podman commit`, и пересоздавай контейнер из image.
 
 
 [user]
