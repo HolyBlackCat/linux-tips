@@ -2411,10 +2411,16 @@ sudo nano /etc/dnf/dnf.conf
         Общая часть
             -env=DISPLAY --volume=/tmp/.X11-unix:/tmp/.X11-unix:ro
         Добавить для AMD:
-            --device /dev/dri
+            Обычный вариант:
+                --device /dev/dri
+                Это может создать проблему, если ты создашь контейнер со включенной интегрированной видеокартой, потом выключишь ее, и попробуешь его запустить. Будет ругаться.
+            Вообще, контейнер можно перенастроить, чтобы убрать ссылку на старую видюху. Но есть еще вот такой вариант от Клода, который должен это обходить: (еще не проверял)
+                -v /dev/dri:/dev/dri \
+                --device-cgroup-rule='c 226:* rwm' \
+                --group-add keep-groups
         Добавить для Nvidia: (вроде в `podman run` это потом тоже можно; хз, нужно в оба места или в одно)
-            --device /dev/dri
-        На хосте запустить:
+            --gpus all
+        Если вдруг приложения не будут стартовать, на хосте запусти эту команду. Это точно иногда было нужно для docker (причем иногда отваливалось и нужно было повторять), но podman у меня сейчас работает и без нее.
             xhost +local:docker
     Дефолтный юзер (можно потом поменять - сначала лучше не указывать, потому что в image нет твоего юзернейма)
         -u <USERNAME>
@@ -2435,11 +2441,28 @@ sudo nano /etc/dnf/dnf.conf
     sudo apt install locales
     sudo locale-gen en_US.UTF-8
     sudo update-locale LANG=en_US.UTF-8
-Меняем дефолтного юзера (какой-то тупой способ, но работает)
-    * podman container stop CONTAINER
-    * sudo nano $(podman inspect --format='/var/lib/docker/containers/{{.Id}}/config.v2.json' CONTAINER)
-        * Там ищем `"User": ""`, и вместо пустой строки пишем юзернейм.
-    * для докера: sudo systemctl restart docker
+Меняем настройки контейнера напрямую. Так например можно поменять дефолтного юзера, или убрать ссылку на отключенную видеокарту AMD (см. выше)
+    docker:
+        docker container stop CONTAINER
+        sudo nano $(docker inspect --format='/var/lib/docker/containers/{{.Id}}/config.v2.json' CONTAINER)
+            * Там ищем `"User": ""`, и вместо пустой строки пишем юзернейм.
+        sudo systemctl restart docker
+    podman:
+        Тут эти настройки лежат в sqlite, а внутри тоже JSON-ы.
+        Сначала ребутнись, на всякий случай, чтобы убедиться, что все остановлено.
+            Вообще должно быть достаточно `podman container stop ...` (список в `podman container ls`),
+            но у меня после ошибок связанных с AMD видюхой (см. выше) оставался висеть процесс `common`, а это наверное нехорошо.
+        Узнай полное название-хеш контейнера: (Здесь `ИмяКонтейнера` можно посмотреть в `podman container ls -a`. Короткий хеш годится вместо имени.)
+            CTR=$(podman inspect --format '{{.Id}}' ИмяКонтейнера)
+        Извлеки JSON: (тут `jq .` его форматирует)
+            DB=~/.local/share/containers/storage/db.sql
+            sqlite3 "$DB" "SELECT JSON FROM ContainerConfig WHERE ID='$CTR';" | jq . >1.json
+        Дальше можно что-то поковырять. Например, чтобы избавиться от отключенной видюхи, я убирал блоки с `/dev/dri/card0` и `/dev/dri/renderD129`
+        Ужми обратно JSON в однострочник:
+            jq -c . 1.json >2.json
+        Дальше запиши обратно в sqlite:
+            sqlite3 "$DB" "UPDATE ContainerConfig SET JSON = readfile('2.json') WHERE ID='$CTR';"
+        Вроде как никакого демона нет, в отличие от докера, так что не нужно ничего перезапускать.
 Создаем image из контейнера:
     podman commit <CONTAINER> <NEW_IMAGE>
 Подключаем GPU к уже существующему контейнеру
