@@ -181,16 +181,16 @@ LiveUSB арча - чисто консольный. Возможно стоит 
         Автозапуск обновления зеркал настроим потом, когда поставим систему.
 
     Базовая система:
-        pacstrap -K /mnt base linux linux-firmware
+        pacstrap -K /mnt base linux linux-firmware reflector
             # На виртуалках linux-firmware не нужон, я думаю.
             # Тут еще можно использвать `linux-lts` вместо или вместе с `linux` - это альтернативное LTS ядро. На очень новом железе не рекомендую, может каких-то дровов не хватать.
+            # Сразу ставим reflector для удобства, чтобы перетереть его конфиг сразу, чтобы потом не создавался `.pacnew` и т.п.
     FSTAB:
         genfstab -U /mnt >>/mnt/etc/fstab
             # `>>` потому что там в начале три строчки комментариев, пусть будут.
             # Даже если используешь LUKS, никаких дополнительных действий не требуется, если он на единственном разделе. Есть файл `crypttab`, но он для случаев, когда зашифровано что-то кроме `/`.
 
     Если настраивал зеркала через reflector как описано выше, скопируй его конфиг тоже:
-        mkdir /mnt/etc/xdg/reflector
         cp {,/mnt}/etc/xdg/reflector/reflector.conf
 
     arch-chroot /mnt   # --- Переходим в chroot, дальше все в нем
@@ -222,24 +222,19 @@ LiveUSB арча - чисто консольный. Возможно стоит 
             # Также читай ниже про grub.
 
     Зеркала: (если настраивал их как написано выше, и скопировал конфиг)
-        pacman -S reflector
-        Убираем новый конфиг:
-            rm /etc/xdg/reflector/reflector.conf.pacnew
-        systemctl enable reflector.timer  # Включаем еженедельное авто-обновление.
-
-    Таймзона:
-        timedatectl set-timezone $(tzselect)
-        # Лучше выбирай родной город, чтобы не поставилась плохая локаль.
-    Синхронизация времени:
-        systemctl enable systemd-timesyncd
+        # Включаем еженедельное авто-обновление.
+        systemctl enable reflector.timer
 
     Локаль:
-        # К сожалению, она общая на гуй и на консоль. Возможно можно как-то отдельно, я хз.
         nano /etc/locale.gen
             Раскомменть там `en_US.UTF-8` и `ru_RU.UTF-8`
         locale-gen
         nano /etc/locale.conf
             LANG=ru_RU.UTF-8
+        # В консоли возвращаем английскую локаль
+        nano /etc/bash.bashrc   (или потом для одного юзера в `~/.bashrc`)
+            export LANG=en_US.UTF-8
+            # Просто делать `unset LANG` нельзя, это ломает юникод в терминале.
 
     Хостнейм
         nano /etc/hostname
@@ -327,6 +322,12 @@ LiveUSB арча - чисто консольный. Возможно стоит 
     shutdown now
     вынимаем live usb
     включаем
+
+    Таймзона: (почему-то через chroot не ставится)
+        timedatectl set-timezone $(tzselect)
+        # Лучше выбирай родной город, чтобы не поставилась плохая локаль.
+    Синхронизация времени:
+        systemctl enable systemd-timesyncd
 
     Пока все.
 

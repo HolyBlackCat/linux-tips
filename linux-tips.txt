@@ -203,7 +203,7 @@ REIB vs REISUB
     sudo rmmod pcspkr snd_pcsp
     # Возможно только один из двух модулей сейчас загружен. Это не проблема, тогда убьется только второй.
 
-[-initial-setup] [bug-workaround] [brightness]
+[+outdated] [bug-workaround] [brightness]
 Комп мгновенно вырубается если потрогать кнопку brightness
 Попробуй так:
     sudo rmmod ideapad_laptop
@@ -307,7 +307,7 @@ REIB vs REISUB
 
 [-initial-setup] [bash] [prompt]
 Настраиваем prompt в bash
-Раззипуй этот шелскрипт (`base64 -d 1.txt | gzip -d >_hbc_bash_prompt.sh`, был сжат `gzip -c9 _hbc_bash_prompt.sh | base64 >1.txt`):
+Раззипуй этот шелскрипт (`base64 -d 1.txt | gzip -d >hbc_bash_prompt.sh`, был сжат `gzip -c9 hbc_bash_prompt.sh | base64 >1.txt`):
     H4sICJx4B2kCA2Jhc2hfcHJvbXB0LnNoAHVWf28iNxD9fz/FNCBBFEJI2qtapVyby3GXSM0PkeSk
     CiIwu7Osy2KvbG8WdLp+9s7YC+VKshKCtccz4zdv3tCAx0xasOgsCIhL6/QSZsJmUBi9LBxYt86x
     GzXgWlkn8hwc28/WMLW6NDFOpZqHtVTmCMLRCwKqBHQK039OuuzMxFN28Ug7sU6QTMiuMFJxVAVS
@@ -331,18 +331,186 @@ REIB vs REISUB
     jDMNzX2ow3VrEdrfBnIEZ9/LJD8EVs+/sITxN3fMBrrrIAb4WnF2ww0ueYr19r2Tsx1lPSU5bTR2
     htJu3IafGkFFQiduHbyqHDuH6B/DBmHugHCS+QqtN4jcAv/7LS73mLOpZARSLyj0JyEo9lZXmUn1
     hOtuTcMfiX8BSu3Lk84JAAA=
-Допиши в `nano ~/.bashrc` в конец `source path/to/_hbc_bash_prompt.sh`.
+Допиши в `nano ~/.bashrc` (или глобальный `/etc/bash.bashrc`? хз) в конец `source path/to/hbc_bash_prompt.sh`.
 Может требоваться ручная подстройка в зависимости от дистрибутива. Проверь, что после зафейлившихся команд рисуется красный символ, но только один раз.
 Если это криво работает, читай комменты в скрипте.
 
 [-initial-setup] [bash] [history]
 Настраиваем историю в баше
-Допиши в `nano ~/.bashrc` в конец строчки:
+Допиши в `nano ~/.bashrc` (или глобальный `/etc/bash.bashrc`? хз) в конец строчки:
     export HISTFILESIZE=100000
     export HISTSIZE=100000
     export HISTCONTROL=ignoreboth
 `HISTCONTROL=ignoreboth` - убирает дубликаты, и заодно убирает все, что начинается с пробела (эти две вещи можно настроить отдельно).
 `HISTFILESIZE` - это максимум записей в файле, а `HISTSIZE` - вроде бы максимум записей в памяти.
+
+[-initial-setup] [-useful-packages] [arch] [yay]
+Настраиваем AUR на арче
+В Manjaro это все встроено в pamac, там ничего делать не нужно.
+Сначала настраиваем сборку пакетов:
+    sudo nano /etc/makepkg.conf
+        поставь `!` перед `debug` в строке `OPTIONS=...`, чтобы не ставить дебажные пакеты
+        либо переключи на кланг, либо там же убери флажок lto чтобы не тормозило
+            чтобы переключить на кланг, в разделе `ARCHITECTURE, COMPILE FLAGS` добавь в начале строки `CC=clang`, `CXX=clang++`. Не забудь его поставить, лол.
+Нужно выбрать программу-менеджер, чтобы руками не билдить. `yay` хорош.
+    sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay && cd yay && makepkg -si && cd .. && rm -rf yay
+.
+    # Initial setup from readme at: https://github.com/Jguer/yay
+    yay -Y --gendb
+    yay -Syu --devel
+    yay -Y --devel --save
+.
+Дальше обновляйся через `yay` (без аргументов - как `pacman -Syu`, но в остальном флаги как у pacman-а)
+Пакеты из AUR ищи и ставь через `yay` (флаги как у `pacman`), а обычные можно как раньше.
+
+[-initial-setup] [-useful-packages]
+Полезные пакеты
+    linux-headers (хедеры ядер - под каждое ядро которое ты поставил, этот для `linux`, а для `linux-lts` был бы `linux-lts-headers`; без них может не взлететь DKMS - автосборка некоторых установленных модулей под ядра)
+        ^ arch ONLY
+    bash-completion (автоподстановки для баша)
+    less
+    bc           (простенький консольный калькулятор)
+    moreutils    (команда sponge и прочее)
+    locate       (поиск файлов - если ругается, сделай `sudo updatedb`)
+    man
+        есть еще `man-pages-ru`, но я б не ставил
+    nano nano-syntax-highlighting
+    {firefox,thunderbird}{,-i18n-{en-us,ru}}
+        Пакеты локализации нужны только на арче. На остальных - просто `firefox thunderbird`.
+    google-chrome
+        ^ AUR
+        (А на Федоре опенсурсный хромиум не ставь, там кодеков недостает. Качай из их отдельного репозитория.)
+    noto-fonts   (минимальные нормальные шрифты)
+        ^ arch, другие сами его ставят
+    gcc gdb
+    clang lld lldb
+        ubuntu -> [ставь новую версию из кастомного репозитория]
+        fedora -> + clang-tools-extra
+    patchelf     (патчим исполняемые файлы, например меняем в них путь к динамическим библиотекам, т.е. rpath)
+    git make pkgconf
+    cmake
+        ubuntu -> + cmake-qt-gui
+        fedora -> + cmake-gui
+    ninja
+        fedora -> ninja-build
+    kdiff3       (разрешитель конфликтов для git-а)
+    wine
+    qalculate-gtk (калькулятор)
+    gnuplot      (построитель графиков, его может использовать qalculate)
+    audacious    (музкальный проигрыватель; на федоре на забудь поставить плагины на форматы файлов, ниже есть инструкция)
+    vlc          (проигрыватель видео)
+        arch:
+            vlc-plugins-all  (больше форматов файлов, и прочее)
+            libdvd{css,nav,read}  (поддержка dvd дисков)
+        ubuntu -> + vlc-l10n
+    net-tools    (ifconfig и другие команды работы с сетью)
+    zip unzip    (zip-архивы)
+    p7zip        (7z-архивы, )
+        федора: + p7zip-plugins
+    unrar        (работа с rar-архивами)
+        ubuntu -> + rar (на других дистрибутивах это какой-то странный несвободный пакет)
+    zstd         (поддержка zstd-архивов для tar и др.)
+    geeqie       (нормальный просмотрщик изображений)
+    krita        (граф. редактор и локализации для него)
+        ubuntu -> + krita-l10n
+    gimp         (граф. редактор)
+    deluge-gtk   (торрент-клиент, более приличный чем дефолтный transmission)
+        ubuntu -> deluge
+    xdotool      (управление окнами из консоли; альтернатива: wmctrl)
+    yt-dlp       (скачивание видосов с ютуба, и многих вещей со многих сайтов; это форк, оригинал был youtube-dl)
+        yt-dlp-ejs (требуется для нормальной работы с ютубом, иначе сыплет ворнингами)
+        python-mutagen (требуется для `--embed-thumbnail`)
+    dconf-editor (редактор настроек)
+    htop         (модный консольный диспечер задач)
+    gparted      (редактор разделов)
+    btrfs-assistant (управление файловой системой btrfs)
+    gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
+    gnome-font-viewer (просмотрщик шрифтов, не особо удобный)
+    ncdu         (то же самое, но минималистичный консольный вариант)
+    xfce4-genmon-plugin (показ на панели вывода произвольных команд)
+    ffmpeg       (конвертер форматов видео) ######### На федоре есть -freeworld? И для хрома еще посмотри
+    aisleriot    (разные пасьянсы в одном приложении)
+    amdgpu_top   (мониторим видюшку AMD - тут есть и консольный режим, и гуй)
+        radeontop    Более старая альтернатива, на новых видюхах похоже может врать.
+        amdsmi       В первую очередь для ROCm (AMD-специфичного аналога Cuda). Кроме него мало что показывает.
+    cloc         (счетчик строк кода)
+    piper        (настраиваем подсветку мышек и т.п.)
+    fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
+    potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
+    qpdf         (разные манипуляции с pdf)
+    guestfs-tools (монтировать диски от виртуальных машин)
+        ^ arch  |  ubuntu,fedora -> libguestfs-tools
+    lm_sensors   (датчики температуры и прочего)
+    peek         (запись гифок с экрана)
+    gifski       (конвертер видео в качественные гифки)
+    imagemagick
+        fedora: ImageMagick
+    virtualbox
+        arch: + virtualbox-guest-iso
+                        когда спросит про host modules, выбирай dkms (потому что второй только для обычного kernel, а вдруг у тебя lts)
+        fedora: VirtualBox
+        ubuntu: + virtualbox-ext-pack
+    tiled        (редактор карт)
+    gucharmap    (таблица символов, видимо та же, что по дефолту стоит на убунте)
+    freecad      (инженерное проектирование)
+        + opencamlib (для дополнительных фичей)
+    audacity     (звуковой редактор; бинарники с сайта у них кривые)
+        fedora: audacity-freeworld (из rpmfusion, без суффикса есть в стандартной репе, но он хуже?)
+    telegram-desktop
+        fedora: пакет кривой, качай оффициальный бинарник (https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
+    discord
+        ^ arch only?
+    steam
+        нужен multilib репозиторий, как для wine (`sudo nano /etc/pacman.conf`, там раскомменть две строки: `[multilib]` и за ней `Include=...`)
+        если спросит, какой драйвер vulkan, то для AMD видюх выбирай vulkan-radeon, а не amdvlk (бенчмарк: https://www.phoronix.com/review/radv-amdvlk-july21/3)
+        тут ярлык называется `Steam (runtime)`; есть еще пакет `steam-native-runtime` (`Steam (native)`)
+            Runtime лучше, советую переименовать его просто в "Steam".
+            Смотри https://wiki.archlinux.org/title/Steam/Troubleshooting
+            Runtime использует родные стимовские либы. Native использует системные либы.
+    renderdoc    (отладчик графики)
+    fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
+    lmms         (музыкальный редактор)
+        ubuntu -> вроде не работают плагины VST? Ставь официальный AppImage вместо пакета, там работют.
+    tree         (печатаем дерево папок)
+    obs-studio   (записываем видео с экрана)
+    lightdm-gtk-greeter-settings (гуй настройки lightdm, не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
+    yad zenity   (рисование диалогов из консоли; первое - форк второго, больше фичей и не новомодный гуй, но пусть будут оба)
+    lshw         (выводит информацию о железе в консоль)
+    perl-rename  (массовое переименование файлов)
+        ubuntu -> rename  (проверь)
+    gimagereader-gtk (распознавание текста с картинки)
+        также нужны пакеты под конкретные языки, например:
+            tesseract-data-{eng,rus,kor,jpn,jpn_vert} hunspell-{en_us,ru}
+    gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav (кодеки; libav - он для H.264, ugly - возможно запатентованные кодеки, bad - нестабильные кодеки (запатентованные и нет))
+        ^ arch
+    inetutils    (утилита hostname и прочие)
+        ^ arch
+    remmina      (утилита для подключения к рабочим столам по разным протоколам)
+        + freerdp (добавляет поддержку стандартного виндового RDP)
+    gphoto2 gvfs-gphoto2 (доступ к файлам на фотоаппаратах через usb, читай инструкцию в отдельном пункте)
+    zram-generator (ОПЦИОНАЛЬНО, реализация свопа через зипование в оперативку) - читай где-то здесь инструкцию как его настроить
+    wipe         (консольный шредер файлов)
+    raider       (гуевый шредер файлов)
+    archlinux-wallpaper (некоторые дефолтные обои)
+    guvcview     (гуй вебкамеры) (раньше был еще `cheese` - он более юзер-френдли но остался только в AUR)
+Гуи архиватора. Выбери между
+    engrampa    или    xarchiver
+        Обычно стоит один из них. Если ставишь другой,
+        удали предыдущий, чтобы ассоциации переставились.
+AUR:
+    jdupes       (дедупликатор файлов)
+    visual-studio-code-bin
+    elementary-xfce-icons
+    onlyoffice-bin   (на manjaro: onlyoffice-desktopeditors)
+    menulibre    (гуй управления .desktop-файлами)
+Только убунта:
+    duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
+        fedora -> собирается из AUR, нафиг его
+    hardinfo     (информация о системе)
+        fedora -> собирается из AUR, нафиг его
+    libavcodec-extra (дополнительные кодеки, которые могут быть защищены патентами - часть пакета ubuntu-restricted-extras)
+    gnome-games  (набор казуальных игр)
+        На других дистрах это какой-то стремный лаунчер. Надеюсь на убунте не переделали тоже под лаунчер.
 
 [fonts]
 Куда ставить шрифты
@@ -440,7 +608,7 @@ Menulibre не запускается
 
 [-initial-setup] [panel] [dpi]
 Чеклист размеров под разные DPI
-Обычный DPI:
+Обычный DPI: (в том числе умеренно высокий на ноуте)
     DPI: 96 (или 104 для ноута)
     Размер курсора мыши: 16 (в обычных настройках и в `/etc/lightdm/lightdm-gtk-greeter.conf` - здесь где-то есть инструкция, Ctrl+F `cursor-theme-size`)
     Высота панели: 26
@@ -450,8 +618,8 @@ Menulibre не запускается
     Размер иконок категорий в whisker: очень маленький
     Размер иконок в боковой панели thunar: 16
     Зум в thunar: минимальный
-    Тема диспечера окон с припиской `-hdpi`
-High DPI:
+    Тема диспечера окон без приписки `-hdpi`
+High DPI: (4к)
     DPI: 144
     Размер курсора мыши: 32 (24 округляется до 16, увы. Но это все равно было бы маловато.)
     Высота панели: 36
@@ -461,7 +629,7 @@ High DPI:
     Размер иконок категорий в whisker: маленький
     Размер иконок в боковой панели thunar: 24
     Зум в thunar: минимальный + 1 один шаг колесика
-    Тема диспечера окон без приписки `-hdpi`
+    Тема диспечера окон с припиской `-hdpi`
 
 [-initial-setup] [fonts]
 Какие шрифты выбрать
@@ -474,6 +642,7 @@ High DPI:
 Терминал:  Monospace Regular 10 или 11 (noto mono?)
 Хинтинг: light на hidpi, medium на обычном?
 Субпиксельное сглаживание - везде RGB?
+Здесь ноут считается за hidpi.
 
 [-initial-setup] [terminal]
 Привычный терминала в символах
@@ -548,9 +717,6 @@ LANG= sudo grub-mkconfig -o /boot/grub/grub.cfg
     cat /sys/module/amdgpu/parameters/ppfeaturemask
     Там по дефолту должно быть 0xfff7bfff, а наш бит - 0x4000, суммируем.
 
-
-cat /sys/module/amdgpu/parameters/ppfeaturemask
-
 [-initial-setup] [videocard] [drivers] [amd] [white-screen]
 Ставим драйвер от AMD
 Сначала проверь, что он не встал по дефолту! Инсталлер запросто мог сам его поставить.
@@ -565,10 +731,11 @@ cat /sys/module/amdgpu/parameters/ppfeaturemask
 [-initial-setup] [videocard] [drivers] [nvidia] [white-screen]
 Ставим драйвер от NVidia
 Arch, новые карточки:
-    pacman -S --needed nvidia-open-dkms nvidia-prime nvidia-settings lib32-nvidia-utils
+    pacman -S --needed nvidia-open-dkms linux-headers nvidia-prime nvidia-settings lib32-nvidia-utils
     Есть два драйвера, опенсурсный и обычный. Опернсурсный вроде как лучше, но работает только для новых видюх. Читай тут: https://wiki.archlinux.org/title/NVIDIA
     Оперсурсный:
         nvidia-open-dkms - есть еще `nvidia-open` без DKMS, но он только для ванильного ядра. А если у тебя LTS, то придется брать DKMS.
+        linux-headers - нужны для dkms, ололо
     Обычный:
         nvidia nvidia-lts - для обычного ядра и для LTS.
     Прочие пакеты, которе я тут добавил:
@@ -1052,10 +1219,8 @@ sudo nano /etc/lightdm/lightdm.conf
 [-initial-setup] [drivers] [sensors]
 Мониторим температуру
 Проц/видюха/...:
-    Убунта:
-        sudo apt install lm-sensors
-    Manjaro:
-        pamac install lm_sensors
+    Устанавливаем:
+        sudo pacman -S lm_sensors
     sensors
 Жесткий диск:
     sudo apt install hddtemp
@@ -1078,6 +1243,7 @@ sudo nano /etc/lightdm/lightdm.conf
             x=="gpu"&&y=="junction:"&&/input/{gpu=$2}
             END {
                 "hddtemp -n /dev/sda" | getline hdd;
+                # Nvidia (цвет $6f6):  "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader" | getline gpu;
                 printf "CPU:%.0f GPU:%.0f HDD:%s\n",cpu,gpu,hdd
             }'
         Здесь находятся:
@@ -1087,7 +1253,7 @@ sudo nano /etc/lightdm/lightdm.conf
                 Как будто бы junction интереснее.
             температура hdd (находится отдельно командой hddtemp)
 Можно еще показывать результаты в панели, для этого `sudo apt install xfce4-genmon-plugin`.
-    Туда можно зафигачить тот же скрипт, но если хочешь цвета, придется пользоваться специальной XML-разметкой, например вот так: (упрощенный вариант без hdd, рекомендуется шрифт arial 7, период 5с)
+    Туда можно зафигачить тот же скрипт, но если хочешь цвета, придется пользоваться специальной XML-разметкой, например вот так: (упрощенный вариант без hdd, рекомендуется шрифт arial 7, период 10с)
         #!/bin/sh
         sensors -u | awk '
         /^$/{x=""}
@@ -1095,30 +1261,11 @@ sudo nano /etc/lightdm/lightdm.conf
         x==""&&/k10temp-pci-/{x="cpu"}
         x==""&&/amdgpu-pci-/{x="gpu"}
         x=="cpu"&&y=="Tctl:"&&/input/{cpu=$2}
-        x=="gpu"&&y=="edge:"&&/input/{gpu=$2}
+        x=="gpu"&&y=="junction:"&&/input/{gpu=$2}
         END {
             printf "<txt><span color='\''#666'\''>CPU </span><span color='\''#0af'\''>%.0f</span>\n",cpu
             printf "<span color='\''#666'\''>GPU </span><span color='\''#f66'\''>%.0f</span></txt><tool>Сенсоры</tool>",gpu
         }'
-
-[-initial-setup] [-useful-packages] [arch] [yay]
-Настраиваем AUR на арче
-В Manjaro это все встроено в pamac, там ничего делать не нужно.
-Сначала настраиваем сборку пакетов:
-    sudo nano /etc/makepkg.conf
-        поставь `!` перед `debug` в строке `OPTIONS=...`, чтобы не ставить дебажные пакеты
-        либо переключи на кланг, либо там же убери флажок lto чтобы не тормозило
-            чтобы переключить на кланг, в разделе `ARCHITECTURE, COMPILE FLAGS` добавь в начале строки `CC=clang`, `CXX=clang++`. Не забудь его поставить, лол.
-Нужно выбрать программу-менеджер, чтобы руками не билдить. `yay` хорош.
-    sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay && cd yay && makepkg -si && cd .. && rm -rf yay
-.
-    # Initial setup from readme at: https://github.com/Jguer/yay
-    yay -Y --gendb
-    yay -Syu --devel
-    yay -Y --devel --save
-.
-Дальше обновляйся через `yay` (без аргументов - как `pacman -Syu`, но в остальном флаги как у pacman-а)
-Пакеты из AUR ищи и ставь через `yay` (флаги как у `pacman`), а обычные можно как раньше.
 
 [arch] [pacman] [yay]
 pacman для чайников
@@ -1190,155 +1337,6 @@ pacman для чайников
 Руками:
     только неустановленные: pacman -Sc
     все:                    pacman -Scc
-
-[-initial-setup] [-useful-packages]
-Полезные пакеты
-    linux-headers (хедеры ядер - под каждое ядро которое ты поставил, этот для `linux`, а для `linux-lts` был бы `linux-lts-headers`; без них может не взлететь DKMS - автосборка некоторых установленных модулей под ядра)
-        ^ arch ONLY
-    bash-completion (автоподстановки для баша)
-    less
-    bc           (простенький консольный калькулятор)
-    moreutils    (команда sponge и прочее)
-    locate       (поиск файлов - если ругается, сделай `sudo updatedb`)
-    man
-        есть еще `man-pages-ru`, но я б не ставил
-    nano nano-syntax-highlighting
-    {firefox,thunderbird}{,-i18n-{en-us,ru}}
-        Пакеты локализации нужны только на арче. На остальных - просто `firefox thunderbird`.
-    google-chrome
-        ^ AUR
-        (А на Федоре опенсурсный хромиум не ставь, там кодеков недостает. Качай из их отдельного репозитория.)
-    noto-fonts   (минимальные нормальные шрифты)
-        ^ arch, другие сами его ставят
-    gcc gdb
-    clang lld lldb
-        ubuntu -> [ставь новую версию из кастомного репозитория]
-        fedora -> + clang-tools-extra
-    patchelf     (патчим исполняемые файлы, например меняем в них путь к динамическим библиотекам, т.е. rpath)
-    git make pkgconf
-    cmake
-        ubuntu -> + cmake-qt-gui
-        fedora -> + cmake-gui
-    ninja
-        fedora -> ninja-build
-    kdiff3       (разрешитель конфликтов для git-а)
-    wine
-    qalculate-gtk (калькулятор)
-    gnuplot      (построитель графиков, его может использовать qalculate)
-    audacious    (музкальный проигрыватель; на федоре на забудь поставить плагины на форматы файлов, ниже есть инструкция)
-    vlc          (проигрыватель видео)
-        arch:
-            vlc-plugins-all  (больше форматов файлов, и прочее)
-            libdvdcss libdvdnav libdvdread  (поддержка dvd дисков)
-        ubuntu -> + vlc-l10n
-    net-tools    (ifconfig и другие команды работы с сетью)
-    zip unzip    (zip-архивы)
-    p7zip        (7z-архивы, )
-        федора: + p7zip-plugins
-    unrar        (работа с rar-архивами)
-        ubuntu -> + rar (на других дистрибутивах это какой-то странный несвободный пакет)
-    zstd         (поддержка zstd-архивов для tar и др.)
-    geeqie       (нормальный просмотрщик изображений)
-    krita        (граф. редактор и локализации для него)
-        ubuntu -> + krita-l10n
-    gimp         (граф. редактор)
-    deluge-gtk   (торрент-клиент, более приличный чем дефолтный transmission)
-        ubuntu -> deluge
-    xdotool      (управление окнами из консоли; альтернатива: wmctrl)
-    yt-dlp       (скачивание видосов с ютуба, и многих вещей со многих сайтов; это форк, оригинал был youtube-dl)
-        yt-dlp-ejs (требуется для нормальной работы с ютубом, иначе сыплет ворнингами)
-        python-mutagen (требуется для `--embed-thumbnail`)
-    dconf-editor (редактор настроек)
-    htop         (модный консольный диспечер задач)
-    gparted      (редактор разделов)
-    btrfs-assistant (управление файловой системой btrfs)
-    gnome-disk-utility (манипуляция жесткими дисками, в т.ч. проверки)
-    gnome-font-viewer (просмотрщик шрифтов, не особо удобный)
-    ncdu         (то же самое, но минималистичный консольный вариант)
-    xfce4-genmon-plugin (показ на панели вывода произвольных команд)
-    ffmpeg       (конвертер форматов видео) ######### На федоре есть -freeworld? И для хрома еще посмотри
-    aisleriot    (разные пасьянсы в одном приложении)
-    amdgpu_top   (мониторим видюшку AMD - тут есть и консольный режим, и гуй)
-        radeontop    Более старая альтернатива, на новых видюхах похоже может врать.
-        amdsmi       В первую очередь для ROCm (AMD-специфичного аналога Cuda). Кроме него мало что показывает.
-    cloc         (счетчик строк кода)
-    piper        (настраиваем подсветку мышек и т.п.)
-    fontforge    (редактор шрифтов) (захвати еще python3-fontforge, для некоторых скриптов)
-    potrace      (утилита в пару к fontforge для преобразования из растра в вектор)
-    qpdf         (разные манипуляции с pdf)
-    guestfs-tools (монтировать диски от виртуальных машин)
-        ^ manjaro,arch  |  ubuntu,fedora -> libguestfs-tools
-    lm_sensors   (датчики температуры и прочего)
-    peek         (запись гифок с экрана)
-    gifski       (конвертер видео в качественные гифки)
-    imagemagick
-        fedora: ImageMagick
-    virtualbox
-        arch: + virtualbox-guest-iso
-                        когда спросит про host modules, выбирай dkms (потому что второй только для обычного kernel, а вдруг у тебя lts)
-        fedora: VirtualBox
-        ubuntu: + virtualbox-ext-pack
-    tiled        (редактор карт)
-    gucharmap    (таблица символов, видимо та же, что по дефолту стоит на убунте)
-    freecad      (инженерное проектирование)
-        + opencamlib (для дополнительных фичей)
-    audacity     (звуковой редактор; бинарники с сайта у них кривые)
-        fedora: audacity-freeworld (из rpmfusion, без суффикса есть в стандартной репе, но он хуже?)
-    telegram-desktop
-        fedora: пакет кривой, качай оффициальный бинарник (https://bugzilla.rpmfusion.org/show_bug.cgi?id=6730)
-    discord
-        ^ arch only?
-    steam
-        нужен multilib репозиторий, как для wine (`sudo nano /etc/pacman.conf`, там раскомменть две строки: `[multilib]` и за ней `Include=...`)
-        если спросит, какой драйвер vulkan, то для AMD видюх выбирай vulkan-radeon, а не amdvlk (бенчмарк: https://www.phoronix.com/review/radv-amdvlk-july21/3)
-        тут ярлык называется `Steam (runtime)`; есть еще пакет `steam-native-runtime` (`Steam (native)`)
-            Runtime лучше, советую переименовать его просто в "Steam".
-            Смотри https://wiki.archlinux.org/title/Steam/Troubleshooting
-            Runtime использует родные стимовские либы. Native использует системные либы.
-    renderdoc    (отладчик графики)
-    fbgrab       (скриншоты напрямую из linux framebuffer для без-гуишной консоли)
-    lmms         (музыкальный редактор)
-        ubuntu -> вроде не работают плагины VST? Ставь официальный AppImage вместо пакета, там работют.
-    tree         (печатаем дерево папок)
-    obs-studio   (записываем видео с экрана)
-    lightdm-gtk-greeter-settings (гуй настройки lightdm, не путай с lightdm-settings, который на самом деле настраивает slick-greeter, и тянет его вместе с собой)
-    yad zenity   (рисование диалогов из консоли; первое - форк второго, больше фичей и не новомодный гуй, но пусть будут оба)
-    lshw         (выводит информацию о железе в консоль)
-    perl-rename  (массовое переименование файлов)
-        ubuntu -> rename  (проверь)
-    gimagereader-gtk (распознавание текста с картинки)
-        также нужны пакеты под конкретные языки, например:
-            tesseract-data-{eng,rus,kor,jpn,jpn_vert} hunspell-{en_us,ru}
-    gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav (кодеки; libav - он для H.264, ugly - возможно запатентованные кодеки, bad - нестабильные кодеки (запатентованные и нет))
-        ^ arch
-    inetutils    (утилита hostname и прочие)
-        ^ arch
-    remmina      (утилита для подключения к рабочим столам по разным протоколам)
-        + freerdp (добавляет поддержку стандартного виндового RDP)
-    gphoto2 gvfs-gphoto2 (доступ к файлам на фотоаппаратах через usb, читай инструкцию в отдельном пункте)
-    zram-generator (ОПЦИОНАЛЬНО, реализация свопа через зипование в оперативку) - читай где-то здесь инструкцию как его настроить
-    wipe         (консольный шредер файлов)
-    raider       (гуевый шредер файлов)
-    archlinux-wallpaper (некоторые дефолтные обои)
-    guvcview     (гуй вебкамеры) (раньше был еще `cheese` - он более юзер-френдли но остался только в AUR)
-Гуи архиватора. Выбери между
-    engrampa    или    xarchiver
-        Обычно стоит один из них. Если ставишь другой,
-        удали предыдущий, чтобы ассоциации переставились.
-AUR:
-    jdupes       (дедупликатор файлов)
-    visual-studio-code-bin
-    elementary-xfce-icons
-    onlyoffice-bin   (на manjaro: onlyoffice-desktopeditors)
-    menulibre    (гуй управления .desktop-файлами)
-Только убунта:
-    duc          (определение того, что занимает больше всего места на диске - очень мощный пакет)
-        fedora -> собирается из AUR, нафиг его
-    hardinfo     (информация о системе)
-        fedora -> собирается из AUR, нафиг его
-    libavcodec-extra (дополнительные кодеки, которые могут быть защищены патентами - часть пакета ubuntu-restricted-extras)
-    gnome-games  (набор казуальных игр)
-        На других дистрах это какой-то стремный лаунчер. Надеюсь на убунте не переделали тоже под лаунчер.
 
 [-initial-setup] [flatpak] [flathub]
 Ставим flatpak
@@ -2527,7 +2525,7 @@ sudo nano /etc/dnf/dnf.conf
 Добавляем в группы:
     sudo usermod -a -G MyGroup $USER
 Включаем цветной промпт в терминале:
-    nano ~/.bashrc
+    nano ~/.bashrc  (или глобальный `/etc/bash.bashrc`? хз)
     # Раскомментируем там `force_color_prompt=yes`.
 
 [ssh]
@@ -2603,6 +2601,7 @@ ssh-keygen -t ed25519 -C ...
     sudo nano ~/.xprofile
         export FOO=BAR
 Есть еще ~/.bashrc - только для баша, и только для одного пользователя. (туда хорошо писать кастомный prompt)
+    Глобальная альтернатива - /etc/bash.bashrc
     Есть еще ~/.bash_profile - он для login shells, а .bashrc - теоретически только для non-login shells,
     но на практике .bash_profile инклудит .bashrc (проверял в manjaro)
 
